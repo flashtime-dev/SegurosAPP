@@ -120,9 +120,99 @@ Utilizamos `Laravel` starter kit con `REACT`, `Inertia`, `Tailwind`, `Next.js`..
     php artisan migrate:refresh --seed
     ```
 
-### 4. Creacion de seeders
+### 4. Creacion de modelos
+- Crear un nuevo modelo:
+El nombre del modelo ha de ir en singular.
+``` bash
+php artisan make:model Poliza
+```
+Los modelos en Laravel son las clases para luego crear objetos y asi facilitar la obtencion, edicion y borrado.
 
-### 5. Creacion de modelos
+- En estos modelos tenemos varios tipos de variables:
+
+``` php
+$table //para identificar el nombre de la tabla en la base de datos
+$fillable //para decir que campos se pueden almacenar masivamente
+$guarded //datos que no se pueden guardar masivamente (como el id)
+$casts //los datos con su casting, teniendo en cuenta que si no se pone laravel comprendera que son string
+$hidden //para datos que tienen que ser ocultos en las columnas json como la contraseña, tokens...
+$visible //datos que son visibles en JSON
+$appends //datos calculables
+$with //para cargar relaciones entre modelos
+```
+
+Hay que tener en cuenta que muchas de estas variables con complementarias, es decir si pones campos como guarded el resto seran automaticamente fillable. Cuando no las pones laravel las autoasigna a lo mas permisivo posible.
+
+- Relaciones entre modelos:
+Relación Uno a Uno `1:1`
+``` php
+// Modelo User
+public function perfil()
+{
+    return $this->hasOne(Perfil::class);
+}
+
+// Modelo Perfil
+public function usuario()
+{
+    return $this->belongsTo(User::class);
+}
+```
+
+Relación Uno a Muchos `1:N`
+``` php
+// Modelo User
+public function polizas()
+{
+    return $this->hasMany(Poliza::class);
+}
+
+// Modelo Poliza
+public function usuario()
+{
+    return $this->belongsTo(User::class);
+}
+```
+
+Relación Muchos a Muchos `N:M`
+``` php
+// Modelo User
+public function roles()
+{
+    return $this->belongsToMany(Rol::class);
+}
+
+// Modelo Rol
+public function usuarios()
+{
+    return $this->belongsToMany(User::class);
+}
+```
+
+### 5. Creacion de seeders
+- Creacion de un nuevo seeder
+Los seeder son para introducir datos de prueba manualmente.
+``` bash
+php artisan make:seeder UserSeeder
+```
+
+Añadir en la funcion `up()` el modelo el cual vamos a crear los datos:
+``` php
+        Agente::create([
+            'nombre' => 'Seguros Axarquía',
+            'telefono' => '123456789',
+        ]);
+```
+
+- Almacenar un seeder concreto
+``` bash
+php artisan db:seed --class=UserSeeder
+```
+
+- Almacenar todos los seeders
+``` bash
+php artisan db:seed
+```
 
 ### 6. Creacion de controladores
 
