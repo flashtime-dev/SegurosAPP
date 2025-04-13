@@ -214,11 +214,136 @@ php artisan db:seed --class=UserSeeder
 php artisan db:seed
 ```
 
-### 6. Creacion de controladores
+### 6. Creacion de CRUDs
 
-### 7. Creacion de rutas
+#### 6.1. Agregar las rutas en `routes/web.php`
+``` php
+Route::resource('polizas', PolizaController::class);
+```
 
-### 8. Creacion de vistas
+#### 6.2. Crear un controlador Inertia de recursos
+``` bash
+php artisan make:controller PolizaController --resource
+```
+
+``` php
+class PolizaController extends Controller
+{
+    public function index()
+    {
+        //Se utiliza en renderizado de inertia para hacer las vistas reactivas
+        return Inertia::render('Polizas/Index', [
+            'polizas' => Poliza::all()
+        ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('Polizas/Create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required',
+            'descripcion' => 'nullable',
+        ]);
+
+        Poliza::create($request->all());
+        //Cuando son funciones que no requieren vistas, el controlador ejecuta la funcion y redirije a la ruta correspondiente
+        return redirect()->route('polizas.index');
+    }
+
+    public function edit(Poliza $poliza)
+    {
+        return Inertia::render('Polizas/Edit', [
+            'poliza' => $poliza
+        ]);
+    }
+
+    public function update(Request $request, Poliza $poliza)
+    {
+        $request->validate([
+            'nombre' => 'required',
+        ]);
+
+        $poliza->update($request->all());
+
+        return redirect()->route('polizas.index');
+    }
+
+    public function destroy(Poliza $poliza)
+    {
+        $poliza->delete();
+
+        return redirect()->route('polizas.index');
+    }
+}
+```
+
+#### 6.3. Creacion de vistas en React: `resources/js/Pages/Polizas/`
+
+`index.jsx`, `edit.jsx`, `create.jsx`
+
+### 7. Uso de Inertia + React en Laravel
+Inertia hace de puente entre Laravel y React:
+- Laravel maneja las rutas, controladores y la lógica del servidor
+
+- React se encarga de mostrar la interfaz del lado del cliente.
+
+- Inertia hace que Laravel y React se comuniquen sin tener que hacer APIs REST o AJAX manualmente.
+
+Para mostrar una vista se usa el renderizado de Inertia:
+``` php
+return Inertia::render('Polizas/Index', ['polizas' => $polizas]);
+
+```
+Con esto Inertia le dice a React renderiza el componente `resources/js/Pages/Polizas/Index.jsx` y pasale estos datos (polizas).
+
+- Estructura: Archivos .jsx (HTML con JS)
+- Datos: Pasados con Inertia::render(..., [...])
+- Formularios: useForm() de Inertia (HOOK)
+- Enlaces: <Link href=""> de Inertia
+
+React no usa <form action="..." method="POST"> como tal. Usa un `hook` de Inertia, esto evita recargar la página y envía los datos directamente a Laravel.
+
+``` jsx
+import { useForm } from '@inertiajs/react';
+
+//data: datos actuales del form(vacios), setData: datos que se escriben en los inputs, post: funcion para enviar los datos via post
+const { data, setData, post } = useForm({
+    nombre: '',
+    descripcion: ''
+});
+
+//evento al enviar el formulario
+const handleSubmit = (e) => {
+    //detiene el funcionamiento clasico
+    e.preventDefault();
+    //envia los datos a la pagina polizas
+    post('/polizas');
+};
+
+```
+
+Luego se hace la conexion en los inputs:
+
+``` jsx
+<input
+    value={data.nombre}
+    onChange={e => setData('nombre', e.target.value)}
+/>
+
+```
+
+Al usar Inertia nos evitamos el @csrf para la seguridad que evita injeccion masiva de otros sitios a nuestra pagina. Se agrega solo en los headers por Inertia.
+
+### 8. Uso de React
+#### 8.1. Estructura base de carpetas
+
+
+#### 8.2. Componentes mas utiles
+
 
 ### 9. Integracion de Request para formularios
 
