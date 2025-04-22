@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Poliza;
+use App\Models\Compania;
+use App\Models\Comunidad;
+use App\Models\Agente;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,9 +16,9 @@ class PolizaController extends Controller
      */
     public function index()
     {
-        $polizas = Poliza::with(['compania', 'comunidad'])->get();
+        $polizas = Poliza::with(['compania', 'comunidad', 'agente'])->get();
 
-        return inertia('polizas/polizas', [
+        return Inertia::render('polizas/polizas', [
             'polizas' => $polizas,
         ]);
     }
@@ -25,8 +28,11 @@ class PolizaController extends Controller
      */
     public function create()
     {
-        // Return a view to create a new policy
-        return Inertia::render('polizas.create');
+        $companias = Compania::all();
+        $comunidades = Comunidad::all();
+        $agentes = Agente::all();
+
+        return Inertia::render('polizas/create', compact('companias', 'comunidades', 'agentes'));
     }
 
     /**
@@ -34,19 +40,24 @@ class PolizaController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request data
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:255',
-            'precio' => 'required|numeric|min:0',
-            // Add other validation rules as needed
+            'id_compania' => 'required|exists:companias,id',
+            'id_comunidad' => 'required|exists:comunidades,id',
+            'id_agente' => 'nullable|exists:agentes,id',
+            'numero' => 'required|string|max:20',
+            'fecha_efecto' => 'required|date',
+            'cuenta' => 'nullable|string|max:24',
+            'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
+            'prima_neta' => 'required|numeric|min:0',
+            'prima_total' => 'required|numeric|min:0',
+            'pdf_poliza' => 'nullable|string|max:255',
+            'observaciones' => 'nullable|string',
+            'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
         ]);
 
-        // Create a new policy
         Poliza::create($request->all());
 
-        // Redirect to the policies index page with a success message
-        return redirect()->route('polizas.index')->with('success', 'Poliza created successfully.');
+        return redirect()->route('polizas.index')->with('success', 'Póliza creada correctamente.');
     }
 
     /**
@@ -54,13 +65,9 @@ class PolizaController extends Controller
      */
     public function show(string $id)
     {
-        $poliza = Poliza::with([
-            'compania',
-            'comunidad',
-            'chats.usuario' // cargamos los chats y su relación con usuario
-        ])->findOrFail($id);
+        $poliza = Poliza::with(['compania', 'comunidad', 'agente', 'chats.usuario'])->findOrFail($id);
 
-        return inertia('polizas/poliza', [
+        return Inertia::render('polizas/poliza', [
             'poliza' => $poliza,
             'chats' => $poliza->chats()->orderBy('created_at')->get(),
         ]);
@@ -71,11 +78,12 @@ class PolizaController extends Controller
      */
     public function edit(string $id)
     {
-        // Find the policy by ID
         $poliza = Poliza::findOrFail($id);
+        $companias = Compania::all();
+        $comunidades = Comunidad::all();
+        $agentes = Agente::all();
 
-        // Return a view to edit the policy
-        return Inertia::render('polizas.edit', compact('poliza'));
+        return Inertia::render('polizas/edit', compact('poliza', 'companias', 'comunidades', 'agentes'));
     }
 
     /**
@@ -83,20 +91,25 @@ class PolizaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Validate the request data
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:255',
-            'precio' => 'required|numeric|min:0',
-            // Add other validation rules as needed
+            'id_compania' => 'required|exists:companias,id',
+            'id_comunidad' => 'required|exists:comunidades,id',
+            'id_agente' => 'nullable|exists:agentes,id',
+            'numero' => 'required|string|max:20',
+            'fecha_efecto' => 'required|date',
+            'cuenta' => 'nullable|string|max:24',
+            'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
+            'prima_neta' => 'required|numeric|min:0',
+            'prima_total' => 'required|numeric|min:0',
+            'pdf_poliza' => 'nullable|string|max:255',
+            'observaciones' => 'nullable|string',
+            'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
         ]);
 
-        // Find the policy by ID and update it
         $poliza = Poliza::findOrFail($id);
         $poliza->update($request->all());
 
-        // Redirect to the policies index page with a success message
-        return redirect()->route('polizas.index')->with('success', 'Poliza updated successfully.');
+        return redirect()->route('polizas.index')->with('success', 'Póliza actualizada correctamente.');
     }
 
     /**
@@ -104,13 +117,9 @@ class PolizaController extends Controller
      */
     public function destroy(string $id)
     {
-        // Find the policy by ID
         $poliza = Poliza::findOrFail($id);
-
-        // Delete the policy
         $poliza->delete();
 
-        // Redirect to the policies index page with a success message
-        return redirect()->route('polizas.index')->with('success', 'Poliza deleted successfully.');
+        return redirect()->route('polizas.index')->with('success', 'Póliza eliminada correctamente.');
     }
 }
