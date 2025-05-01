@@ -24,7 +24,7 @@ export function PolizaMenu({ poliza, chats, authUser }: { poliza: Poliza, chats:
                             <PolizaLogoAcciones logoUrl={poliza.compania.url_logo} telefono="934165046" />
                         </div>
                     </div>
-                    <PolizaChat chats={chats} authUser={authUser} />
+                    <PolizaChat chats={chats} authUser={authUser} polizaId={poliza.id} />
                 </TabsContent>
 
                 {/* <TabsContent value="siniestros">

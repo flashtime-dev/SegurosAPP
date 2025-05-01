@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatPolizaController;
 use App\Http\Controllers\CompaniaController;
 use App\Http\Controllers\PolizaController;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('polizas', PolizaController::class);
     Route::get('telefonos-asistencia', [CompaniaController::class, 'telefonosAsistencia'])->name('telefonos-asistencia');
     Route::resource('companias', CompaniaController::class);
-    
+    Route::post('/chat-poliza/{poliza}', [ChatPolizaController::class, 'store'])->name('chat-poliza.store');
     
 });
 
