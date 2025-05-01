@@ -1,55 +1,84 @@
-import AppLayout from '@/layouts/app-layout';
+import * as React from "react";
 import { Head, usePage } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import { PolizaCard, Poliza } from '@/components/poliza-card';
+import FiltroPolizas from '@/components/polizas-filtro';
+import PaginacionPolizas from "@/components/polizas-paginacion";
 
-interface Poliza {
-    id: number;
-    numero: string;
-    estado: string;
-    fecha_efecto: string;
-    compania: {
-        nombre: string;
-        url_logo: string;
-    };
-    comunidad: {
-        nombre: string;
-        direccion: string;
-    };
-}
-
+/**
+ * Página principal que muestra el listado de pólizas con filtros
+ */
 export default function Polizas() {
     const { props } = usePage<{ polizas: Poliza[] }>();
     const polizas = props.polizas;
 
+    const [filtros, setFiltros] = React.useState({
+        nombreCompania: '',
+        nombreComunidad: '',
+        numeroPoliza: '',
+        cif: ''
+    });
+
+    const filtrarPolizas = (poliza: Poliza) => {
+        const { nombreCompania, nombreComunidad, numeroPoliza, cif } = filtros;
+
+        const matchNombreCompania = poliza.compania.nombre.toLowerCase().includes(nombreCompania.toLowerCase());
+        const matchNombreComunidad = poliza.comunidad.nombre.toLowerCase().includes(nombreComunidad.toLowerCase());
+        const matchNumeroPoliza = poliza.numero.toLowerCase().includes(numeroPoliza.toLowerCase());
+        const matchCif = poliza.comunidad.cif.toLowerCase().includes(cif.toLowerCase());
+
+        return matchNombreCompania && matchNombreComunidad && matchNumeroPoliza && matchCif;
+    };
+
+    const handleFilterChange = (newFiltros: typeof filtros) => {
+        setFiltros(newFiltros);
+        setPaginaActual(1); // Reiniciar a la primera página
+    };
+
+    const polizasFiltradas = polizas.filter(filtrarPolizas);
+
+
+
+    const [paginaActual, setPaginaActual] = React.useState(1);
+    const porPagina = 9; // Número de pólizas por página
+
+    const polizasPaginadas = polizasFiltradas.slice(
+        (paginaActual - 1) * porPagina,
+        paginaActual * porPagina
+    );
+
+    const totalPaginas = Math.ceil(polizasFiltradas.length / porPagina);
+
+    
     return (
         <AppLayout breadcrumbs={[{ title: 'Pólizas', href: '/polizas' }]}>
             <Head title="Pólizas" />
 
-            <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {polizas.map((poliza) => (
-                    <div
-                        key={poliza.id}
-                        className="cursor-pointer border rounded-lg p-4 shadow hover:shadow-lg transition"
-                        onClick={() => window.location.href = `/polizas/${poliza.id}`}
-                    >
-                        <img
-                            src={poliza.compania.url_logo}
-                            alt={`${poliza.compania.nombre} logo`}
-                            className="h-16 w-auto mx-auto object-contain"
+            <div className="container mx-auto px-4 py-6">
+                <h1 className="text-2xl font-bold mb-6">Pólizas</h1>
+
+                {/* Filtro de pólizas */}
+                <FiltroPolizas onFilter={handleFilterChange} />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    {polizasPaginadas.map((poliza) => (
+                        <PolizaCard
+                            key={poliza.id}
+                            poliza={poliza}
+                            onClick={() => window.location.href = `/polizas/${poliza.id}`}
                         />
-                        <h2 className="mt-2 text-lg font-bold text-center">{poliza.comunidad.nombre}</h2>
-                        <p className="text-sm text-gray-500 text-center">{poliza.comunidad.direccion}</p>
-                        <p className="mt-2 text-sm text-gray-700">
-                            <strong>Número:</strong> {poliza.numero}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                            <strong>Estado:</strong> {poliza.estado}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                            <strong>Fecha:</strong> {new Date(poliza.fecha_efecto).toLocaleDateString()}
-                        </p>
-                    </div>
-                ))}
+                    ))}
+                    {polizasPaginadas.length === 0 && (
+                        <p className="col-span-full text-center text-gray-500">No se encontraron pólizas.</p>
+                    )}
+                </div>
             </div>
+
+            <PaginacionPolizas
+                paginaActual={paginaActual}
+                totalPaginas={totalPaginas}
+                onPageChange={(nueva) => setPaginaActual(nueva)}
+            />
         </AppLayout>
     );
 }

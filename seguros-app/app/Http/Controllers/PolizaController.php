@@ -8,6 +8,7 @@ use App\Models\Comunidad;
 use App\Models\Agente;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class PolizaController extends Controller
 {
@@ -66,10 +67,13 @@ class PolizaController extends Controller
     public function show(string $id)
     {
         $poliza = Poliza::with(['compania', 'comunidad', 'agente', 'chats.usuario'])->findOrFail($id);
+        $chats = $poliza->chats()->with('usuario')->orderBy('created_at')->get();
+        $authUser = Auth::id();
 
-        return Inertia::render('polizas/poliza', [
+        return Inertia::render('polizas/poliza-id', [
             'poliza' => $poliza,
-            'chats' => $poliza->chats()->orderBy('created_at')->get(),
+            'chats' => $chats,
+            'authUser' => $authUser,
         ]);
     }
 

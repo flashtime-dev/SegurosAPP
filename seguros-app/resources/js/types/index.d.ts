@@ -41,3 +41,36 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+export interface Poliza {
+    id: number;
+    numero: string;
+    estado: string;
+    alias: string;
+    fecha_efecto: string;
+    cuenta: string;
+    forma_pago: string;
+    prima_neta: number;
+    prima_total: number;
+    pdf_poliza: string | null;
+    observaciones: string | null;
+    compania: {
+        nombre: string;
+        url_logo: string;
+    };
+    comunidad: {
+        nombre: string;
+        cif: string;
+        direccion: string;
+    };
+}
+
+export interface ChatPoliza {
+    id: number;
+    id_poliza: number;
+    mensaje: string;
+    created_at: string;
+    usuario: {
+        id: number;
+        name: string;
+    };
+}
