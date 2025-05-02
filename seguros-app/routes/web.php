@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\ComunidadController;
+use App\Http\Controllers\SiniestroController;
 use App\Http\Controllers\ChatPolizaController;
 use App\Http\Controllers\CompaniaController;
 use App\Http\Controllers\PolizaController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -19,7 +22,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('telefonos-asistencia', [CompaniaController::class, 'telefonosAsistencia'])->name('telefonos-asistencia');
     Route::resource('companias', CompaniaController::class);
     Route::post('/chat-poliza/{poliza}', [ChatPolizaController::class, 'store'])->name('chat-poliza.store');
-    
+    Route::resource('usuarios', UserController::class);
+    Route::resource('comunidades', ComunidadController::class);
+    Route::resource('siniestros', SiniestroController::class);
+
 });
 
 
