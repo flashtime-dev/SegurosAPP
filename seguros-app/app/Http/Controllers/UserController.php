@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Rol;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -14,8 +15,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('rol')->get(); // Obtener todos los usuarios con su rol
-        return view('users.index', compact('users')); // Retornar la vista con los datos
+        $users = User::with('rol')->get(['id', 'id_rol' ,'name', 'email', 'state']); // Obtener todos los usuarios con su rol
+
+        //dd($users); // Debugging: Verificar los datos de los usuarios
+        return Inertia::render('usuarios/index', [
+            'users' => $users
+        ]);
+        //return view('users.index', compact('users')); // Retornar la vista con los datos
     }
 
     /**

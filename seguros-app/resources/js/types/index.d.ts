@@ -41,6 +41,13 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Rol {
+    id: number;
+    name: string;
+    created_at: string;
+    updated_at: string;
+}
 export interface Poliza {
     id: number;
     numero: string;
@@ -73,4 +80,19 @@ export interface ChatPoliza {
         id: number;
         name: string;
     };
+}
+
+export interface Siniestro {
+    id: number;
+    declaracion: string;
+    tramitador: string;
+    expediente: string;
+    exp_cia: string;
+    exp_asist: string;
+    fecha_ocurrencia: string;
+    adjunto: string | null;
+    poliza: {
+        id: number;
+        numero: string;
+    }
 }

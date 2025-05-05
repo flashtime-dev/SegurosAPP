@@ -8,7 +8,7 @@ import PaginacionPolizas from "@/components/polizas-paginacion";
 /**
  * Página principal que muestra el listado de pólizas con filtros
  */
-export default function Polizas() {
+export default function Index() {
     const { props } = usePage<{ polizas: Poliza[] }>();
     const polizas = props.polizas;
 

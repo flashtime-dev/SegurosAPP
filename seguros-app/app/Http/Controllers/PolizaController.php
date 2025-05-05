@@ -19,7 +19,7 @@ class PolizaController extends Controller
     {
         $polizas = Poliza::with(['compania', 'comunidad', 'agente'])->get();
 
-        return Inertia::render('polizas/polizas', [
+        return Inertia::render('polizas/index', [
             'polizas' => $polizas,
         ]);
     }

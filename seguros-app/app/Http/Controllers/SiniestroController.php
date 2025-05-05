@@ -6,6 +6,7 @@ use App\Models\Siniestro;
 use App\Models\Poliza;
 use App\Models\Contacto;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class SiniestroController extends Controller
 {
@@ -15,7 +16,9 @@ class SiniestroController extends Controller
     public function index()
     {
         $siniestros = Siniestro::with('poliza', 'contactos')->get(); // Obtener todos los siniestros con sus relaciones
-        return view('siniestros.index', compact('siniestros')); // Retornar la vista con los datos
+        return Inertia::render('siniestros/index', [
+            'siniestros' => $siniestros,
+        ]); // Retornar la vista con la lista de siniestros
     }
 
     /**
