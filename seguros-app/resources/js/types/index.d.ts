@@ -39,14 +39,20 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+    state: number;
+    rol: Rol;
     [key: string]: unknown; // This allows for additional properties...
 }
 
 export interface Rol {
     id: number;
-    name: string;
-    created_at: string;
-    updated_at: string;
+    nombre: string;
+    permisos?: Permiso[];
+}
+
+export interface Permiso {
+    id: number;
+    nombre: string;
 }
 export interface Poliza {
     id: number;
