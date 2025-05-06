@@ -14,13 +14,16 @@ export function UserCard({ usuario }: { usuario: User }) {
                     &#x22EE; {/* Icono de tres puntos */}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="z-10">
-                    <DropdownMenuItem>
-                        <Link href={`/usuarios/${usuario.id}/edit`} className="text-gray-700">
+                    <DropdownMenuItem
+                        onClick={() => {
+                                router.visit(route('usuarios.show', usuario.id));
+                            }
+                        }
+                        className="text-gray-700"
+                    >
                             Editar
-                        </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                        
                         onClick={() => {
                             if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
                                 router.delete(route('usuarios.destroy', usuario.id));
