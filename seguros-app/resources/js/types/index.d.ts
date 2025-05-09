@@ -53,6 +53,12 @@ export interface Rol {
 export interface Permiso {
     id: number;
     nombre: string;
+    id_tipo: number;
+    tipoPermiso: TipoPermiso;
+}
+export interface TipoPermiso {
+    id: number;
+    nombre: string;
 }
 export interface Poliza {
     id: number;
@@ -101,4 +107,15 @@ export interface Siniestro {
         id: number;
         numero: string;
     }
+}
+
+export interface Comunidad {
+    id: number;
+    nombre: string;
+    cif: string;
+    direccion: string;
+    ubi_catastral: string;
+    ref_catastral: string;
+    telefono: string;
+    polizas: Poliza[];
 }

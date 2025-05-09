@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comunidad;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ComunidadController extends Controller
 {
@@ -13,7 +14,9 @@ class ComunidadController extends Controller
     public function index()
     {
         $comunidades = Comunidad::all(); // Obtener todas las comunidades
-        return view('comunidades.index', compact('comunidades')); // Retornar la vista con los datos
+        return Inertia::render('comunidades/index', [
+            'comunidades' => $comunidades,
+        ]); // Retornar la vista con los datos
     }
 
     /**
@@ -21,7 +24,7 @@ class ComunidadController extends Controller
      */
     public function create()
     {
-        return view('comunidades.create'); // Retornar la vista para crear una nueva comunidad
+        return Inertia::render('comunidades/create'); // Retornar la vista para crear una nueva comunidad
     }
 
     /**
@@ -46,24 +49,29 @@ class ComunidadController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Comunidad $comunidad)
+    public function show($id)
     {
-        return view('comunidades.show', compact('comunidad')); // Retornar la vista con los detalles de la comunidad
+        $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+        return Inertia::render('Comunidad/Show', ['comunidad' => $comunidad]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Comunidad $comunidad)
+    public function edit($id)
     {
-        return view('comunidades.edit', compact('comunidad')); // Retornar la vista para editar la comunidad
+        $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+        return Inertia::render('comunidades/edit', [
+            'comunidad' => $comunidad, // Pasar la comunidad a la vista
+        ]); // Retornar la vista para editar la comunidad
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comunidad $comunidad)
+    public function update(Request $request, $id)
     {
+        $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
         $request->validate([
             'nombre' => 'required|string|max:255',
             'cif' => 'required|string|max:15|unique:comunidades,cif,' . $comunidad->id,
@@ -81,8 +89,14 @@ class ComunidadController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comunidad $comunidad)
+    public function destroy($id)
     {
+        $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+        $comunidad->users()->detach(); // Desvincular usuarios de la comunidad
+        $comunidad->caracteristica()->delete(); // Eliminar la característica asociada
+        $comunidad->contactos()->delete(); // Eliminar los contactos asociados
+        $comunidad->presupuestos()->delete(); // Eliminar los presupuestos asociados
+        $comunidad->polizas()->delete(); // Eliminar las pólizas asociadas
         $comunidad->delete(); // Eliminar la comunidad
         return redirect()->route('comunidades.index')->with('success', 'Comunidad eliminada correctamente.');
     }

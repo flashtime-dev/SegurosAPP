@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Rol;
+use App\Models\TipoPermiso;
 use App\Models\Permiso;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class RolController extends Controller
 {
@@ -14,7 +16,11 @@ class RolController extends Controller
     public function index()
     {
         $roles = Rol::with('permisos')->get(); // Obtener todos los roles con sus permisos
-        return view('roles.index', compact('roles')); // Retornar la vista con los datos
+        $tipoPermisos = TipoPermiso::all(); // Obtener todos los permisos de los roles
+        return Inertia::render('roles/index', [
+            'roles' => $roles,
+            'tipoPermisos' => $tipoPermisos
+        ]); // Retornar la vista con los datos
     }
 
     /**
@@ -22,8 +28,11 @@ class RolController extends Controller
      */
     public function create()
     {
-        $permisos = Permiso::all(); // Obtener todos los permisos
-        return view('roles.create', compact('permisos')); // Retornar la vista para crear un nuevo rol
+        $permisos = Permiso::with('tipoPermiso')->get(); // Obtener todos los roles con sus permisos
+        //dd($permisos); // Debugging: Verificar los datos de los permisos
+        return Inertia::render('roles/create', [
+            'permisos' => $permisos,
+        ]); // Retornar la vista con los datos
     }
 
     /**
@@ -41,8 +50,13 @@ class RolController extends Controller
             'nombre' => $request->nombre,
         ]);
 
+        // se esta mandando un array de permisos con solo los ids
+        //dd($request->permisos); // Debugging: Verificar los datos de los permisos
+
         if ($request->has('permisos')) {
-            $rol->permisos()->sync($request->permisos); // Asignar permisos al rol
+            $rol->permisos()->attach($request->permisos); // Crear la relación entre el rol y los permisos
+        } else {
+            $rol->permisos()->detach(); // Eliminar la relación entre el rol y los permisos
         }
 
         return redirect()->route('roles.index')->with('success', 'Rol creado correctamente.');
@@ -51,27 +65,39 @@ class RolController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Rol $rol)
-    {
-        $rol->load('permisos'); // Cargar los permisos del rol
-        return view('roles.show', compact('rol')); // Retornar la vista con los detalles del rol
-    }
+    // public function show($id)
+    // {
+    //     $rol = Rol::findOrFail($id); // Buscar el rol por ID
+    //     $rol->load('permisos'); // Cargar los permisos del rol
+    //     return Inertia::render(
+    //         'roles/show', [
+    //             'rol' => $rol,
+    //             'permisos' => $rol->permisos, // Pasar los permisos del rol a la vista
+    //         ]
+    //     ); // Retornar la vista con los detalles del rol
+    // }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Rol $rol)
+    public function edit($id)
     {
-        $permisos = Permiso::all(); // Obtener todos los permisos
+        $rol = Rol::findOrFail($id); // Buscar el rol por ID
+        $permisos = Permiso::with('tipoPermiso')->get();
         $rol->load('permisos'); // Cargar los permisos del rol
-        return view('roles.edit', compact('rol', 'permisos')); // Retornar la vista para editar el rol
+        return Inertia::render('roles/edit', [
+            'rol' => $rol,
+            'permisosRol' => $rol->permisos, // Pasar los permisos del rol a la vista
+            'permisos' => $permisos,
+        ]); // Retornar la vista con los datos
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Rol $rol)
+    public function update(Request $request, $id)
     {
+        $rol = Rol::findOrFail($id); // Buscar el rol por ID
         $request->validate([
             'nombre' => 'required|string|max:255',
             'permisos' => 'nullable|array',
@@ -92,8 +118,17 @@ class RolController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Rol $rol)
+    public function destroy($id)
     {
+        $rol = Rol::findOrFail($id); // Buscar el rol por ID
+
+        // Verificar si el rol tiene permisos asignados
+        if ($rol->permisos()->count() > 0) {
+            //borrar las relaciones con permisos
+            $rol->permisos()->detach(); // Eliminar las relaciones con permisos
+        }
+
+        // Eliminar el rol y sus relaciones con permisos
         $rol->permisos()->detach(); // Eliminar las relaciones con permisos
         $rol->delete(); // Eliminar el rol
 

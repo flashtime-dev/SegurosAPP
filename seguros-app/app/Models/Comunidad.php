@@ -18,7 +18,6 @@ class Comunidad extends Model
         'ubi_catastral',
         'ref_catastral',
         'telefono',
-        'descripcion',
     ];
 
     // Relación uno a muchos: Una Comunidad tiene muchos Usuarios

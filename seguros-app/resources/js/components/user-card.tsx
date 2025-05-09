@@ -15,10 +15,7 @@ export function UserCard({ usuario }: { usuario: User }) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="z-10">
                     <DropdownMenuItem
-                        onClick={() => {
-                                router.visit(route('usuarios.show', usuario.id));
-                            }
-                        }
+                        onClick={() => { router.visit(route('usuarios.show', usuario.id));} }
                         className="text-gray-700"
                     >
                             Editar
