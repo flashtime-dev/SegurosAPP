@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agente;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AgenteController extends Controller
 {
@@ -13,16 +14,20 @@ class AgenteController extends Controller
     public function index()
     {
         $agentes = Agente::all(); // Obtener todos los agentes
-        return view('agentes.index', compact('agentes')); // Retornar la vista con los datos
+        return Inertia::render('agentes/index', [
+            'agentes' => $agentes, // Pasar los agentes a la vista
+            //'success' => session('success'), // Pasar el mensaje de éxito a la vista
+            //'error' => session('error'), // Pasar el mensaje de error a la vista
+        ]); // Retornar la vista con los datos
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        return view('agentes.create'); // Retornar la vista para crear un nuevo agente
-    }
+    // public function create()
+    // {
+    //     return Inertia::render('agentes/create'); // Retornar la vista para crear un nuevo agente
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -43,24 +48,28 @@ class AgenteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Agente $agente)
-    {
-        return view('agentes.show', compact('agente')); // Retornar la vista con los detalles del agente
-    }
+    // public function show(Agente $agente)
+    // {
+    //     return view('agentes.show', compact('agente')); // Retornar la vista con los detalles del agente
+    // }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Agente $agente)
-    {
-        return view('agentes.edit', compact('agente')); // Retornar la vista para editar el agente
-    }
+    // public function edit($id)
+    // {
+    //     $agente = Agente::findOrFail($id); // Buscar el agente por ID
+    //     return Inertia::render('agentes/edit', [
+    //         'agente' => $agente, // Pasar el agente a la vista
+    //     ]); // Retornar la vista para editar el agente
+    // }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Agente $agente)
+    public function update(Request $request, $id)
     {
+        $agente = Agente::findOrFail($id); // Buscar el agente por ID
         $request->validate([
             'nombre' => 'required|string|max:255',
             'telefono' => 'nullable|string|max:15',
@@ -75,8 +84,9 @@ class AgenteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Agente $agente)
+    public function destroy($id)
     {
+        $agente = Agente::findOrFail($id); // Buscar el agente por ID
         $agente->delete(); // Eliminar el agente
         return redirect()->route('agentes.index')->with('success', 'Agente eliminado correctamente.');
     }

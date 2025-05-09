@@ -7,6 +7,7 @@ use App\Http\Controllers\CompaniaController;
 use App\Http\Controllers\PolizaController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AgenteController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -28,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('roles', RolController::class);
     Route::resource('comunidades', ComunidadController::class);
     Route::resource('siniestros', SiniestroController::class);
+    Route::resource('agentes', AgenteController::class);
 
 });
 

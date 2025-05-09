@@ -9,12 +9,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Edit, Ellipsis, EllipsisVertical, Trash2 } from "lucide-react";
+import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
 import { router } from "@inertiajs/react";
 
 export function MostrarRolesPermisos({ roles, tipoPermisos }: { roles: Rol[], tipoPermisos: TipoPermiso[] }) {
-
     const [selectedRol, setSelectedRol] = useState<Rol | null>(null);
+
+    const handleDeleteRol = (rolId: number) => {
+        if (confirm('¿Estás seguro de que deseas eliminar este rol?')) {
+            router.delete(route('roles.destroy', rolId), {
+                onSuccess: () => {
+                    // Si el rol eliminado es el seleccionado, reseteamos el estado
+                    if (selectedRol?.id === rolId) {
+                        setSelectedRol(null);
+                    }
+                },
+            });
+        }
+    };
 
     return (
         <div className="flex flex-col md:flex-row gap-6 w-full">
@@ -43,15 +55,11 @@ export function MostrarRolesPermisos({ roles, tipoPermisos }: { roles: Rol[], ti
                                                     <EllipsisVertical className="w-5 h-5 text-gray-500 hover:text-gray-700" />
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="z-10">
-                                                    <DropdownMenuItem onClick={() => {router.visit(route('roles.edit', rol.id));}}>
+                                                    <DropdownMenuItem onClick={() => { router.visit(route('roles.edit', rol.id)); }}>
                                                         <Edit className="w-4 h-4 mr-1 inline" />
                                                         Editar
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => {
-                                                        if (confirm('¿Estás seguro de que deseas eliminar este rol?')) {
-                                                            router.delete(route('roles.destroy', rol.id));
-                                                        }
-                                                    }}>
+                                                    <DropdownMenuItem onClick={() => handleDeleteRol(rol.id)}>
                                                         <span className="text-red-600">
                                                             <Trash2 className="text-red-600 w-4 h-4 mr-1 inline" />
                                                             Eliminar
@@ -61,7 +69,6 @@ export function MostrarRolesPermisos({ roles, tipoPermisos }: { roles: Rol[], ti
                                             </DropdownMenu>
                                         </div>
                                     </div>
-
                                 </li>
                             ))}
                         </ul>
