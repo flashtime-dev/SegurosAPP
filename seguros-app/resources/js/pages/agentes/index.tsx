@@ -14,19 +14,9 @@ import {
     DialogFooter,
     DialogClose,
 } from '@/components/ui/dialog';
+import { Agente } from '@/types';
 
-type Agente = {
-    id: number;
-    nombre: string;
-    email: string;
-    telefono: string;
-};
-
-type Props = {
-    agentes: Agente[];
-};
-
-export default function Index({ agentes }: Props) {
+export default function Index({ agentes }: {agentes: Agente[]}) {
     const [editingAgente, setEditingAgente] = useState<Agente | null>(null);
     const [isCreating, setIsCreating] = useState(false); // Estado para el modal de creación
     const { data, setData, post, put, processing, errors, reset } = useForm({

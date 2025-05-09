@@ -1,23 +1,29 @@
 import * as React from "react";
-import { Head, usePage } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import { PolizaCard, Poliza } from '@/components/poliza-card';
-import FiltroPolizas from '@/components/polizas-filtro';
+import { Head, usePage } from "@inertiajs/react";
+import AppLayout from "@/layouts/app-layout";
+import { PolizaCard, Poliza } from "@/components/poliza-card";
+import FiltroPolizas from "@/components/polizas-filtro";
 import PaginacionPolizas from "@/components/polizas-paginacion";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import CrearPolizaModal from "@/components/polizas/CrearPolizaModal";
+import { Compania, Comunidad, Agente } from "@/types";
 
-/**
- * Página principal que muestra el listado de pólizas con filtros
- */
 export default function Index() {
-    const { props } = usePage<{ polizas: Poliza[] }>();
+    const { props } = usePage<{ polizas: Poliza[], companias: Compania[], comunidades: Comunidad[], agentes: Agente[] }>();
     const polizas = props.polizas;
+    const companias = props.companias;
+    const comunidades = props.comunidades;
+    const agentes = props.agentes;
 
     const [filtros, setFiltros] = React.useState({
-        nombreCompania: '',
-        nombreComunidad: '',
-        numeroPoliza: '',
-        cif: ''
+        nombreCompania: "",
+        nombreComunidad: "",
+        numeroPoliza: "",
+        cif: "",
     });
+
+    const [isCreating, setIsCreating] = React.useState(false); // Estado para el modal de creación
 
     const filtrarPolizas = (poliza: Poliza) => {
         const { nombreCompania, nombreComunidad, numeroPoliza, cif } = filtros;
@@ -30,14 +36,7 @@ export default function Index() {
         return matchNombreCompania && matchNombreComunidad && matchNumeroPoliza && matchCif;
     };
 
-    const handleFilterChange = (newFiltros: typeof filtros) => {
-        setFiltros(newFiltros);
-        setPaginaActual(1); // Reiniciar a la primera página
-    };
-
     const polizasFiltradas = polizas.filter(filtrarPolizas);
-
-
 
     const [paginaActual, setPaginaActual] = React.useState(1);
     const porPagina = 9; // Número de pólizas por página
@@ -49,16 +48,20 @@ export default function Index() {
 
     const totalPaginas = Math.ceil(polizasFiltradas.length / porPagina);
 
-    
     return (
-        <AppLayout breadcrumbs={[{ title: 'Pólizas', href: '/polizas' }]}>
+        <AppLayout breadcrumbs={[{ title: "Pólizas", href: "/polizas" }]}>
             <Head title="Pólizas" />
 
             <div className="container mx-auto px-4 py-6">
-                <h1 className="text-2xl font-bold mb-6">Pólizas</h1>
-
+                <div className="flex justify-between items-center">
+                    <h1 className="text-2xl font-bold mb-6">Pólizas</h1>
+                    <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2">
+                        <Plus className="w-4 h-4" />
+                        <span>Crear póliza</span>
+                    </Button>
+                </div>
                 {/* Filtro de pólizas */}
-                <FiltroPolizas onFilter={handleFilterChange} />
+                <FiltroPolizas onFilter={(newFiltros) => setFiltros(newFiltros)} />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     {polizasPaginadas.map((poliza) => (
@@ -79,6 +82,9 @@ export default function Index() {
                 totalPaginas={totalPaginas}
                 onPageChange={(nueva) => setPaginaActual(nueva)}
             />
+
+            {/* Modal para crear póliza */}
+            <CrearPolizaModal isOpen={isCreating} onClose={() => setIsCreating(false)} companias={companias} comunidades={comunidades} agentes={agentes} />
         </AppLayout>
     );
 }

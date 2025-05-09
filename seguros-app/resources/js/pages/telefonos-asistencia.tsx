@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { BreadcrumbItem } from '@/types';
+import { Compania } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -11,18 +12,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface Telefono {
-    id: number;
-    telefono: string;
-    descripcion: string;
-}
-
-interface Compania {
-    id: number;
-    nombre: string;
-    url_logo: string;
-    telefonos: Telefono[];
-}
 
 export default function TelefonosAsistencia() {
     const { props } = usePage<{ companias: Compania[] }>();

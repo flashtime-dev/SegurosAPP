@@ -18,9 +18,14 @@ class PolizaController extends Controller
     public function index()
     {
         $polizas = Poliza::with(['compania', 'comunidad', 'agente'])->get();
-
+        $companias = Compania::all();
+        $comunidades = Comunidad::all();
+        $agentes = Agente::all();
         return Inertia::render('polizas/index', [
             'polizas' => $polizas,
+            'companias' => $companias,
+            'comunidades' => $comunidades,
+            'agentes' => $agentes,
         ]);
     }
 

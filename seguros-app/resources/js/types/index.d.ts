@@ -44,6 +44,13 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
+export interface Agente {
+    id: number;
+    nombre: string;
+    email: string;
+    telefono: string;
+};
+
 export interface Rol {
     id: number;
     nombre: string;
@@ -81,6 +88,19 @@ export interface Poliza {
         cif: string;
         direccion: string;
     };
+}
+
+export interface Telefono {
+    id: number;
+    telefono: string;
+    descripcion: string;
+}
+
+export interface Compania {
+    id: number;
+    nombre: string;
+    url_logo: string;
+    telefonos: Telefono[];
 }
 
 export interface ChatPoliza {
