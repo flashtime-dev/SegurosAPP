@@ -20,20 +20,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
+    Route::get('/polizas/{id}/pdf', [PolizaController::class, 'servePdf'])->name('polizas.pdf');
     Route::resource('polizas', PolizaController::class);
     Route::get('telefonos-asistencia', [CompaniaController::class, 'telefonosAsistencia'])->name('telefonos-asistencia');
     Route::resource('companias', CompaniaController::class);
     Route::post('/chat-poliza/{poliza}', [ChatPolizaController::class, 'store'])->name('chat-poliza.store');
     Route::resource('usuarios', UserController::class);
-    
+
     Route::resource('roles', RolController::class);
     Route::resource('comunidades', ComunidadController::class);
     Route::resource('siniestros', SiniestroController::class);
     Route::resource('agentes', AgenteController::class);
-
 });
 
 
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

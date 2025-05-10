@@ -1,13 +1,15 @@
 import * as React from "react";
 import { Head, usePage } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
-import { PolizaCard, Poliza } from "@/components/poliza-card";
+import { PolizaCard } from "@/components/poliza-card";
+import { Poliza } from "@/types";
 import FiltroPolizas from "@/components/polizas-filtro";
 import PaginacionPolizas from "@/components/polizas-paginacion";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import CrearPolizaModal from "@/components/polizas/CrearPolizaModal";
 import { Compania, Comunidad, Agente } from "@/types";
+import EditarPolizaModal from "@/components/polizas/EditarPolizaModal";
 
 export default function Index() {
     const { props } = usePage<{ polizas: Poliza[], companias: Compania[], comunidades: Comunidad[], agentes: Agente[] }>();
@@ -24,6 +26,13 @@ export default function Index() {
     });
 
     const [isCreating, setIsCreating] = React.useState(false); // Estado para el modal de creación
+    const [isEditing, setIsEditing] = React.useState(false);
+    const [polizaSeleccionada, setPolizaSeleccionada] = React.useState<Poliza | null>(null);
+
+    const handleEdit = (poliza: Poliza) => {
+        setPolizaSeleccionada(poliza);
+        setIsEditing(true);
+    };
 
     const filtrarPolizas = (poliza: Poliza) => {
         const { nombreCompania, nombreComunidad, numeroPoliza, cif } = filtros;
@@ -68,7 +77,7 @@ export default function Index() {
                         <PolizaCard
                             key={poliza.id}
                             poliza={poliza}
-                            onClick={() => window.location.href = `/polizas/${poliza.id}`}
+                            onEdit={() => handleEdit(poliza)} // Pasar función de edición
                         />
                     ))}
                     {polizasPaginadas.length === 0 && (
@@ -85,6 +94,15 @@ export default function Index() {
 
             {/* Modal para crear póliza */}
             <CrearPolizaModal isOpen={isCreating} onClose={() => setIsCreating(false)} companias={companias} comunidades={comunidades} agentes={agentes} />
+
+            <EditarPolizaModal
+                isOpen={isEditing}
+                onClose={() => {setIsEditing(false)}}
+                companias={companias}
+                comunidades={comunidades}
+                agentes={agentes}
+                poliza={polizaSeleccionada} // Pasar póliza seleccionada
+            />
         </AppLayout>
     );
 }

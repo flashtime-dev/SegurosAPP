@@ -45,26 +45,44 @@ class PolizaController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'id_compania' => 'required|exists:companias,id',
-            'id_comunidad' => 'required|exists:comunidades,id',
-            'id_agente' => 'nullable|exists:agentes,id',
-            'numero' => 'required|string|max:20',
-            'fecha_efecto' => 'required|date',
-            'cuenta' => 'nullable|string|max:24',
-            'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
-            'prima_neta' => 'required|numeric|min:0',
-            'prima_total' => 'required|numeric|min:0',
-            'pdf_poliza' => 'nullable|string|max:255',
-            'observaciones' => 'nullable|string',
-            'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
-        ]);
+{
+    // Validar los campos del formulario
+    $request->validate([
+        'id_compania' => 'required|exists:companias,id',
+        'id_comunidad' => 'required|exists:comunidades,id',
+        'id_agente' => 'nullable|exists:agentes,id',
+        'numero' => 'required|string|max:20',
+        'fecha_efecto' => 'required|date',
+        'cuenta' => 'nullable|string|max:24',
+        'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
+        'prima_neta' => 'required|numeric|min:0',
+        'prima_total' => 'required|numeric|min:0',
+        'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
+        'observaciones' => 'nullable|string',
+        'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
+    ]);
 
-        Poliza::create($request->all());
+    // Inicializar la variable para la URL del PDF
+    $pdfUrl = null;
 
-        return redirect()->route('polizas.index')->with('success', 'Póliza creada correctamente.');
+    // Verificar si se subió un archivo PDF
+    if ($request->hasFile('pdf_poliza')) {
+        $pdf_poliza = $request->file('pdf_poliza');
+
+        // Intentar almacenar el archivo en el servidor
+        $path = $pdf_poliza->storeAs('polizas', $pdf_poliza->getClientOriginalName(), 'public');
+
+        if ($path) {
+            // Si el almacenamiento es exitoso, generar la URL del archivo
+            $pdfUrl = asset('storage/' . $path);
+        }
     }
+
+    // Crear la póliza con los datos del formulario y la URL del PDF
+    Poliza::create(array_merge($request->all(), ['pdf_poliza' => $pdfUrl]));
+
+    return redirect()->route('polizas.index')->with('success', 'Póliza creada correctamente.');
+}
 
     /**
      * Display the specified resource.
@@ -124,7 +142,7 @@ class PolizaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         $poliza = Poliza::findOrFail($id);
         $poliza->delete();
