@@ -10,6 +10,10 @@ import { Link } from "@inertiajs/react";
  * Componente que muestra la información de una póliza de seguro en formato de tarjeta
  */
 export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => void }) {
+    // Ref para el botón del menú
+    const menuButtonRef = React.useRef<HTMLButtonElement>(null);
+    // Ref para controlar si el menú está abierto
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
     const getEstadoColor = () => {
         switch (poliza.estado.toLowerCase()) {
@@ -32,16 +36,36 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
         return new Date(dateString).toLocaleDateString();
     };
 
+    const handleEdit = (e: Event) => {
+        e.preventDefault();
+        
+        // Devolver el foco al botón del menú antes de cerrar
+        if (menuButtonRef.current) {
+            menuButtonRef.current.focus();
+        }
+        
+        // Asegurarnos de que el menú se cierre correctamente
+        setIsMenuOpen(false);
+        
+        // Esperar a que termine la animación de cierre antes de abrir el modal
+        setTimeout(() => {
+            if (onEdit) onEdit();
+        }, 100);
+    };
+
     return (
         <Card className="relative border rounded-lg shadow-md hover:shadow-lg transition-shadow">
             {/* Dropdown Menu */}
-            <DropdownMenu>
-                <DropdownMenuTrigger className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none">
+            <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                <DropdownMenuTrigger 
+                    ref={menuButtonRef} 
+                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
                     &#x22EE; {/* Icono de tres puntos */}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="z-10">
                     {onEdit && (
-                        <DropdownMenuItem onClick={onEdit} className="text-gray-700">
+                        <DropdownMenuItem onSelect={handleEdit}>
                             Editar
                         </DropdownMenuItem>
                     )}
