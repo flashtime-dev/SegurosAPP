@@ -2,13 +2,11 @@ import { Head, usePage } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { PolizaHeader } from "@/components/poliza-header";
-import { PolizaDetalles } from "@/components/poliza-detalles";
-import { PolizaLogoAcciones } from "@/components/poliza-logo-acciones";
 import { Poliza } from "@/types";
 import { PolizaMenu } from "@/components/poliza-menu";
 import { ChatPoliza } from "@/types";
 
-export default function PolizaId() {
+export default function Show() {
     const { props } = usePage<{ 
         poliza: Poliza, 
         chats: ChatPoliza[];

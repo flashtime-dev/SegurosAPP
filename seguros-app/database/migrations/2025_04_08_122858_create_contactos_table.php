@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('contactos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_comunidad'); // Relación con comunidades
+            $table->unsignedBigInteger('id_siniestro'); // Relación con comunidades
             $table->string('nombre', 255); // Nombre del contacto
             $table->string('cargo', 100)->nullable(); // Cargo opcional
             $table->string('piso', 50)->nullable(); // Piso opcional

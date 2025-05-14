@@ -33,10 +33,10 @@ class Siniestro extends Model
         return $this->belongsTo(Poliza::class, 'id_poliza', 'id');
     }
 
-    // Relación muchos a muchos: Un Siniestro pertenece a muchos Contactos
+    // Relación muchos a muchos: Un Siniestro puede tener muchos Contactos
     public function contactos()
     {
-        return $this->belongsToMany(Contacto::class, 'siniestros_contactos', 'id_siniestro', 'id_contacto');
+        return $this->hasMany(Contacto::class, 'id_siniestro', 'id');
     }
 
     // Relación uno a muchos: Un Siniestro tiene muchos AdjuntoSiniestro
@@ -44,7 +44,7 @@ class Siniestro extends Model
     {
         return $this->hasMany(AdjuntoSiniestro::class, 'id_siniestro', 'id');
     }
-    
+
     // Relación uno a muchos: Un Siniestro tiene muchos ChatSiniestro
     public function chats()
     {

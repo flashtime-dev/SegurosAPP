@@ -93,7 +93,7 @@ class PolizaController extends Controller
         $chats = $poliza->chats()->with('usuario')->orderBy('created_at')->get();
         $authUser = Auth::id();
 
-        return Inertia::render('polizas/poliza-id', [
+        return Inertia::render('polizas/show', [
             'poliza' => $poliza,
             'chats' => $chats,
             'authUser' => $authUser,

@@ -46,7 +46,7 @@ return new class extends Migration
 
         // Tabla Contactos
         Schema::table('contactos', function (Blueprint $table) {
-            $table->foreign('id_comunidad')->references('id')->on('comunidades')->onDelete('cascade');
+            $table->foreign('id_siniestro')->references('id')->on('siniestros')->onDelete('cascade');
         });
 
         // Tabla Presupuestos
@@ -73,12 +73,6 @@ return new class extends Migration
         // Tabla Siniestros
         Schema::table('siniestros', function (Blueprint $table) {
             $table->foreign('id_poliza')->references('id')->on('polizas')->onDelete('cascade');
-        });
-
-        // Tabla SiniestrosContactos
-        Schema::table('siniestros_contactos', function (Blueprint $table) {
-            $table->foreign('id_contacto')->references('id')->on('contactos')->onDelete('cascade');
-            $table->foreign('id_siniestro')->references('id')->on('siniestros')->onDelete('cascade');
         });
 
         // Tabla Polizas
@@ -152,11 +146,6 @@ return new class extends Migration
             $table->dropForeign(['id_agente']);
         });
 
-        Schema::table('siniestros_contactos', function (Blueprint $table) {
-            $table->dropForeign(['id_contacto']);
-            $table->dropForeign(['id_siniestro']);
-        });
-
         Schema::table('siniestros', function (Blueprint $table) {
             $table->dropForeign(['id_poliza']);
         });
@@ -179,7 +168,7 @@ return new class extends Migration
         });
 
         Schema::table('contactos', function (Blueprint $table) {
-            $table->dropForeign(['id_comunidad']);
+            $table->dropForeign(['id_siniestro']);
         });
 
         Schema::table('caracteristicas', function (Blueprint $table) {

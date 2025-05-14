@@ -1,35 +1,55 @@
+import CrearSiniestroModal from "@/components/siniestros/CrearSiniestroModal";
+import EditarSiniestroModal from "@/components/siniestros/EditarSiniestroModal";
+import { SiniestroCard } from "@/components/siniestros/SiniestroCard";
+import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/app-layout";
-import { Siniestro } from "@/types";
+import { Poliza, Siniestro } from "@/types";
 import { Head, usePage } from "@inertiajs/react";
-import { format, parseISO } from "date-fns"; // Importa las funciones necesarias
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 export default function Siniestros() {
-    const { props } = usePage<{ siniestros: Siniestro[] }>();
+    const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[] }>();
     const siniestros = props.siniestros;
+    const polizas = props.polizas;
+    const [isCreating, setIsCreating] = useState(false); // Estado para el modal de creación
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [siniestroSeleccionado, setSiniestroSeleccionado] = useState<Siniestro | null>(null);
+
+    const handleEdit = (siniestro: Siniestro) => {
+        setSiniestroSeleccionado(siniestro);
+        setIsEditing(true);
+    };
 
     return (
         <AppLayout breadcrumbs={[{ title: 'Siniestros', href: '/siniestros' }]}>
             <Head title="Siniestros" />
             <div className="container mx-auto px-4 py-6">
-                <h1 className="text-2xl font-bold mb-6">Siniestros</h1>
-
+                <div className="flex justify-between items-center">
+                    <h1 className="text-2xl font-bold mb-6">Siniestros</h1>
+                    <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2">
+                        <Plus className="w-4 h-4" />
+                        <span>Crear póliza</span>
+                    </Button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     {siniestros.map((siniestro) => (
-                        <div key={siniestro.id} className="bg-white shadow-md rounded-lg p-4">
-                            <h2 className="text-lg font-semibold">{siniestro.expediente}</h2>
-                            {/* <p className="text-gray-600">Estado: {siniestro.estado}</p> */} {/*HACE FALTA AÑADIR A BD*/}
-                            <p className="text-gray-600">
-                                Fecha:{" "}
-                                {siniestro.fecha_ocurrencia
-                                    ? format(parseISO(siniestro.fecha_ocurrencia), "dd/MM/yyyy")
-                                    : "Fecha no disponible"}
-                            </p>
-                            <p className="text-gray-600">Poliza: {siniestro.poliza.numero}</p>
-                            <p className="text-gray-600">Descripcion: {siniestro.declaracion}</p>
-                        </div>
+                        <SiniestroCard siniestro={siniestro} key={siniestro.id} onEdit={() => { handleEdit(siniestro) }} />
                     ))}
                 </div>
             </div>
+
+
+            {/* Modal para crear siniestro */}
+            <CrearSiniestroModal isOpen={isCreating} onClose={() => setIsCreating(false)} polizas={polizas} />
+
+            <EditarSiniestroModal
+                isOpen={isEditing}
+                onClose={() => { setIsEditing(false) }}
+                polizas={polizas} // Pasar póliza seleccionada
+                siniestro={siniestroSeleccionado} // Pasar póliza seleccionada
+            />
         </AppLayout>
     );
 }

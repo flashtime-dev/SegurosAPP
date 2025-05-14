@@ -16,20 +16,22 @@ class SiniestroController extends Controller
     public function index()
     {
         $siniestros = Siniestro::with('poliza', 'contactos')->get(); // Obtener todos los siniestros con sus relaciones
+        $polizas = Poliza::all(); // Obtener todas las pólizas
         return Inertia::render('siniestros/index', [
             'siniestros' => $siniestros,
+            'polizas' => $polizas,
         ]); // Retornar la vista con la lista de siniestros
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $polizas = Poliza::all(); // Obtener todas las pólizas
-        $contactos = Contacto::all(); // Obtener todos los contactos
-        return view('siniestros.create', compact('polizas', 'contactos')); // Retornar la vista para crear un nuevo siniestro
-    }
+    // public function create()
+    // {
+    //     $polizas = Poliza::all(); // Obtener todas las pólizas
+    //     $contactos = Contacto::all(); // Obtener todos los contactos
+    //     return view('siniestros.create', compact('polizas', 'contactos')); // Retornar la vista para crear un nuevo siniestro
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -44,44 +46,65 @@ class SiniestroController extends Controller
             'exp_cia' => 'nullable|string|max:50',
             'exp_asist' => 'nullable|string|max:50',
             'fecha_ocurrencia' => 'nullable|date',
-            'adjunto' => 'nullable|boolean',
+            'adjunto' => 'nullable|file|max:2048',
             'contactos' => 'nullable|array',
-            'contactos.*' => 'exists:contactos,id',
         ]);
 
-        $siniestro = Siniestro::create($request->except('contactos')); // Crear un nuevo siniestro
+        $data = $request->except(['contactos', 'adjunto']);
 
-        if ($request->has('contactos')) {
-            $siniestro->contactos()->sync($request->contactos); // Asignar contactos al siniestro
+        // Manejar el archivo adjunto
+        if ($request->hasFile('adjunto')) {
+            $file = $request->file('adjunto');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/adjuntos', $fileName);
+            $data['adjunto'] = true; // Si hay archivo, guardamos true
+        } else {
+            $data['adjunto'] = false; // Si no hay archivo, guardamos false
         }
 
-        return redirect()->route('siniestros.index')->with('success', 'Siniestro creado correctamente.');
+        $siniestro = Siniestro::create($data);
+
+        if ($request->has('contactos')) {
+            foreach ($request->contactos as $contacto) {
+                $siniestro->contactos()->create($contacto);
+            }
+        }
+
+        return redirect()->route('siniestros.index')
+            ->with('success', 'Siniestro creado correctamente.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Siniestro $siniestro)
+    public function show($id)
     {
+        $siniestro = Siniestro::findOrFail($id); // Buscar el siniestro por ID
         $siniestro->load('poliza', 'contactos'); // Cargar las relaciones del siniestro
-        return view('siniestros.show', compact('siniestro')); // Retornar la vista con los detalles del siniestro
+        return Inertia::render('siniestros/show', [
+            'siniestro' => $siniestro, // Pasar el siniestro a la vista
+            'contactos' => $siniestro->contactos, // Pasar los contactos a la vista
+            'poliza' => $siniestro->poliza, // Pasar la póliza a la vista
+        ]); // Retornar la vista con los detalles del siniestro
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Siniestro $siniestro)
-    {
-        $polizas = Poliza::all(); // Obtener todas las pólizas
-        $contactos = Contacto::all(); // Obtener todos los contactos
-        return view('siniestros.edit', compact('siniestro', 'polizas', 'contactos')); // Retornar la vista para editar el siniestro
-    }
+    // public function edit(Siniestro $siniestro)
+    // {
+    //     $polizas = Poliza::all(); // Obtener todas las pólizas
+    //     $contactos = Contacto::all(); // Obtener todos los contactos
+    //     return view('siniestros.edit', compact('siniestro', 'polizas', 'contactos')); // Retornar la vista para editar el siniestro
+    // }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Siniestro $siniestro)
+    public function update(Request $request, $id)
     {
+        $siniestro = Siniestro::findOrFail($id);
+
         $request->validate([
             'id_poliza' => 'required|exists:polizas,id',
             'declaracion' => 'required|string',
@@ -92,26 +115,45 @@ class SiniestroController extends Controller
             'fecha_ocurrencia' => 'nullable|date',
             'adjunto' => 'nullable|boolean',
             'contactos' => 'nullable|array',
-            'contactos.*' => 'exists:contactos,id',
         ]);
 
-        $siniestro->update($request->except('contactos')); // Actualizar el siniestro
+        $siniestro->update($request->except('contactos', 'adjunto'));
+         // Manejar el archivo adjunto
+        if ($request->hasFile('adjunto')) {
+            $file = $request->file('adjunto');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/adjuntos', $fileName);
+            $data['adjunto'] = true; // Si hay archivo, guardamos true
+        } else {
+            $data['adjunto'] = false; // Si no hay archivo, guardamos false
+        }
+        $siniestro->adjunto = $data['adjunto'];
+        $siniestro->save();
 
         if ($request->has('contactos')) {
-            $siniestro->contactos()->sync($request->contactos); // Actualizar contactos del siniestro
+            // Eliminar contactos existentes
+            $siniestro->contactos()->delete();
+            
+            // Crear nuevos contactos
+            foreach ($request->contactos as $contacto) {
+                $siniestro->contactos()->create($contacto);
+            }
         }
 
-        return redirect()->route('siniestros.index')->with('success', 'Siniestro actualizado correctamente.');
+        return redirect()->route('siniestros.index')
+            ->with('success', 'Siniestro actualizado correctamente.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Siniestro $siniestro)
+    public function destroy($id)
     {
-        $siniestro->contactos()->detach(); // Eliminar las relaciones con contactos
+        $siniestro = Siniestro::findOrFail($id);
+        $siniestro->contactos()->delete(); // Eliminar todos los contactos asociados
         $siniestro->delete(); // Eliminar el siniestro
 
-        return redirect()->route('siniestros.index')->with('success', 'Siniestro eliminado correctamente.');
+        return redirect()->route('siniestros.index')
+            ->with('success', 'Siniestro eliminado correctamente.');
     }
 }

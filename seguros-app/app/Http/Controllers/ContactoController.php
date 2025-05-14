@@ -33,7 +33,7 @@ class ContactoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_comunidad' => 'required|exists:comunidades,id',
+            'id_siniestro' => 'required|exists:siniestro,id',
             'nombre' => 'required|string|max:255',
             'cargo' => 'nullable|string|max:100',
             'piso' => 'nullable|string|max:50',
