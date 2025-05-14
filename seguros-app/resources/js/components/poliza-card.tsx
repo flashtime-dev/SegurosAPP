@@ -59,7 +59,7 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <DropdownMenuTrigger 
                     ref={menuButtonRef} 
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    className="absolute top-2 right-2 w-6 h-6 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
                 >
                     &#x22EE; {/* Icono de tres puntos */}
                 </DropdownMenuTrigger>
@@ -81,7 +81,7 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <Link href={`/polizas/${poliza.id}`} className="p-4">
+            <Link href={`/polizas/${poliza.id}`} className="p-4 cursor-default">
                 <img
                     src={poliza.compania.url_logo}
                     alt={`${poliza.compania.nombre} logo`}
