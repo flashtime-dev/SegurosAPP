@@ -30,7 +30,7 @@ export default function Siniestros() {
                     <h1 className="text-2xl font-bold mb-6">Siniestros</h1>
                     <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2">
                         <Plus className="w-4 h-4" />
-                        <span>Crear póliza</span>
+                        <span>Crear siniestro</span>
                     </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
