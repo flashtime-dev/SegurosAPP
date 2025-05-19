@@ -6,15 +6,16 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Permiso;
 
-class ChechPermiso
+class CheckPermiso
 {
     /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, int $permiso): Response
+    public function handle(Request $request, Closure $next, string $permisoNombre): Response
     {
         $user = Auth::user();
         
@@ -27,12 +28,20 @@ class ChechPermiso
             return $next($request);
         }
         
+        // Buscar el permiso por nombre
+        $permiso = Permiso::where('nombre', $permisoNombre)->first();
+        
+        if (!$permiso) {
+            // Si el permiso no existe en la BD
+            abort(500, 'Permiso no encontrado en el sistema');
+        }
+        
         // Verifica si el usuario tiene el permiso requerido
-        if ($user->rol && $user->rol->permisos->contains('id', $permiso)) {
+        if ($user->rol && $user->rol->permisos->contains('id', $permiso->id)) {
             return $next($request);
         }
         
         // Si no tiene permisos, redirigir a página de acceso denegado
-        return redirect()->route('acceso-denegado');
+        return abort(403, 'Permiso denegado para el acceso');
     }
 }

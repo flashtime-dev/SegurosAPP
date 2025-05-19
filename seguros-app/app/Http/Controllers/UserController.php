@@ -9,9 +9,21 @@ use App\Models\TipoPermiso;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use App\Http\Middleware\CheckPermiso;
 
-class UserController extends Controller
+use Illuminate\Routing\Controller as BaseController;
+
+class UserController extends BaseController
 {
+    public function __construct()
+    {
+     // Aplica middleware de permisos a métodos específicos
+        $this->middleware(CheckPermiso::class . ':usuarios.ver', ['only' => ['index', 'show']]);
+        $this->middleware(CheckPermiso::class . ':usuarios.crear', ['only' => ['create', 'store']]);
+        $this->middleware(CheckPermiso::class . ':usuarios.editar', ['only' => ['edit', 'update']]);
+        $this->middleware(CheckPermiso::class . ':usuarios.eliminar', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

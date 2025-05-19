@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('permisos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_tipo')->nullable();
-            $table->string('nombre', 255);
+            $table->string('nombre', 255)->unique();
+            $table->string('descripcion', 255)->unique();
             $table->timestamps();
         });
     }

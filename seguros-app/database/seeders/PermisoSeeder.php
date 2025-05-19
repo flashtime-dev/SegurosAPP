@@ -14,131 +14,163 @@ class PermisoSeeder extends Seeder
     public function run(): void
     {
         Permiso::create([
-            'nombre' => 'Crear Usuarios',
+            'nombre' => 'usuarios.crear',
+            'descripcion' => 'Crear Usuarios',
             'id_tipo' => 1
         ]);
         Permiso::create([
-            'nombre' => 'Ver Usuarios',
+            'nombre' => 'usuarios.ver',
+            'descripcion' => 'Ver Usuarios',
             'id_tipo' => 1
         ]);
         Permiso::create([
-            'nombre' => 'Actualizar Usuarios',
+            'nombre' => 'usuarios.editar',
+            'descripcion' => 'Actualizar Usuarios',
             'id_tipo' => 1
         ]);
         Permiso::create([
-            'nombre' => 'Eliminar Usuarios',
+            'nombre' => 'usuarios.eliminar',
+            'descripcion' => 'Eliminar Usuarios',
             'id_tipo' => 1
         ]);
         Permiso::create([
-            'nombre' => 'Crear Permisos',
+            'nombre' => 'permisos.crear',
+            'descripcion' => 'Crear Permisos',
             'id_tipo' => 2
         ]);
         Permiso::create([
-            'nombre' => 'Ver Permisos',
+            'nombre' => 'permisos.ver',
+            'descripcion' => 'Ver Permisos',
             'id_tipo' => 2
         ]);
         Permiso::create([
-            'nombre' => 'Actualizar Permisos',
+            'nombre' => 'permisos.editar',
+            'descripcion' => 'Actualizar Permisos',
             'id_tipo' => 2
         ]);
         Permiso::create([
-            'nombre' => 'Eliminar Permisos',
+            'nombre' => 'permisos.eliminar',
+            'descripcion' => 'Eliminar Permisos',
             'id_tipo' => 2
         ]);
         Permiso::create([
-            'nombre' => 'Crear Roles',
+            'nombre' => 'roles.crear',
+            'descripcion' => 'Crear Roles',
             'id_tipo' => 3
         ]);
         Permiso::create([
-            'nombre' => 'Ver Roles',
+            'nombre' => 'roles.ver',
+            'descripcion' => 'Ver Roles',
             'id_tipo' => 3
         ]);
         Permiso::create([
-            'nombre' => 'Actualizar Roles',
+            'nombre' => 'roles.editar',
+            'descripcion' => 'Actualizar Roles',
             'id_tipo' => 3
         ]);
         Permiso::create([
-            'nombre' => 'Eliminar Roles',
+            'nombre' => 'roles.eliminar',
+            'descripcion' => 'Eliminar Roles',
             'id_tipo' => 3
         ]);
         Permiso::create([
-            'nombre' => 'Crear Tipo de Permisos',
+            'nombre' => 'tipospermisos.crear',
+            'descripcion' => 'Crear Tipo de Permisos',
             'id_tipo' => 4
         ]);
         Permiso::create([
-            'nombre' => 'Ver Tipo de Permisos',
+            'nombre' => 'tipospermisos.ver',
+            'descripcion' => 'Ver Tipo de Permisos',
             'id_tipo' => 4
         ]);
         Permiso::create([
-            'nombre' => 'Actualizar Tipo de Permisos',
+            'nombre' => 'tipospermisos.editar',
+            'descripcion' => 'Actualizar Tipo de Permisos',
             'id_tipo' => 4
         ]);
         Permiso::create([
-            'nombre' => 'Eliminar Tipo de Permisos',
+            'nombre' => 'tipospermisos.eliminar',
+            'descripcion' => 'Eliminar Tipo de Permisos',
             'id_tipo' => 4
         ]);
         Permiso::create([
-            'nombre' => 'Crear Compañias',
+            'nombre' => 'companias.crear',
+            'descripcion' => 'Crear Compañias',
             'id_tipo' => 5
         ]);
         Permiso::create([
-            'nombre' => 'Ver Compañias',
+            'nombre' => 'companias.ver',
+            'descripcion' => 'Ver Compañias',
             'id_tipo' => 5
         ]);
         Permiso::create([
-            'nombre' => 'Actualizar Compañias',
+            'nombre' => 'companias.editar',
+            'descripcion' => 'Actualizar Compañias',
             'id_tipo' => 5
         ]);
         Permiso::create([
-            'nombre' => 'Eliminar Compañias',
+            'nombre' => 'companias.eliminar',
+            'descripcion' => 'Eliminar Compañias',
             'id_tipo' => 5
         ]);
         Permiso::create([
-            'nombre' => 'Crear Comunidades',
+            'nombre' => 'comunidades.crear',
+            'descripcion' => 'Crear Comunidades',
             'id_tipo' => 6
         ]);
         Permiso::create([
-            'nombre' => 'Ver Comunidades',
+            'nombre' => 'comunidades.ver',
+            'descripcion' => 'Ver Comunidades',
             'id_tipo' => 6
         ]);
         Permiso::create([
-            'nombre' => 'Actualizar Comunidades',
+            'nombre' => 'comunidades.editar',
+            'descripcion' => 'Actualizar Comunidades',
             'id_tipo' => 6
         ]);
         Permiso::create([
-            'nombre' => 'Eliminar Comunidades',
+            'nombre' => 'comunidades.eliminar',
+            'descripcion' => 'Eliminar Comunidades',
             'id_tipo' => 6
         ]);
         Permiso::create([
-            'nombre' => 'Crear Polizas',
+            'nombre' => 'polizas.crear',
+            'descripcion' => 'Crear Polizas',
             'id_tipo' => 7
         ]);
         Permiso::create([
-            'nombre' => 'Ver Polizas',
+            'nombre' => 'polizas.ver',
+            'descripcion' => 'Ver Polizas',
             'id_tipo' => 7
         ]);
         Permiso::create([
-            'nombre' => 'Actualizar Polizas',
+            'nombre' => 'polizas.editar',
+            'descripcion' => 'Actualizar Polizas',
             'id_tipo' => 7
         ]);
         Permiso::create([
-            'nombre' => 'Eliminar Polizas',
+            'nombre' => 'polizas.eliminar',
+            'descripcion' => 'Eliminar Polizas',
             'id_tipo' => 7
         ]);
         Permiso::create([
-            'nombre' => 'Crear Siniestros',
+            'nombre' => 'siniestros.crear',
+            'descripcion' => 'Crear Siniestros',
             'id_tipo' => 8
         ]);
         Permiso::create([
-            'nombre' => 'Ver Siniestros',
+            'nombre' => 'siniestros.ver',
+            'descripcion' => 'Ver Siniestros',
             'id_tipo' => 8
         ]);
         Permiso::create([
-            'nombre' => 'Actualizar Siniestros',
+            'nombre' => 'siniestros.editar',
+            'descripcion' => 'Actualizar Siniestros',
             'id_tipo' => 8
         ]);
         Permiso::create([
-            'nombre' => 'Eliminar Siniestros',
+            'nombre' => 'siniestros.eliminar',
+            'descripcion' => 'Eliminar Siniestros',
             'id_tipo' => 8
         ]);
     }

@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Siniestro;
 use App\Models\Poliza;
 use App\Models\Contacto;
+use App\Models\Comunidad;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class SiniestroController extends Controller
 {
@@ -15,8 +17,25 @@ class SiniestroController extends Controller
      */
     public function index()
     {
-        $siniestros = Siniestro::with('poliza', 'contactos')->get(); // Obtener todos los siniestros con sus relaciones
-        $polizas = Poliza::all(); // Obtener todas las pólizas
+        $user = Auth::user(); // Obtener el usuario autenticado
+
+        // Verificar si el usuario tiene el rol de administrador
+        if ($user->rol->nombre == 'Superadministrador') {
+            $siniestros = Siniestro::with('poliza', 'contactos')->get(); // Obtener todos los siniestros con sus relaciones
+            $polizas = Poliza::all(); // Obtener todas las pólizas
+        } else {
+            // Obtener comunidades donde el usuario es propietario O está asignado como usuario
+            $comunidades = Comunidad::where('id_propietario', $user->id)
+                ->orWhereHas('users', function ($query) use ($user) {
+                    $query->where('users.id', $user->id);
+                })
+                ->get();
+            $siniestros = Siniestro::whereIn('id_poliza', Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->pluck('id'))
+                ->with(['poliza', 'contactos'])
+                ->get();
+            $polizas = Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->get(); // Obtener pólizas de las comunidades del usuario
+        }
+
         return Inertia::render('siniestros/index', [
             'siniestros' => $siniestros,
             'polizas' => $polizas,
@@ -118,7 +137,7 @@ class SiniestroController extends Controller
         ]);
 
         $siniestro->update($request->except('contactos', 'adjunto'));
-         // Manejar el archivo adjunto
+        // Manejar el archivo adjunto
         if ($request->hasFile('adjunto')) {
             $file = $request->file('adjunto');
             $fileName = time() . '_' . $file->getClientOriginalName();
@@ -133,7 +152,7 @@ class SiniestroController extends Controller
         if ($request->has('contactos')) {
             // Eliminar contactos existentes
             $siniestro->contactos()->delete();
-            
+
             // Crear nuevos contactos
             foreach ($request->contactos as $contacto) {
                 $siniestro->contactos()->create($contacto);

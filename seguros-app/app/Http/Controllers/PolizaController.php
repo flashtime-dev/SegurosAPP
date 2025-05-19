@@ -17,10 +17,27 @@ class PolizaController extends Controller
      */
     public function index()
     {
-        $polizas = Poliza::with(['compania', 'comunidad', 'agente'])->get();
-        $companias = Compania::all();
-        $comunidades = Comunidad::all();
-        $agentes = Agente::all();
+        $user = Auth::user(); // Obtener el usuario autenticado
+
+        // Verificar si el usuario tiene el rol de administrador
+        if ($user->rol->nombre == 'Superadministrador') {
+            $polizas = Poliza::with(['compania', 'comunidad', 'agente'])->get();
+            $companias = Compania::all();
+            $comunidades = Comunidad::all();
+            $agentes = Agente::all();
+        } else {
+            // Obtener comunidades donde el usuario es propietario O está asignado como usuario
+            $comunidades = Comunidad::where('id_propietario', $user->id)
+                ->orWhereHas('users', function ($query) use ($user) {
+                    $query->where('users.id', $user->id);
+                })
+                ->get();
+            $polizas = Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))
+                ->with(['compania', 'comunidad', 'agente'])
+                ->get();
+            $companias = Compania::all();
+            $agentes = Agente::all();
+        }
         return Inertia::render('polizas/index', [
             'polizas' => $polizas,
             'companias' => $companias,
@@ -45,44 +62,44 @@ class PolizaController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    // Validar los campos del formulario
-    $request->validate([
-        'id_compania' => 'required|exists:companias,id',
-        'id_comunidad' => 'required|exists:comunidades,id',
-        'id_agente' => 'nullable|exists:agentes,id',
-        'numero' => 'required|string|max:20',
-        'fecha_efecto' => 'required|date',
-        'cuenta' => 'nullable|string|max:24',
-        'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
-        'prima_neta' => 'required|numeric|min:0',
-        'prima_total' => 'required|numeric|min:0',
-        'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
-        'observaciones' => 'nullable|string',
-        'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
-    ]);
+    {
+        // Validar los campos del formulario
+        $request->validate([
+            'id_compania' => 'required|exists:companias,id',
+            'id_comunidad' => 'required|exists:comunidades,id',
+            'id_agente' => 'nullable|exists:agentes,id',
+            'numero' => 'required|string|max:20',
+            'fecha_efecto' => 'required|date',
+            'cuenta' => 'nullable|string|max:24',
+            'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
+            'prima_neta' => 'required|numeric|min:0',
+            'prima_total' => 'required|numeric|min:0',
+            'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
+            'observaciones' => 'nullable|string',
+            'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
+        ]);
 
-    // Inicializar la variable para la URL del PDF
-    $pdfUrl = null;
+        // Inicializar la variable para la URL del PDF
+        $pdfUrl = null;
 
-    // Verificar si se subió un archivo PDF
-    if ($request->hasFile('pdf_poliza')) {
-        $pdf_poliza = $request->file('pdf_poliza');
+        // Verificar si se subió un archivo PDF
+        if ($request->hasFile('pdf_poliza')) {
+            $pdf_poliza = $request->file('pdf_poliza');
 
-        // Intentar almacenar el archivo en el servidor
-        $path = $pdf_poliza->storeAs('polizas', $pdf_poliza->getClientOriginalName(), 'public');
+            // Intentar almacenar el archivo en el servidor
+            $path = $pdf_poliza->storeAs('polizas', $pdf_poliza->getClientOriginalName(), 'public');
 
-        if ($path) {
-            // Si el almacenamiento es exitoso, generar la URL del archivo
-            $pdfUrl = asset('storage/' . $path);
+            if ($path) {
+                // Si el almacenamiento es exitoso, generar la URL del archivo
+                $pdfUrl = asset('storage/' . $path);
+            }
         }
+
+        // Crear la póliza con los datos del formulario y la URL del PDF
+        Poliza::create(array_merge($request->all(), ['pdf_poliza' => $pdfUrl]));
+
+        return redirect()->route('polizas.index')->with('success', 'Póliza creada correctamente.');
     }
-
-    // Crear la póliza con los datos del formulario y la URL del PDF
-    Poliza::create(array_merge($request->all(), ['pdf_poliza' => $pdfUrl]));
-
-    return redirect()->route('polizas.index')->with('success', 'Póliza creada correctamente.');
-}
 
     /**
      * Display the specified resource.
