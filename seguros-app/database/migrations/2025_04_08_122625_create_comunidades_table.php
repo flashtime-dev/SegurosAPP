@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('comunidades', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_propietario')->default(1); // Agregar columna 'idusuario'
             $table->string('nombre', 255); // Nombre de la comunidad
             $table->string('cif', 15)->unique(); // CIF único
             $table->string('direccion', 255)->nullable(); // Dirección opcional

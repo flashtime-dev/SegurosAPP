@@ -12,6 +12,7 @@ class Comunidad extends Model
     protected $table = 'comunidades'; // Nombre de la tabla en la base de datos
 
     protected $fillable = [ // Atributos que se pueden asignar masivamente
+        'id_propietario', // Clave foránea del propietario
         'nombre',
         'cif',
         'direccion',

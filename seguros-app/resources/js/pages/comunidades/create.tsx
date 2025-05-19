@@ -6,9 +6,16 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 
-export default function Create() {
+import { User } from "@/types";
+
+type Props = {
+    usuarios: User[];
+};
+
+export default function Create({ usuarios }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         nombre: '',
         cif: '',
@@ -16,7 +23,18 @@ export default function Create() {
         ubi_catastral: '',
         ref_catastral: '',
         telefono: '',
+        usuarios: [] as number[], // Array de IDs de usuarios
     });
+
+    const agregarUsuario = (userId: number) => {
+        if (!data.usuarios.includes(userId)) {
+            setData('usuarios', [...data.usuarios, userId]);
+        }
+    };
+
+    const eliminarUsuario = (userId: number) => {
+        setData('usuarios', data.usuarios.filter(id => id !== userId));
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -108,6 +126,51 @@ export default function Create() {
                         <InputError message={errors.telefono} className="mt-2" />
                     </div>
 
+                    {/* Campo para añadir usuarios */}
+                    <div className="sm:col-span-2 space-y-4">
+                        <div className="flex flex-col gap-4">
+                            <Label>Usuarios de la Comunidad</Label>
+                            <div className="flex flex-wrap gap-2">
+                                {data.usuarios.map((userId) => {
+                                    const usuario = usuarios.find(u => u.id === userId);
+                                    if (!usuario) return null;
+                                    return (
+                                        <div key={userId} className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2">
+                                            <span>{usuario.name}</span>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-auto p-1"
+                                                onClick={() => eliminarUsuario(userId)}
+                                            >
+                                                ✕
+                                            </Button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div className="flex gap-2">
+                                <Select
+                                    onValueChange={(value) => agregarUsuario(Number(value))}
+                                    value=""
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Selecciona un usuario para agregar" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {usuarios
+                                            .filter(u => !data.usuarios.includes(u.id))
+                                            .map((usuario) => (
+                                                <SelectItem key={usuario.id} value={String(usuario.id)}>
+                                                    {usuario.name} ({usuario.email})
+                                                </SelectItem>
+                                            ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <Button type="submit" disabled={processing} className="w-full">
@@ -118,7 +181,3 @@ export default function Create() {
         </AppLayout>
     );
 }
-function post(arg0: string, arg1: { onFinish: () => any; }) {
-    throw new Error('Function not implemented.');
-}
-

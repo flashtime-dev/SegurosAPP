@@ -2,7 +2,7 @@ import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
+import { Rol, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { Building, FileText, LayoutGrid, Phone, ShieldUser , User, Zap } from 'lucide-react';
 import AppLogo from './app-logo';
@@ -12,21 +12,31 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: '/dashboard',
         icon: LayoutGrid,
+        role: [1],
     },
     {
         title: 'Usuarios',
         href: '/usuarios',
         icon: User,
+        role: [1],
+    },
+    {
+        title: 'Empleados',
+        href: '/empleados',
+        icon: User,
+        role: [2],
     },
     {
         title: 'Comunidades',
         href: '/comunidades',
         icon: Building,
+        role: [1,2],
     },
     {
         title: 'Agentes',
         href: '/agentes',
         icon: ShieldUser,
+        role: [1],
     },
     {
         title: 'Polizas',
@@ -64,7 +74,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={mainNavItems}/>
             </SidebarContent>
 
             <SidebarFooter>

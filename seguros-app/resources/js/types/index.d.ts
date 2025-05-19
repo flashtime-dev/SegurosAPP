@@ -20,6 +20,7 @@ export interface NavItem {
     href: string;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    role?: number [];
 }
 
 export interface SharedData {
@@ -138,4 +139,5 @@ export interface Comunidad {
     ref_catastral: string;
     telefono: string;
     polizas: Poliza[];
+    users: User[];
 }

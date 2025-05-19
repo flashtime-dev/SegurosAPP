@@ -39,6 +39,11 @@ return new class extends Migration
             $table->foreign('id_usuario')->references('id')->on('users')->onDelete('cascade');
         });
 
+        // Tabla Comunidades
+        Schema::table('comunidades', function (Blueprint $table) {
+            $table->foreign('id_propietario')->references('id')->on('users')->onDelete('cascade');
+        });
+
         // Tabla Caracteristicas
         Schema::table('caracteristicas', function (Blueprint $table) {
             $table->foreign('id_comunidad')->references('id')->on('comunidades')->onDelete('cascade');
@@ -117,6 +122,10 @@ return new class extends Migration
     public function down(): void
     {
         // Eliminar claves foráneas en orden inverso
+        Schema::table('comunidades', function (Blueprint $table) {
+            $table->dropForeign(['id_propietario']);
+        });
+
         Schema::table('adjuntos_siniestros', function (Blueprint $table) {
             $table->dropForeign(['id_siniestro']);
             $table->dropForeign(['id_chat']);
