@@ -61,6 +61,7 @@ export interface Rol {
 export interface Permiso {
     id: number;
     nombre: string;
+    descripcion: string;
     id_tipo: number;
     tipoPermiso: TipoPermiso;
 }

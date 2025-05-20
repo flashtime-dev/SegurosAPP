@@ -88,7 +88,7 @@ export default function Edit({ rol, permisosRol, permisos }: Props) {
                                         .filter((permiso) => !selectedPermisos.find((p) => p.id === permiso.id))
                                         .map((permiso) => (
                                             <li key={permiso.id} className="flex items-center justify-between">
-                                                <span className="text-sm text-gray-800">{permiso.nombre}</span>
+                                                <span className="text-sm text-gray-800">{permiso.descripcion}</span>
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
@@ -116,7 +116,7 @@ export default function Edit({ rol, permisosRol, permisos }: Props) {
                                     <ul className="space-y-2">
                                         {selectedPermisos.map((permiso) => (
                                             <li key={permiso.id} className="flex items-center justify-between">
-                                                <span className="text-sm text-gray-800">{permiso.nombre}</span>
+                                                <span className="text-sm text-gray-800">{permiso.descripcion}</span>
                                                 <Button
                                                     variant="outline"
                                                     size="sm"

@@ -6,7 +6,6 @@ import {
     CardTitle,
     CardContent,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
@@ -107,7 +106,7 @@ export function MostrarRolesPermisos({ roles, tipoPermisos }: { roles: Rol[], ti
                                                     key={permiso.id}
                                                     className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm text-gray-800 transition"
                                                 >
-                                                    {permiso.nombre}
+                                                    {permiso.descripcion}
                                                 </li>
                                             ))}
                                         </ul>
