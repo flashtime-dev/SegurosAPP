@@ -55,13 +55,18 @@ class UserController extends BaseController
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
+            'password' => 'required|string|confirmed||regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/',
             'id_rol' => 'required|exists:roles,id',
             'address' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:15',
             'state' => 'nullable|boolean',
+        ],[
+            'name.min' => 'El nombre debe tener al menos 3 caracteres',
+            'email.regex' => 'El formato del correo electrónico es inválido',
+            'id_rol.required' => 'Debes seleccionar un rol',
+            'password.regex' => 'La contraseña debe contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
         ]);
 
         User::create([
@@ -115,19 +120,24 @@ class UserController extends BaseController
         // Validar los datos del formulario
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|min:3|max:255',
             'email' => [
                 'required',
                 'string',
                 'email',
                 'max:255',
                 'unique:users,email,' . $user->id, // Excluir el correo actual del usuario
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i', // Validar formato de correo electrónico
             ],
-            'password' => 'nullable|string|min:8|confirmed', // Contraseña opcional
+            'password' => 'nullable|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/', // Contraseña opcional
             'id_rol' => 'required|exists:roles,id',
             'address' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:15',
             'state' => 'nullable|boolean',
+        ],[
+            'name.min' => 'El nombre debe tener al menos 3 caracteres',
+            'email.regex' => 'El formato del correo electrónico es inválido.',
+            'password.regex' => 'La contraseña debe contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
         ]);
 
         // Actualizar los datos del usuario
