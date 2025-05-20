@@ -55,7 +55,7 @@ class UserController extends BaseController
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|min:3|max:255',
+            'name' => 'required|string|min:2|max:255',
             'email' => 'required|string|email|max:255|unique:users,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
             'password' => 'required|string|confirmed||regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/',
             'id_rol' => 'required|exists:roles,id',
@@ -120,7 +120,7 @@ class UserController extends BaseController
         // Validar los datos del formulario
 
         $request->validate([
-            'name' => 'required|string|min:3|max:255',
+            'name' => 'required|string|min:2|max:255',
             'email' => [
                 'required',
                 'string',

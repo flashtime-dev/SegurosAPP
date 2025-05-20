@@ -64,11 +64,11 @@ class ComunidadController extends Controller
     {
         $user = Auth::user(); // Obtener el usuario autenticado
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'cif' => 'required|string|max:15|unique:comunidades,cif',
+            'nombre' => 'required|string|min:2|max:255',
+            'cif' => 'required|string|max:15|unique:comunidades,cif|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/',
             'direccion' => 'nullable|string|max:255',
             'ubi_catastral' => 'nullable|string|max:255',
-            'ref_catastral' => 'nullable|string|max:20',
+            'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
             'telefono' => 'nullable|string|max:15',
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
@@ -116,11 +116,11 @@ class ComunidadController extends Controller
     {
         $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'cif' => 'required|string|max:15|unique:comunidades,cif,' . $comunidad->id,
+            'nombre' => 'required|string|min:2|max:255',
+            'cif' => 'required|string|max:15|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
             'direccion' => 'nullable|string|max:255',
             'ubi_catastral' => 'nullable|string|max:255',
-            'ref_catastral' => 'nullable|string|max:20',
+            'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
             'telefono' => 'nullable|string|max:15',
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista

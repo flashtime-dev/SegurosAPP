@@ -42,7 +42,7 @@ export function MostrarRolesPermisos({ roles, tipoPermisos }: { roles: Rol[], ti
                             {roles.map((rol) => (
                                 <li key={rol.id} className="flex items-center">
                                     <div
-                                        className={`w-full justify-start font-medium rounded-lg transition-colors flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm text-gray-800 transition ${selectedRol?.id === rol.id ? "bg-blue-100" : ""
+                                        className={`break-all w-full justify-start font-medium rounded-lg transition-colors flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm text-gray-800 transition ${selectedRol?.id === rol.id ? "bg-blue-100" : ""
                                             }`}
                                         role="button"
                                         onClick={() => setSelectedRol(rol)}

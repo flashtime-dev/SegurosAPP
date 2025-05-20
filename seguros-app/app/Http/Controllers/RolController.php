@@ -41,7 +41,7 @@ class RolController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|min:2|max:50',
             'permisos' => 'nullable|array',
             'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
         ]);
@@ -99,7 +99,7 @@ class RolController extends Controller
     {
         $rol = Rol::findOrFail($id); // Buscar el rol por ID
         $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|min:2|max:50',
             'permisos' => 'nullable|array',
             'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
         ]);
