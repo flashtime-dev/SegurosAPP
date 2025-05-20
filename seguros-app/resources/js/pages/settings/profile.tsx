@@ -120,7 +120,8 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     </form>
                 </div>
 
-                <DeleteUser />
+                {/* Apartado para eliminar la cuenta */}
+                {/* <DeleteUser /> */}
             </SettingsLayout>
         </AppLayout>
     );
