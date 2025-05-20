@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comunidad;
+use App\Models\Subusuario;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,9 +30,16 @@ class ComunidadController extends Controller
                 })
                 ->with('users')
                 ->get();
-            $usuarios = []; // Inicializar usuarios como un array vacío
+            $empleados = Subusuario::where('id_usuario_creador', $user->id)->get(); // Obtener empleados
+            
+            if ($empleados->isEmpty()) {
+                $usuarios = []; // Obtener todos los usuarios si no hay empleados
+            } else {
+                $usuarios = User::where('id', $empleados->pluck('id'))->get(); // Obtener usuarios según los empleados
+            }
         }
         
+
         return Inertia::render('comunidades/index', [
             'comunidades' => $comunidades,
             'usuarios' => $usuarios,
