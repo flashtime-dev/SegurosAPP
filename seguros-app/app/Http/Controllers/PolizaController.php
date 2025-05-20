@@ -38,6 +38,7 @@ class PolizaController extends Controller
             $companias = Compania::all();
             $agentes = Agente::all();
         }
+        
         return Inertia::render('polizas/index', [
             'polizas' => $polizas,
             'companias' => $companias,

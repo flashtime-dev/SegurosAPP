@@ -20,6 +20,7 @@ class Siniestro extends Model
         'exp_asist',
         'fecha_ocurrencia',
         'adjunto',
+        'estado',
     ];
 
     protected $casts = [ // Casts para los atributos

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('exp_asist', 50)->nullable(); // Expediente de asistencia opcional
             $table->date('fecha_ocurrencia')->nullable(); // Fecha de ocurrencia opcional
             $table->boolean('adjunto')->default(false); // Adjunto booleano con valor por defecto
+            $table->enum('estado', ['Abierto', 'Cerrado'])->default('Abierto'); // Estado con valor por defecto
             $table->timestamps();
         });
     }
