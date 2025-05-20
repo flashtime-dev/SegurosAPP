@@ -1,0 +1,195 @@
+import React from "react";
+import { useForm } from "@inertiajs/react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogClose,
+    DialogDescription,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import InputError from "@/components/input-error";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Rol } from "@/types";
+
+type Props = {
+    isOpen: boolean;
+    onClose: () => void;
+    roles: Rol[];
+};
+
+export default function CrearUsuarioModal({ isOpen, onClose, roles }: Props) {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+        address: "",
+        phone: "",
+        state: "1",
+        id_rol: "",
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post(route("usuarios.store"), {
+            onSuccess: () => {
+                reset();
+                onClose();
+            },
+        });
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>Nuevo Usuario</DialogTitle>
+                    <DialogDescription>
+                        Completa los campos para crear un nuevo usuario.
+                    </DialogDescription>
+                </DialogHeader>
+
+                <ScrollArea className="max-h-[70vh]">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="grid gap-4">
+                            <div>
+                                <Label htmlFor="name">Nombre</Label>
+                                <Input
+                                    id="name"
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    disabled={processing}
+                                    required
+                                    placeholder="Nombre completo"
+                                />
+                                <InputError message={errors.name} className="mt-2" />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="email">Correo electrónico</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    value={data.email} 
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    disabled={processing}
+                                    required
+                                    placeholder="email@example.com"
+                                />
+                                <InputError message={errors.email} className="mt-2" />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="password">Contraseña</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    disabled={processing}
+                                    required
+                                    placeholder="Contraseña"
+                                />
+                                <InputError message={errors.password} className="mt-2" />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="password_confirmation">Confirmar contraseña</Label>
+                                <Input
+                                    id="password_confirmation"
+                                    type="password"
+                                    value={data.password_confirmation}
+                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                    disabled={processing}
+                                    required
+                                    placeholder="Confirmar contraseña"
+                                />
+                                <InputError message={errors.password_confirmation} className="mt-2" />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="address">Dirección</Label>
+                                <Input
+                                    id="address"
+                                    value={data.address}
+                                    onChange={(e) => setData('address', e.target.value)}
+                                    disabled={processing}
+                                    placeholder="Dirección de residencia"
+                                />
+                                <InputError message={errors.address} className="mt-2" />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="phone">Teléfono</Label>
+                                <Input
+                                    id="phone"
+                                    value={data.phone}
+                                    onChange={(e) => setData('phone', e.target.value)}
+                                    disabled={processing}
+                                    placeholder="Número de teléfono"
+                                />
+                                <InputError message={errors.phone} className="mt-2" />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="state">Estado</Label>
+                                <Select
+                                    value={data.state}
+                                    onValueChange={(value) => setData('state', value)}
+                                    disabled={processing}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecciona estado" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="1">Activo</SelectItem>
+                                        <SelectItem value="0">Inactivo</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <InputError message={errors.state} className="mt-2" />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="id_rol">Rol</Label>
+                                <Select
+                                    value={data.id_rol}
+                                    onValueChange={(value) => setData('id_rol', value)}
+                                    disabled={processing}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecciona un rol" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {roles.map((rol) => (
+                                            <SelectItem key={rol.id} value={String(rol.id)}>
+                                                {rol.nombre}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <InputError message={errors.id_rol} className="mt-2" />
+                            </div>
+                        </div>
+
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button type="button" variant="outline" onClick={onClose}>
+                                    Cancelar
+                                </Button>
+                            </DialogClose>
+                            <Button type="submit" disabled={processing}>
+                                {processing ? "Creando..." : "Crear"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </ScrollArea>
+            </DialogContent>
+        </Dialog>
+    );
+}

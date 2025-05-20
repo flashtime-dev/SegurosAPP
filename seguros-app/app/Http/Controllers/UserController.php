@@ -29,10 +29,11 @@ class UserController extends BaseController
      */
     public function index()
     {
-        $users = User::with('rol')->get(['id', 'id_rol', 'name', 'email', 'state']); // Obtener todos los usuarios con su r$tipoPermisos = TipoPermiso::all(); // Obtener todos los permisos de los rolesol
+        $users = User::with('rol')->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']); // Obtener todos los usuarios con su r$tipoPermisos = TipoPermiso::all(); // Obtener todos los permisos de los rolesol
         
         return Inertia::render('usuarios/index', [
             'users' => $users,
+            'roles' => Rol::all(),
         ]);
         //return view('users.index', compact('users')); // Retornar la vista con los datos
     }
@@ -40,12 +41,13 @@ class UserController extends BaseController
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        return Inertia::render('usuarios/create', [
-            'roles' => Rol::all(), // Obtener todos los roles
-        ]); // Retornar la vista para crear un nuevo usuario
-    }
+    // public function create()
+    // {
+    //     return Inertia::render('usuarios/create', [
+    //          // Obtener todos los roles
+    //         'roles' => Rol::all(),
+    //     ]); // Retornar la vista para crear un nuevo usuario
+    // }
 
     /**
      * Store a newly created resource in storage.
