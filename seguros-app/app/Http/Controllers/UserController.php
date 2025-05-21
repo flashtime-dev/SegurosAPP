@@ -56,7 +56,7 @@ class UserController extends BaseController
     {
         // Capitalizar cada palabra del nombre antes de la validación
         $request->merge([
-            'name' => ucwords(strtolower($request->name)),
+            'name' => ucfirst(($request->name)),
             'address' => ucfirst($request->address)
         ]);
 
@@ -128,7 +128,7 @@ class UserController extends BaseController
 
         // Capitalizar cada palabra del nombre antes de la validación
         $request->merge([
-            'name' => ucwords(strtolower($request->name)),
+            'name' => ucfirst($request->name),
             'address' => ucfirst($request->address)
         ]);
 

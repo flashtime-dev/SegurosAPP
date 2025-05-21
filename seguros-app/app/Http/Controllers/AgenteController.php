@@ -34,10 +34,18 @@ class AgenteController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            'nombre' => ucfirst(($request->nombre))
+        ]);
+
         $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|min:2|max:255',
             'telefono' => 'nullable|string|max:15',
-            'email' => 'nullable|string|email|max:255|unique:agentes,email',
+            'email' => 'nullable|string|email|max:255|unique:agentes,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
+        ],[
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'email.unique' => 'El email ya está en uso.',
+            'email.regex' => 'El formato del email es inválido.',
         ]);
 
         Agente::create($request->all()); // Crear un nuevo agente
@@ -70,10 +78,26 @@ class AgenteController extends Controller
     public function update(Request $request, $id)
     {
         $agente = Agente::findOrFail($id); // Buscar el agente por ID
+
+        $request->merge([
+            'nombre' => ucfirst(($request->nombre))
+        ]);
+
         $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|min:2|max:255',
             'telefono' => 'nullable|string|max:15',
-            'email' => 'nullable|string|email|max:255|unique:agentes,email,' . $agente->id,
+            'email' => [
+                'nullable',
+                'string',
+                'email',
+                'max:255',
+                'unique:agentes,email,' . $agente->id,
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
+            ],
+        ],[
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'email.unique' => 'El email ya está en uso.',
+            'email.regex' => 'El formato del email es inválido.',
         ]);
 
         $agente->update($request->all()); // Actualizar el agente

@@ -65,10 +65,10 @@ class ComunidadController extends Controller
         $user = Auth::user(); // Obtener el usuario autenticado
 
         $request->merge([
-            'nombre' => ucfirst($request->nombre),
+            'nombre' => ucfirst(($request->nombre)),
             'cif' => strtoupper($request->cif),
-            'direccion' => ucfirst($request->direccion),
-            'ubi_catastral' => ucfirst($request->ubi_catastral),
+            'direccion' => ucfirst(($request->direccion)),
+            'ubi_catastral' => ucfirst(($request->ubi_catastral)),
             'ref_catastral' => strtoupper($request->ref_catastral)
         ]);
 
@@ -81,6 +81,11 @@ class ComunidadController extends Controller
             'telefono' => 'nullable|string|max:15',
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
+        ],[
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
+            'cif.unique' => 'El CIF ya está en uso.',
+            'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
         ]);
         
         $request->merge(['id_propietario' => $user->id]); // Asignar el ID del propietario al request
@@ -126,10 +131,10 @@ class ComunidadController extends Controller
         $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
         
         $request->merge([
-            'nombre' => ucfirst($request->nombre),
+            'nombre' => ucfirst(($request->nombre)),
             'cif' => strtoupper($request->cif),
-            'direccion' => ucfirst($request->direccion),
-            'ubi_catastral' => ucfirst($request->ubi_catastral),
+            'direccion' => ucfirst(($request->direccion)),
+            'ubi_catastral' => ucfirst(($request->ubi_catastral)),
             'ref_catastral' => strtoupper($request->ref_catastral)
         ]);
             
@@ -142,6 +147,11 @@ class ComunidadController extends Controller
             'telefono' => 'nullable|string|max:15',
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
+        ],[
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
+            'cif.unique' => 'El CIF ya está en uso.',
+            'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
         ]);
 
         // Actualizar los datos de la comunidad excepto los usuarios

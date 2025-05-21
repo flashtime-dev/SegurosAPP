@@ -42,7 +42,7 @@ class RolController extends Controller
     {
         // Capitalizar solo la primera palabra del nombre antes de la validación
         $request->merge([
-            'nombre' => ucfirst(strtolower($request->nombre))
+            'nombre' => ucfirst(($request->nombre))
         ]);
 
         $request->validate([
@@ -100,7 +100,7 @@ class RolController extends Controller
 
         // Capitalizar solo la primera palabra del nombre antes de la validación
         $request->merge([
-            'nombre' => ucfirst(strtolower($request->nombre))
+            'nombre' => ucfirst(($request->nombre))
         ]);
 
         $request->validate([
