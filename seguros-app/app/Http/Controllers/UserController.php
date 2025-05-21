@@ -70,10 +70,12 @@ class UserController extends BaseController
             'state' => 'nullable|boolean',
         ], [
             'name.min' => 'El nombre debe tener al menos 3 caracteres',
+            'email.required' => 'El correo electrónico es obligatorio',
+            'email.unique' => 'El correo electrónico ya está en uso',
             'email.regex' => 'El formato del correo electrónico es inválido',
             'id_rol.required' => 'Debes seleccionar un rol',
             'password.confirmed' => 'Las contraseñas no coinciden',
-            'password.regex' => 'La contraseña debe contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
+            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
         ]);
 
         User::create([
@@ -150,7 +152,7 @@ class UserController extends BaseController
             'name.min' => 'El nombre debe tener al menos 3 caracteres',
             'email.regex' => 'El formato del correo electrónico es inválido.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password.regex' => 'La contraseña debe se de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
+            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
         ]);
 
         // Actualizar los datos del usuario

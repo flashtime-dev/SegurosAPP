@@ -32,7 +32,7 @@ export default function CrearUsuarioModal({ isOpen, onClose, roles }: Props) {
         address: "",
         phone: "",
         state: "1",
-        id_rol: "",
+        id_rol: "3",
     });
 
     // Función auxiliar para capitalizar cada palabra
@@ -145,7 +145,7 @@ export default function CrearUsuarioModal({ isOpen, onClose, roles }: Props) {
                                     value={data.phone}
                                     onChange={(e) => setData('phone', e.target.value)}
                                     disabled={processing}
-                                    placeholder="Número de teléfono"
+                                    placeholder="+34 123 456 789"
                                 />
                                 <InputError message={errors.phone} className="mt-2" />
                             </div>

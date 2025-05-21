@@ -73,9 +73,13 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios}: Props)
                                 <Input
                                     id="nombre"
                                     value={data.nombre}
-                                    onChange={(e) => setData('nombre', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setData('nombre', value.charAt(0).toUpperCase() + value.slice(1));
+                                    }}
                                     disabled={processing}
                                     required
+                                    placeholder="Nombre de la comunidad"
                                 />
                                 <InputError message={errors.nombre} className="mt-2" />
                             </div>
@@ -88,6 +92,7 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios}: Props)
                                     onChange={(e) => setData('cif', e.target.value.toUpperCase())}
                                     disabled={processing}
                                     required
+                                    placeholder="H12345678"
                                 />
                                 <InputError message={errors.cif} className="mt-2" />
                             </div>
@@ -97,8 +102,12 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios}: Props)
                                 <Input
                                     id="direccion"
                                     value={data.direccion}
-                                    onChange={(e) => setData('direccion', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setData('direccion', value.charAt(0).toUpperCase() + value.slice(1));
+                                    }}
                                     disabled={processing}
+                                    placeholder="Dirección de la comunidad"
                                 />
                                 <InputError message={errors.direccion} className="mt-2" />
                             </div>
@@ -108,8 +117,12 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios}: Props)
                                 <Input
                                     id="ubi_catastral"
                                     value={data.ubi_catastral}
-                                    onChange={(e) => setData('ubi_catastral', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setData('ubi_catastral', value.charAt(0).toUpperCase() + value.slice(1));
+                                    }}
                                     disabled={processing}
+                                    placeholder="Ubicación Catastral"
                                 />
                                 <InputError message={errors.ubi_catastral} className="mt-2" />
                             </div>
@@ -121,6 +134,7 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios}: Props)
                                     value={data.ref_catastral}
                                     onChange={(e) => setData('ref_catastral', e.target.value.toUpperCase())}
                                     disabled={processing}
+                                    placeholder="1234ABCD5678EFGH9012"
                                 />
                                 <InputError message={errors.ref_catastral} className="mt-2" />
                             </div>
@@ -133,6 +147,7 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios}: Props)
                                     value={data.telefono}
                                     onChange={(e) => setData('telefono', e.target.value)}
                                     disabled={processing}
+                                    placeholder="+34 123 456 789"
                                 />
                                 <InputError message={errors.telefono} className="mt-2" />
                             </div>

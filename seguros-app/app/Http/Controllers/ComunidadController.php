@@ -65,12 +65,16 @@ class ComunidadController extends Controller
         $user = Auth::user(); // Obtener el usuario autenticado
 
         $request->merge([
+            'nombre' => ucfirst($request->nombre),
+            'cif' => strtoupper($request->cif),
+            'direccion' => ucfirst($request->direccion),
+            'ubi_catastral' => ucfirst($request->ubi_catastral),
             'ref_catastral' => strtoupper($request->ref_catastral)
         ]);
 
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
-            'cif' => 'required|string|max:15|unique:comunidades,cif|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/',
+            'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif',
             'direccion' => 'nullable|string|max:255',
             'ubi_catastral' => 'nullable|string|max:255',
             'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
@@ -122,12 +126,16 @@ class ComunidadController extends Controller
         $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
         
         $request->merge([
+            'nombre' => ucfirst($request->nombre),
+            'cif' => strtoupper($request->cif),
+            'direccion' => ucfirst($request->direccion),
+            'ubi_catastral' => ucfirst($request->ubi_catastral),
             'ref_catastral' => strtoupper($request->ref_catastral)
         ]);
             
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
-            'cif' => 'required|string|max:15|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
+            'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
             'direccion' => 'nullable|string|max:255',
             'ubi_catastral' => 'nullable|string|max:255',
             'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
