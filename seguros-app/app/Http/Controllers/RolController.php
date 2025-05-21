@@ -16,10 +16,13 @@ class RolController extends Controller
     public function index()
     {
         $roles = Rol::with('permisos')->get(); // Obtener todos los roles con sus permisos
-        $tipoPermisos = TipoPermiso::all(); // Obtener todos los permisos de los roles
+        $tipoPermisos = TipoPermiso::all(); // Obtener todos los tipos de permisos
+        $permisos = Permiso::with('tipoPermiso')->get(); // Obtener todos los permisos
+
         return Inertia::render('roles/index', [
             'roles' => $roles,
-            'tipoPermisos' => $tipoPermisos
+            'tipoPermisos' => $tipoPermisos,
+            'permisos' => $permisos
         ]); // Retornar la vista con los datos
     }
 
@@ -28,11 +31,8 @@ class RolController extends Controller
      */
     public function create()
     {
-        $permisos = Permiso::with('tipoPermiso')->get(); // Obtener todos los roles con sus permisos
-        //dd($permisos); // Debugging: Verificar los datos de los permisos
-        return Inertia::render('roles/create', [
-            'permisos' => $permisos,
-        ]); // Retornar la vista con los datos
+        // Ya no es necesario, se utiliza el modal
+        abort(404);
     }
 
     /**
@@ -87,14 +87,8 @@ class RolController extends Controller
      */
     public function edit($id)
     {
-        $rol = Rol::findOrFail($id); // Buscar el rol por ID
-        $permisos = Permiso::with('tipoPermiso')->get();
-        $rol->load('permisos'); // Cargar los permisos del rol
-        return Inertia::render('roles/edit', [
-            'rol' => $rol,
-            'permisosRol' => $rol->permisos, // Pasar los permisos del rol a la vista
-            'permisos' => $permisos,
-        ]); // Retornar la vista con los datos
+        // Ya no es necesario, se utiliza el modal
+        abort(404);
     }
 
     /**

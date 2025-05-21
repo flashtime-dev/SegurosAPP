@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { TipoPermiso, Rol } from "@/types";
 import {
     Card,
@@ -11,20 +11,48 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
 import { router } from "@inertiajs/react";
 
-export function MostrarRolesPermisos({ roles, tipoPermisos }: { roles: Rol[], tipoPermisos: TipoPermiso[] }) {
+interface Props {
+    roles: Rol[];
+    tipoPermisos: TipoPermiso[];
+    onEditRol?: (rol: Rol) => void;
+}
+
+export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) {
     const [selectedRol, setSelectedRol] = useState<Rol | null>(null);
+    const [isMenuOpen, setIsMenuOpen] = useState<{ [key: number]: boolean }>({});
+    const menuButtonRefs = useRef<{ [key: number]: HTMLButtonElement | null }>({});
+
+    const handleEditRol = (e: Event, rol: Rol) => {
+        e.preventDefault();
+        
+        // Devolver el foco al botón del menú antes de cerrar
+        if (menuButtonRefs.current[rol.id]) {
+            menuButtonRefs.current[rol.id]?.focus();
+        }
+        
+        // Asegurarnos de que el menú se cierre correctamente
+        setIsMenuOpen(prev => ({ ...prev, [rol.id]: false }));
+        
+        // Esperar a que termine la animación de cierre antes de abrir el modal
+        setTimeout(() => {
+            if (onEditRol) onEditRol(rol);
+        }, 100);
+    };
 
     const handleDeleteRol = (rolId: number) => {
         if (confirm('¿Estás seguro de que deseas eliminar este rol?')) {
             router.delete(route('roles.destroy', rolId), {
                 onSuccess: () => {
-                    // Si el rol eliminado es el seleccionado, reseteamos el estado
                     if (selectedRol?.id === rolId) {
                         setSelectedRol(null);
                     }
                 },
             });
         }
+    };
+
+    const setMenuButtonRef = (id: number) => (el: HTMLButtonElement | null) => {
+        menuButtonRefs.current[id] = el;
     };
 
     return (
@@ -49,12 +77,18 @@ export function MostrarRolesPermisos({ roles, tipoPermisos }: { roles: Rol[], ti
                                     >
                                         {rol.nombre}
                                         <div className="justify-end ml-auto flex items-center">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger className="ml-2">
+                                            <DropdownMenu 
+                                                open={isMenuOpen[rol.id]} 
+                                                onOpenChange={(open) => setIsMenuOpen(prev => ({ ...prev, [rol.id]: open }))}
+                                            >
+                                                <DropdownMenuTrigger 
+                                                    ref={setMenuButtonRef(rol.id)}
+                                                    className="ml-2 focus:outline-none"
+                                                >
                                                     <EllipsisVertical className="w-5 h-5 text-gray-500 hover:text-gray-700" />
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="z-10">
-                                                    <DropdownMenuItem onClick={() => { router.visit(route('roles.edit', rol.id)); }}>
+                                                    <DropdownMenuItem onSelect={(e) => handleEditRol(e, rol)}>
                                                         <Edit className="w-4 h-4 mr-1 inline" />
                                                         Editar
                                                     </DropdownMenuItem>
@@ -94,30 +128,32 @@ export function MostrarRolesPermisos({ roles, tipoPermisos }: { roles: Rol[], ti
                                         if (!acc[tipo]) acc[tipo] = [];
                                         acc[tipo].push(permiso);
                                         return acc;
-                                    }, {} as Record<string, typeof selectedRol.permisos>)
+                                    }, {} as { [key: string]: any[] })
                                 ).map(([tipo, permisos]) => (
-                                    <div key={tipo} className="mb-6">
-                                        <h3 className="text-md font-semibold text-gray-700 mb-3 border-b pb-1">
-                                            {tipoPermisos.find((tp) => tp.id === Number(tipo))?.nombre || "Otros"}
+                                    <div key={tipo} className="mb-4">
+                                        <h3 className="text-md font-semibold mb-2">
+                                            {tipoPermisos.find(t => t.id.toString() === tipo)?.nombre || tipo}
                                         </h3>
-                                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                            {permisos.map((permiso) => (
-                                                <li
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            {permisos.map(permiso => (
+                                                <div
                                                     key={permiso.id}
-                                                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm text-gray-800 transition"
+                                                    className="p-2 bg-gray-50 rounded-lg text-sm"
                                                 >
                                                     {permiso.descripcion}
-                                                </li>
+                                                </div>
                                             ))}
-                                        </ul>
+                                        </div>
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-gray-600 italic">Este rol no tiene permisos asignados.</p>
+                                <p className="text-center text-gray-500">Este rol no tiene permisos asignados</p>
                             )}
                         </ScrollArea>
                     ) : (
-                        <p className="text-gray-600 italic">Haz clic en un rol para ver sus permisos.</p>
+                        <div className="h-72 flex items-center justify-center">
+                            <p className="text-gray-500">Selecciona un rol para ver sus permisos asignados</p>
+                        </div>
                     )}
                 </CardContent>
             </Card>
