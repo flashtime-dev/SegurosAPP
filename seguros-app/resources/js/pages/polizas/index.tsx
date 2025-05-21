@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Head, usePage } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
-import { PolizaCard } from "@/components/poliza-card";
+import { PolizaCard } from "@/components/polizas/poliza-card";
 import { Poliza } from "@/types";
-import FiltroPolizas from "@/components/polizas-filtro";
-import PaginacionPolizas from "@/components/polizas-paginacion";
+import FiltroPolizas from "@/components/polizas/polizas-filtro";
+import PaginacionPolizas from "@/components/polizas/polizas-paginacion";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import CrearPolizaModal from "@/components/polizas/CrearPolizaModal";

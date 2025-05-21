@@ -3,7 +3,6 @@ import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/com
 import { Comunidad } from "@/types";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Edit, EllipsisVertical } from "lucide-react";
-import { DeleteAlert } from "@/components/delete-alert";
 import { router } from "@inertiajs/react";
 
 export function ComunidadCard({ comunidad, onEdit }: { comunidad: Comunidad; onEdit?: () => void }) {

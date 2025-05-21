@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Head, usePage } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import { Comunidad, User } from '@/types';
-import { ComunidadCard } from '@/components/comunidad-card';
+import { ComunidadCard } from '@/components/comunidades/comunidad-card';
 import { useState } from 'react';
 import CrearComunidadModal from '@/components/comunidades/CrearComunidadModal';
 import EditarComunidadModal from '@/components/comunidades/EditarComunidadModal';

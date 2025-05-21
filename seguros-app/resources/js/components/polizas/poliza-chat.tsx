@@ -1,5 +1,5 @@
 import { ChatPoliza } from "@/types";
-import { Chat } from "./chat";
+import { Chat } from "../chat";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 

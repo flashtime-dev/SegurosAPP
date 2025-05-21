@@ -1,9 +1,9 @@
 import { Head, usePage } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
 import { Card, CardContent } from "@/components/ui/card";
-import { PolizaHeader } from "@/components/poliza-header";
+import { PolizaHeader } from "@/components/polizas/poliza-header";
 import { Poliza } from "@/types";
-import { PolizaMenu } from "@/components/poliza-menu";
+import { PolizaMenu } from "@/components/polizas/poliza-menu";
 import { ChatPoliza } from "@/types";
 
 export default function Show() {

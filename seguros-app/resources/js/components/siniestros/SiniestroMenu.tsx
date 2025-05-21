@@ -2,8 +2,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 //import { Siniestros } from "@/components/siniestros";
 //import { Recibos } from "@/components/recibos";
 import { Siniestro, ChatSiniestro } from "@/types";
-import { PolizaLogoAcciones } from "../poliza-logo-acciones";
-import { PolizaChat } from "../poliza-chat";
+import { PolizaLogoAcciones } from "../polizas/poliza-logo-acciones";
+import { PolizaChat } from "../polizas/poliza-chat";
 
 export function SiniestroMenu({ siniestro, chats, authUser }: { siniestro: Siniestro, chats: ChatSiniestro[], authUser: number }) {
     return (

@@ -1,8 +1,8 @@
-import { UsuariosMenu } from "@/components/usuarios-menu";
+import { UsuariosMenu } from "@/components/usuarios/usuarios-menu";
 import AppLayout from "@/layouts/app-layout";
 import { TipoPermiso, Rol, User } from "@/types";
 import { Head, usePage } from "@inertiajs/react";
-import { UserCard } from "@/components/user-card";
+import { UserCard } from "@/components/usuarios/user-card";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";

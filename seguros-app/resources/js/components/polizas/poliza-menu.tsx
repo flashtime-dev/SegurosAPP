@@ -1,5 +1,5 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { PolizaDetalles } from "@/components/poliza-detalles";
+import { PolizaDetalles } from "@/components/polizas/poliza-detalles";
 //import { Siniestros } from "@/components/siniestros";
 //import { Recibos } from "@/components/recibos";
 import { Poliza } from "@/types";

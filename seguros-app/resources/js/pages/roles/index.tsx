@@ -1,4 +1,4 @@
-import { UsuariosMenu } from "@/components/usuarios-menu";
+import { UsuariosMenu } from "@/components/usuarios/usuarios-menu";
 import AppLayout from "@/layouts/app-layout";
 import { TipoPermiso, Rol, User } from "@/types";
 import { Head, usePage } from "@inertiajs/react";
