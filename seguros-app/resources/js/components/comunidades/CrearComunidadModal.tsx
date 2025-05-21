@@ -85,7 +85,7 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios}: Props)
                                 <Input
                                     id="cif"
                                     value={data.cif}
-                                    onChange={(e) => setData('cif', e.target.value)}
+                                    onChange={(e) => setData('cif', e.target.value.toUpperCase())}
                                     disabled={processing}
                                     required
                                 />
@@ -119,7 +119,7 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios}: Props)
                                 <Input
                                     id="ref_catastral"
                                     value={data.ref_catastral}
-                                    onChange={(e) => setData('ref_catastral', e.target.value)}
+                                    onChange={(e) => setData('ref_catastral', e.target.value.toUpperCase())}
                                     disabled={processing}
                                 />
                                 <InputError message={errors.ref_catastral} className="mt-2" />

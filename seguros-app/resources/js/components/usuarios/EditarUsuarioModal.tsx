@@ -53,8 +53,18 @@ export default function EditarUsuarioModal({ isOpen, onClose, roles, user }: Pro
         }
     }, [user]);
 
+    // Función auxiliar para capitalizar cada palabra
+    const capitalizeWords = (str: string) => {
+        return str.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // Capitaliza la primera letra del nombre
+        setData('name', capitalizeWords(data.name));
+        setData('address', data.address.charAt(0).toUpperCase() + data.address.slice(1));
         if (user) {
             put(route("usuarios.update", user.id), {
                 onSuccess: () => {
@@ -83,7 +93,7 @@ export default function EditarUsuarioModal({ isOpen, onClose, roles, user }: Pro
                                 <Input
                                     id="name"
                                     value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) => setData('name', capitalizeWords(e.target.value))}
                                     disabled={processing}
                                     required
                                     placeholder="Nombre completo"
@@ -136,7 +146,10 @@ export default function EditarUsuarioModal({ isOpen, onClose, roles, user }: Pro
                                 <Input
                                     id="address"
                                     value={data.address}
-                                    onChange={(e) => setData('address', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setData('address', value.charAt(0).toUpperCase() + value.slice(1));
+                                    }}
                                     disabled={processing}
                                     placeholder="Dirección de residencia"
                                 />

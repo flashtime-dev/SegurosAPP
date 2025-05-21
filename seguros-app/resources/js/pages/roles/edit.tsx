@@ -23,12 +23,12 @@ export default function Edit({ rol, permisosRol, permisos }: Props) {
         nombre: rol.nombre || '',
         permisos: (permisosRol || []).map((permiso) => permiso.id), // ✅ usar permisosRol
     });
-    
+
     const [selectedPermisos, setSelectedPermisos] = useState<Permiso[]>(
         permisos.filter((permiso) => (permisosRol || []).some((p) => p.id === permiso.id)) // ✅ usar permisosRol
     );
-    
-    
+
+
 
     // Función para añadir un permiso a la lista seleccionada
     const addPermiso = (permiso: Permiso) => {
@@ -64,7 +64,10 @@ export default function Edit({ rol, permisosRol, permisos }: Props) {
                         placeholder="Nombre del rol"
                         autoFocus
                         required
-                        onChange={(e) => setData('nombre', e.target.value)}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setData('nombre', value.charAt(0).toUpperCase() + value.slice(1).toLowerCase());
+                        }}
                     />
                     <InputError message={errors.nombre} className="mt-2" />
 

@@ -63,6 +63,11 @@ class ComunidadController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user(); // Obtener el usuario autenticado
+
+        $request->merge([
+            'ref_catastral' => strtoupper($request->ref_catastral)
+        ]);
+
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
             'cif' => 'required|string|max:15|unique:comunidades,cif|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/',
@@ -115,6 +120,11 @@ class ComunidadController extends Controller
     public function update(Request $request, $id)
     {
         $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+        
+        $request->merge([
+            'ref_catastral' => strtoupper($request->ref_catastral)
+        ]);
+            
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
             'cif' => 'required|string|max:15|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,

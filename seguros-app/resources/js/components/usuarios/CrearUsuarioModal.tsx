@@ -35,8 +35,18 @@ export default function CrearUsuarioModal({ isOpen, onClose, roles }: Props) {
         id_rol: "",
     });
 
+    // Función auxiliar para capitalizar cada palabra
+    const capitalizeWords = (str: string) => {
+        return str.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // Capitaliza la primera letra del nombre
+        setData('name', capitalizeWords(data.name));
+        setData('address', data.address.charAt(0).toUpperCase() + data.address.slice(1));
         post(route("usuarios.store"), {
             onSuccess: () => {
                 reset();
@@ -63,7 +73,7 @@ export default function CrearUsuarioModal({ isOpen, onClose, roles }: Props) {
                                 <Input
                                     id="name"
                                     value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) => setData('name', capitalizeWords(e.target.value))}
                                     disabled={processing}
                                     required
                                     placeholder="Nombre completo"
@@ -76,7 +86,7 @@ export default function CrearUsuarioModal({ isOpen, onClose, roles }: Props) {
                                 <Input
                                     id="email"
                                     type="email"
-                                    value={data.email} 
+                                    value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
                                     disabled={processing}
                                     required
@@ -118,7 +128,10 @@ export default function CrearUsuarioModal({ isOpen, onClose, roles }: Props) {
                                 <Input
                                     id="address"
                                     value={data.address}
-                                    onChange={(e) => setData('address', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setData('address', value.charAt(0).toUpperCase() + value.slice(1));
+                                    }}
                                     disabled={processing}
                                     placeholder="Dirección de residencia"
                                 />

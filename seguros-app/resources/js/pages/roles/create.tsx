@@ -57,8 +57,11 @@ export default function Create({ permisos }: Props) {
                         placeholder="Nombre del rol"
                         autoFocus
                         required
-                        onChange={(e) => setData('nombre', e.target.value)}
-                        
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setData('nombre', value.charAt(0).toUpperCase() + value.slice(1).toLowerCase());
+                        }}
+
                     />
                     <InputError message={errors.nombre} className="mt-2" />
 

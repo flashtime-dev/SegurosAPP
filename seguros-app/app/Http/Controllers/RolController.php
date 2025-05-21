@@ -40,6 +40,11 @@ class RolController extends Controller
      */
     public function store(Request $request)
     {
+        // Capitalizar solo la primera palabra del nombre antes de la validación
+        $request->merge([
+            'nombre' => ucfirst(strtolower($request->nombre))
+        ]);
+
         $request->validate([
             'nombre' => 'required|string|min:2|max:50',
             'permisos' => 'nullable|array',
@@ -98,6 +103,12 @@ class RolController extends Controller
     public function update(Request $request, $id)
     {
         $rol = Rol::findOrFail($id); // Buscar el rol por ID
+
+        // Capitalizar solo la primera palabra del nombre antes de la validación
+        $request->merge([
+            'nombre' => ucfirst(strtolower($request->nombre))
+        ]);
+
         $request->validate([
             'nombre' => 'required|string|min:2|max:50',
             'permisos' => 'nullable|array',
