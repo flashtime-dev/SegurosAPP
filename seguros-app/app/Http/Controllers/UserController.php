@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use App\Http\Middleware\CheckPermiso;
 use App\Models\Subusuario;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends BaseController
 {
@@ -24,10 +25,37 @@ class UserController extends BaseController
 
     public function index()
     {
-        $users = User::with('rol', 'subusuarios.usuario:id,id_rol,name,email,address,phone,state', 'usuarioCreador.usuario:id,id_rol,name,email,address,phone,state')->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']); // Obtener todos los usuarios con su r$tipoPermisos = TipoPermiso::all(); // Obtener todos los permisos de los rolesol
+        $users = User::with('rol', 'subusuarios.usuario:id,id_rol,name,email,address,phone,state', 'usuarioCreador')->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
 
         //dd($users); // Debugging: Verificar los datos de los usuarios
         return Inertia::render('usuarios/index', [
+            'users' => $users,
+            'roles' => Rol::all(),
+        ]);
+    }
+
+    public function empleados()
+    {
+        $user = Auth::user();
+        $users = User::with(
+            'rol',
+            'subusuarios.usuario:id,id_rol,name,email,address,phone,state',
+            'usuarioCreador.usuarioCreador:id,id_rol,name,email,address,phone,state'
+        )
+            ->whereHas('usuarioCreador', function ($query) use ($user) {
+                $query->where('id_usuario_creador', $user->id);
+            })
+            ->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
+
+        $userLogged = User::findOrFail($user->id); // Obtener el usuario autenticado
+        $userLogged->load(
+            'rol', 
+            'subusuarios.usuario:id,id_rol,name,email,address,phone,state',
+            'usuarioCreador.usuarioCreador:id,id_rol,name,email,address,phone,state'); // Cargar el rol del usuario autenticado
+
+        //dd($userLogged); // Debugging: Verificar los datos del usuario autenticado
+        return Inertia::render('empleados/index', [
+            'user' => $userLogged,
             'users' => $users,
             'roles' => Rol::all(),
         ]);
@@ -78,7 +106,7 @@ class UserController extends BaseController
         }
 
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
+        //return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
     }
 
     /**
@@ -157,7 +185,7 @@ class UserController extends BaseController
             }
         }
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+        //return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
     }
 
     /**
@@ -167,6 +195,6 @@ class UserController extends BaseController
     {
         $user = User::findOrFail($id); // Buscar el usuario por ID
         $user->delete(); // Eliminar el usuario
-        return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado correctamente.');
+        //return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado correctamente.');
     }
 }

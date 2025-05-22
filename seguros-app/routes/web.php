@@ -25,7 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('companias', CompaniaController::class);
     Route::post('/chat-poliza/{poliza}', [ChatPolizaController::class, 'store'])->name('chat-poliza.store');
     Route::resource('usuarios', UserController::class);
-
+    Route::get('empleados', [UserController::class, 'empleados'])->name('empleados.index');
     Route::resource('roles', RolController::class);
     Route::resource('comunidades', ComunidadController::class);
     Route::resource('siniestros', SiniestroController::class);
