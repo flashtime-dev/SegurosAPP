@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "@inertiajs/react";
 import {
     Dialog,
@@ -21,9 +21,10 @@ type Props = {
     isOpen: boolean;
     onClose: () => void;
     polizas: Poliza[];
+    polizaSeleccionada?: string;
 };
 
-export default function CrearSiniestroModal({ isOpen, onClose, polizas}: Props) {
+export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSeleccionada }: Props) {
     type FormData = {
         id_poliza: string;
         declaracion: string;
@@ -37,7 +38,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas}: Props) 
     };
 
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
-        id_poliza: '',
+        id_poliza: polizaSeleccionada || '',
         declaracion: '',
         tramitador: '',
         expediente: '',
@@ -47,6 +48,12 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas}: Props) 
         adjunto: null,
         contactos: []
     });
+
+    useEffect(() => {
+        if (polizaSeleccionada) {
+            setData('id_poliza', polizaSeleccionada);
+        }
+    }, [polizaSeleccionada]);
 
     const agregarContacto = () => {
         setData('contactos', [...data.contactos, { nombre: '', cargo: '', piso: '', telefono: '' }]);

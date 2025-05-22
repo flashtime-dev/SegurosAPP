@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge"; // asumiendo que tienes uno, o lo puedes crear
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 function estadoToVariant(estado: string) {
     switch (estado.toLowerCase()) {

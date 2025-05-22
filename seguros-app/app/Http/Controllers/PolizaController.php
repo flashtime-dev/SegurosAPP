@@ -107,12 +107,14 @@ class PolizaController extends Controller
      */
     public function show(string $id)
     {
-        $poliza = Poliza::with(['compania', 'comunidad', 'agente', 'chats.usuario'])->findOrFail($id);
+
+        $poliza = Poliza::with(['compania', 'comunidad', 'siniestros', 'agente', 'chats.usuario'])->findOrFail($id);
+        $siniestros = $poliza->siniestros;
         $chats = $poliza->chats()->with('usuario')->orderBy('created_at')->get();
         $authUser = Auth::id();
-
         return Inertia::render('polizas/show', [
             'poliza' => $poliza,
+            'siniestros' => $siniestros,
             'chats' => $chats,
             'authUser' => $authUser,
         ]);

@@ -2,17 +2,19 @@ import { Head, usePage } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { PolizaHeader } from "@/components/polizas/poliza-header";
-import { Poliza } from "@/types";
+import { Poliza, Siniestro } from "@/types";
 import { PolizaMenu } from "@/components/polizas/poliza-menu";
 import { ChatPoliza } from "@/types";
 
 export default function Show() {
     const { props } = usePage<{ 
         poliza: Poliza, 
+        siniestros: Siniestro[];
         chats: ChatPoliza[];
         authUser: number;
     }>();
     const { poliza } = props;
+    const { siniestros } = props;
     const {chats} = props;
     const { authUser } = props;
     
@@ -24,7 +26,7 @@ export default function Show() {
                 <Card>
                     <CardContent className="space-y-6">
                         <PolizaHeader comunidad={poliza.comunidad.nombre} estado={poliza.estado} />
-                        <PolizaMenu poliza={poliza} chats={chats} authUser={authUser}/>
+                        <PolizaMenu poliza={poliza} siniestros={siniestros} chats={chats} authUser={authUser}/>
                     </CardContent>
                 </Card>
             </div>
