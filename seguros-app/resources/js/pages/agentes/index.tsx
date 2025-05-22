@@ -130,9 +130,13 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                     <Input
                                         id="nombre"
                                         value={data.nombre}
-                                        onChange={(e) => setData('nombre', e.target.value)}
+                                        onChange={(e) => {
+                                        const value = e.target.value;
+                                            setData('nombre', value.charAt(0).toUpperCase() + value.slice(1));
+                                        }}
                                         disabled={processing}
                                         required
+                                        placeholder="Nombre completo"
                                     />
                                     <InputError message={errors.nombre} className="mt-2" />
                                 </div>
@@ -146,6 +150,7 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                         onChange={(e) => setData('email', e.target.value)}
                                         disabled={processing}
                                         required
+                                        placeholder="email@example.com"
                                     />
                                     <InputError message={errors.email} className="mt-2" />
                                 </div>
@@ -158,6 +163,7 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                         onChange={(e) => setData('telefono', e.target.value)}
                                         disabled={processing}
                                         required
+                                        placeholder="+34 123 456 789"
                                     />
                                     <InputError message={errors.telefono} className="mt-2" />
                                 </div>
@@ -191,9 +197,13 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                     <Input
                                         id="nombre"
                                         value={data.nombre}
-                                        onChange={(e) => setData('nombre', e.target.value)}
+                                        onChange={(e) => {
+                                        const value = e.target.value;
+                                            setData('nombre', value.charAt(0).toUpperCase() + value.slice(1));
+                                        }}
                                         disabled={processing}
                                         required
+                                        placeholder="Nombre completo"
                                     />
                                     <InputError message={errors.nombre} className="mt-2" />
                                 </div>
@@ -207,6 +217,7 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                         onChange={(e) => setData('email', e.target.value)}
                                         disabled={processing}
                                         required
+                                        placeholder="email@example.com"
                                     />
                                     <InputError message={errors.email} className="mt-2" />
                                 </div>
@@ -219,6 +230,7 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                         onChange={(e) => setData('telefono', e.target.value)}
                                         disabled={processing}
                                         required
+                                        placeholder="+34 123 456 789"
                                     />
                                     <InputError message={errors.telefono} className="mt-2" />
                                 </div>
