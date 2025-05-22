@@ -18,13 +18,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Rol, User } from "@/types";
 
 type Props = {
+    usuarios: User[];
     isOpen: boolean;
     onClose: () => void;
     roles: Rol[];
     user: User;
 };
 
-export default function EditarUsuarioModal({ isOpen, onClose, roles, user }: Props) {
+export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, user }: Props) {
+    const empleados = usuarios.filter((usuario) => usuario.usuario_creador === null);
     const { data, setData, put, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -34,8 +36,10 @@ export default function EditarUsuarioModal({ isOpen, onClose, roles, user }: Pro
         phone: "",
         state: "",
         id_rol: "",
+        id_usuario_creador: "",
     });
 
+    console.log("user", user);
     useEffect(() => {
         if (user) {
             setData({
@@ -46,7 +50,8 @@ export default function EditarUsuarioModal({ isOpen, onClose, roles, user }: Pro
                 address: user.address || "",
                 phone: user.phone || "",
                 state: String(user.state),
-                id_rol: String(user.id_rol || ""),
+                id_rol: String(user.rol.id || ""),
+                id_usuario_creador: String(user.usuario_creador?.id_usuario_creador || ""),
             });
         } else {
             reset();
@@ -196,6 +201,26 @@ export default function EditarUsuarioModal({ isOpen, onClose, roles, user }: Pro
                                         {roles.map((rol) => (
                                             <SelectItem key={rol.id} value={String(rol.id)}>
                                                 {rol.nombre}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <InputError message={errors.id_rol} className="mt-2" />
+                            </div>
+                            <div>
+                                <Label htmlFor="id_usuario_creador">Es empleado de otro usuario?</Label>
+                                <Select
+                                    value={data.id_usuario_creador}
+                                    onValueChange={(value) => setData('id_usuario_creador', value)}
+                                    disabled={processing}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecciona un usuario en caso afirmativo" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {empleados.map((usuario) => (
+                                            <SelectItem key={usuario.id} value={String(usuario.id)}>
+                                                {usuario.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

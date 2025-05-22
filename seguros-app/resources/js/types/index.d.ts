@@ -44,7 +44,11 @@ export interface User {
     updated_at: string;
     state: number;
     rol: Rol;
-    [key: string]: unknown; // This allows for additional properties...
+    subusuarios: User[];
+    usuario_creador:{
+        id: number;
+        id_usuario_creador: string;
+    }
 }
 
 export interface Agente {

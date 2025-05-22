@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Permiso;
 use App\Models\User;
 use App\Models\Rol;
-use App\Models\TipoPermiso;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use App\Http\Middleware\CheckPermiso;
-
+use App\Models\Subusuario;
 use Illuminate\Routing\Controller as BaseController;
 
 class UserController extends BaseController
@@ -24,34 +22,17 @@ class UserController extends BaseController
         $this->middleware(CheckPermiso::class . ':usuarios.eliminar', ['only' => ['destroy']]);
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $users = User::with('rol')->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']); // Obtener todos los usuarios con su r$tipoPermisos = TipoPermiso::all(); // Obtener todos los permisos de los rolesol
+        $users = User::with('rol', 'subusuarios.usuario:id,id_rol,name,email,address,phone,state', 'usuarioCreador.usuario:id,id_rol,name,email,address,phone,state')->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']); // Obtener todos los usuarios con su r$tipoPermisos = TipoPermiso::all(); // Obtener todos los permisos de los rolesol
 
+        //dd($users); // Debugging: Verificar los datos de los usuarios
         return Inertia::render('usuarios/index', [
             'users' => $users,
             'roles' => Rol::all(),
         ]);
-        //return view('users.index', compact('users')); // Retornar la vista con los datos
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    // public function create()
-    // {
-    //     return Inertia::render('usuarios/create', [
-    //          // Obtener todos los roles
-    //         'roles' => Rol::all(),
-    //     ]); // Retornar la vista para crear un nuevo usuario
-    // }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         // Capitalizar cada palabra del nombre antes de la validación
@@ -68,6 +49,7 @@ class UserController extends BaseController
             'address' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:15',
             'state' => 'nullable|boolean',
+            'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
         ], [
             'name.min' => 'El nombre debe tener al menos 3 caracteres',
             'email.required' => 'El correo electrónico es obligatorio',
@@ -78,7 +60,7 @@ class UserController extends BaseController
             'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -87,6 +69,13 @@ class UserController extends BaseController
             'phone' => $request->phone,
             'state' => $request->boolean('state'), // Convertir a booleano
         ]);
+
+        if ($user && $request->filled('id_usuario_creador')) {
+            Subusuario::create([
+                'id' => $user->id,
+                'id_usuario_creador' => $request->id_usuario_creador,
+            ]);
+        }
 
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
@@ -107,21 +96,6 @@ class UserController extends BaseController
         ]); // Retornar la vista con los detalles del usuario
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // public function edit(User $user)
-    // {
-    //     $roles = Rol::all(); // Obtener todos los roles
-    //     return Inertia::render('usuarios/edit',[
-    //         'user' => $user, // Pasar el usuario a la vista
-    //         'roles' => $roles, // Pasar todos los roles a la vista
-    //     ]);
-    // }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id); // Buscar el usuario por ID
@@ -148,6 +122,7 @@ class UserController extends BaseController
             'address' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:15',
             'state' => 'nullable|boolean',
+            'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
         ], [
             'name.min' => 'El nombre debe tener al menos 3 caracteres',
             'email.regex' => 'El formato del correo electrónico es inválido.',
@@ -165,6 +140,22 @@ class UserController extends BaseController
             'phone' => $request->phone,
             'state' => $request->state ?? $user->state,
         ]);
+
+        if ($user && $request->filled('id_usuario_creador')) {
+            // Si el usuario tiene un id_usuario_creador, actualizarlo
+            $subusuario = Subusuario::where('id', $user->id)->first();
+            if ($subusuario) {
+                $subusuario->update([
+                    'id_usuario_creador' => $request->id_usuario_creador,
+                ]);
+            } else {
+                // Si no existe, crear uno nuevo
+                Subusuario::create([
+                    'id' => $user->id,
+                    'id_usuario_creador' => $request->id_usuario_creador,
+                ]);
+            }
+        }
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
     }

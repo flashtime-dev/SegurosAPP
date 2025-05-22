@@ -43,6 +43,7 @@ export default function Index() {
             </div>
 
             <CrearUsuarioModal
+                usuarios={users}
                 isOpen={isCreating}
                 onClose={() => setIsCreating(false)}
                 roles={roles}
@@ -50,6 +51,7 @@ export default function Index() {
 
             {usuarioSeleccionado && (
                 <EditarUsuarioModal
+                    usuarios={users}
                     isOpen={isEditing}
                     onClose={() => {
                         setIsEditing(false);
