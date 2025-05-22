@@ -21,4 +21,9 @@ class Subusuario extends Model
     {
     return $this->belongsTo(User::class, 'id_usuario_creador', 'id');
     }
+
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'id', 'id');
+    }
 }

@@ -62,6 +62,11 @@ class User extends Authenticatable
         return $this->hasMany(Subusuario::class, 'id_usuario_creador', 'id');
     }
 
+    public function usuarioCreador()
+    {
+        return $this->hasOne(Subusuario::class, 'id', 'id');
+    }
+
     // Relación N:N: Un Usuario pertenece a muchas Comunidades
     public function comunidades()
     {
