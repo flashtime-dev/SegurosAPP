@@ -66,7 +66,7 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
             <div className="max-w-6xl mx-auto p-4 space-y-6">
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-bold text-gray-800">Lista de Agentes</h1>
-                    <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2">
+                    <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2 cursor-pointer">
                         <Plus className="w-4 h-4" />
                         <span>Nuevo Agente</span>
                     </Button>
@@ -93,14 +93,14 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                             variant="outline"
                                             size="sm"
                                             onClick={() => handleEdit(agente)}
-                                            className="text-blue-600 border-blue-600"
+                                            className="text-blue-600 border-blue-600 cursor-pointer"
                                         >
                                             <Edit className="w-4 h-4" />
                                         </Button>
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="text-red-600 border-red-600"
+                                            className="text-red-600 border-red-600 cursor-pointer"
                                             onClick={() => {
                                                 if (confirm('¿Estás seguro de que deseas eliminar este agente?')) {
                                                     router.delete(route('agentes.destroy', agente.id));
@@ -216,7 +216,6 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
                                         disabled={processing}
-                                        required
                                         placeholder="email@example.com"
                                     />
                                     <InputError message={errors.email} className="mt-2" />
@@ -229,7 +228,6 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                         value={data.telefono}
                                         onChange={(e) => setData('telefono', e.target.value)}
                                         disabled={processing}
-                                        required
                                         placeholder="+34 123 456 789"
                                     />
                                     <InputError message={errors.telefono} className="mt-2" />

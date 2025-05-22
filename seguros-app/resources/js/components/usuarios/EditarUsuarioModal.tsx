@@ -164,7 +164,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
                                     value={data.phone}
                                     onChange={(e) => setData('phone', e.target.value)}
                                     disabled={processing}
-                                    placeholder="Número de teléfono"
+                                    placeholder="+34 123 456 789"
                                 />
                                 <InputError message={errors.phone} className="mt-2" />
                             </div>

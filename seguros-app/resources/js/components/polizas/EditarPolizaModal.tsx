@@ -101,6 +101,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <Select
                                 onValueChange={(value) => setData("id_compania", value)}
                                 value={data.id_compania}
+                                required
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecciona una compañía" />
@@ -122,6 +123,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <Select
                                 onValueChange={(value) => setData("id_comunidad", value)}
                                 value={data.id_comunidad}
+                                required
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecciona una comunidad" />
@@ -164,8 +166,12 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <Input
                                 id="alias"
                                 value={data.alias}
-                                onChange={(e) => setData("alias", e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setData('alias', value.charAt(0).toUpperCase() + value.slice(1));
+                                }}
                                 disabled={processing}
+                                placeholder="Alias del Cliente"
                             />
                             <InputError message={errors.alias} className="mt-2" />
                         </div>
@@ -178,7 +184,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 value={data.numero}
                                 onChange={(e) => setData("numero", e.target.value)}
                                 disabled={processing}
-                                required
+                                placeholder="123456789012345678901"
                             />
                             <InputError message={errors.numero} className="mt-2" />
                         </div>
@@ -205,6 +211,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 value={data.cuenta}
                                 onChange={(e) => setData("cuenta", e.target.value)}
                                 disabled={processing}
+                                placeholder="1234 5678 90 1234567890"
                             />
                             <InputError message={errors.cuenta} className="mt-2" />
                         </div>
@@ -215,6 +222,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <Select
                                 onValueChange={(value) => setData("forma_pago", value)}
                                 value={data.forma_pago}
+                                required
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecciona una forma de pago" />
@@ -241,6 +249,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 onChange={(e) => setData("prima_neta", e.target.value)}
                                 disabled={processing}
                                 required
+                                placeholder="0.00"
                             />
                             <InputError message={errors.prima_neta} className="mt-2" />
                         </div>
@@ -256,6 +265,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 onChange={(e) => setData("prima_total", e.target.value)}
                                 disabled={processing}
                                 required
+                                placeholder="0.00"
                             />
                             <InputError message={errors.prima_total} className="mt-2" />
                         </div>
@@ -282,6 +292,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 onChange={(e) => setData("observaciones", e.target.value)}
                                 disabled={processing}
                                 className="w-full border rounded-md p-2"
+                                placeholder="Escribe tus observaciones sobre la póliza aquí..."
                             />
                             <InputError message={errors.observaciones} className="mt-2" />
                         </div>
@@ -292,6 +303,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <Select
                                 onValueChange={(value) => setData("estado", value)}
                                 value={data.estado}
+                                required
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecciona un estado" />

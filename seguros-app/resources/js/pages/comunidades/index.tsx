@@ -23,7 +23,7 @@ export default function Index() {
     };
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Comunindades', href: route('comunidades.index') }]}>
+        <AppLayout breadcrumbs={[{ title: 'Comunidades', href: route('comunidades.index') }]}>
             <Head title='Comunidades' />
             <div className="py-5 px-20 space-y-6">
                 <h1 className="text-2xl font-bold">Comunidades</h1>

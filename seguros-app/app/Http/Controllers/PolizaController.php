@@ -64,12 +64,19 @@ class PolizaController extends Controller
      */
     public function store(Request $request)
     {
+
+        // Capitalizar solo la primera palabra del alias antes de la validación
+        $request->merge([
+            'alias' => ucfirst(($request->alias))
+        ]);
+
         // Validar los campos del formulario
         $request->validate([
             'id_compania' => 'required|exists:companias,id',
             'id_comunidad' => 'required|exists:comunidades,id',
             'id_agente' => 'nullable|exists:agentes,id',
-            'numero' => 'required|string|max:20',
+            'alias' => 'nullable|string|min:2|max:255',
+            'numero' => 'nullable|string|max:20',
             'fecha_efecto' => 'required|date',
             'cuenta' => 'nullable|string|max:24',
             'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
@@ -78,6 +85,16 @@ class PolizaController extends Controller
             'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
             'observaciones' => 'nullable|string',
             'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
+        ],[
+            'id_compania.required' => 'La compañía es obligatoria.',
+            'id_comunidad.required' => 'La comunidad es obligatoria.',
+            'alias.min' => 'El alias debe tener al menos 2 caracteres.',
+            'cuenta.min' => 'La cuenta debe tener al menos 20 caracteres.',
+            'forma_pago.required' => 'La forma de pago es obligatoria.',
+            'pdf_poliza.mimes' => 'El archivo debe ser un PDF.',
+            'pdf_poliza.max' => 'El archivo no debe exceder los 2MB.',
+            'pdf_poliza.file' => 'El archivo no es válido.',
+            'estado.required' => 'El estado es obligatorio.',
         ]);
 
         // Inicializar la variable para la URL del PDF
@@ -138,19 +155,35 @@ class PolizaController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // Capitalizar solo la primera palabra del alias antes de la validación
+        $request->merge([
+            'alias' => ucfirst(($request->alias))
+        ]);
+
         $request->validate([
             'id_compania' => 'required|exists:companias,id',
             'id_comunidad' => 'required|exists:comunidades,id',
             'id_agente' => 'nullable|exists:agentes,id',
-            'numero' => 'required|string|max:20',
+            'alias' => 'nullable|string|min:2|max:255',
+            'numero' => 'nullable|string|max:20',
             'fecha_efecto' => 'required|date',
-            'cuenta' => 'nullable|string|max:24',
+            'cuenta' => 'nullable|string|min:20|max:24',
             'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
             'prima_neta' => 'required|numeric|min:0',
             'prima_total' => 'required|numeric|min:0',
-            'pdf_poliza' => 'nullable|string|max:255',
+            'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
             'observaciones' => 'nullable|string',
             'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
+        ],[
+            'id_compania.required' => 'La compañía es obligatoria.',
+            'id_comunidad.required' => 'La comunidad es obligatoria.',
+            'alias.min' => 'El alias debe tener al menos 2 caracteres.',
+            'cuenta.min' => 'La cuenta debe tener al menos 20 caracteres.',
+            'forma_pago.required' => 'La forma de pago es obligatoria.',
+            'pdf_poliza.mimes' => 'El archivo debe ser un PDF.',
+            'pdf_poliza.max' => 'El archivo no debe exceder los 2MB.',
+            'pdf_poliza.file' => 'El archivo no es válido.',
+            'estado.required' => 'El estado es obligatorio.',
         ]);
 
         $poliza = Poliza::findOrFail($id);

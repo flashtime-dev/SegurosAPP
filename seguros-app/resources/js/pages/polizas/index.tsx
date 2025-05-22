@@ -39,7 +39,8 @@ export default function Index() {
 
         const matchNombreCompania = poliza.compania.nombre.toLowerCase().includes(nombreCompania.toLowerCase());
         const matchNombreComunidad = poliza.comunidad.nombre.toLowerCase().includes(nombreComunidad.toLowerCase());
-        const matchNumeroPoliza = poliza.numero.toLowerCase().includes(numeroPoliza.toLowerCase());
+        //const matchNumeroPoliza = poliza.numero.toLowerCase().includes(numeroPoliza.toLowerCase());
+        const matchNumeroPoliza = poliza.numero?.toLowerCase().includes(numeroPoliza.toLowerCase() || '') ?? true;
         const matchCif = poliza.comunidad.cif.toLowerCase().includes(cif.toLowerCase());
 
         return matchNombreCompania && matchNombreComunidad && matchNumeroPoliza && matchCif;
