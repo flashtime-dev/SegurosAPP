@@ -1,13 +1,15 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 //import { Siniestros } from "@/components/siniestros";
 //import { Recibos } from "@/components/recibos";
-import { Siniestro, ChatSiniestro, Poliza } from "@/types";
+import { Siniestro, ChatSiniestro, Poliza, Contacto } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { SiniestroLogoAcciones } from "./siniestro-logo-acciones";
 import { SiniestroDetalles } from "./siniestro-detalles";
 import { SiniestroChat } from "./siniestro-chat";
+import TablaContactos from "./TablaContactos";
 
-export function SiniestroMenu({ poliza, siniestro, chats, authUser }: { poliza: Poliza, siniestro: Siniestro, chats: ChatSiniestro[], authUser: number }) {
+export function SiniestroMenu({ poliza, siniestro, contactos, chats, authUser }: { poliza: Poliza, siniestro: Siniestro, contactos: Contacto[],chats: ChatSiniestro[], authUser: number }) {
+    console.log("SiniestroMenu", { poliza, siniestro, contactos, chats, authUser });
     return (
         <div>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
@@ -19,7 +21,7 @@ export function SiniestroMenu({ poliza, siniestro, chats, authUser }: { poliza: 
             <Tabs defaultValue="ficha" className="w-full">
                 <TabsList className="mb-6">
                     <TabsTrigger value="ficha">Siniestro</TabsTrigger>
-                    <TabsTrigger value="siniestros">Contactos</TabsTrigger>
+                    <TabsTrigger value="contactos">Contactos</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="ficha">
@@ -33,7 +35,7 @@ export function SiniestroMenu({ poliza, siniestro, chats, authUser }: { poliza: 
                 </TabsContent>
 
                 <TabsContent value="contactos">
-                    {/* <Contactos siniestro={siniestro} /> */}
+                    <TablaContactos contactos={contactos} />
                 </TabsContent>
             </Tabs>
         </div>

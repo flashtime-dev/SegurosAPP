@@ -157,3 +157,13 @@ export interface Comunidad {
     polizas: Poliza[];
     users: User[];
 }
+
+export interface Contacto {
+    id: number;
+    id_siniestro: number;
+    nombre: string;
+    cargo: string;
+    piso: string;
+    telefono: string;
+    
+}
