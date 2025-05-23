@@ -98,9 +98,11 @@ class SiniestroController extends Controller
      */
     public function show($id)
     {
-        $siniestro = Siniestro::findOrFail($id); // Buscar el siniestro por ID
-        $siniestro->load('poliza', 'contactos'); // Cargar las relaciones del siniestro
+        $siniestro = Siniestro::with('poliza.compania', 'contactos', 'chats.usuario')->findOrFail($id); // Buscar el siniestro por ID
+        //dd($siniestro); // Debugging: Verificar el siniestro cargado
         return Inertia::render('siniestros/show', [
+            'chats' => $siniestro->chats, // Pasar los chats a la vista
+            'authUser' => Auth::id(), // Pasar el ID del usuario autenticado a la vista
             'siniestro' => $siniestro, // Pasar el siniestro a la vista
             'contactos' => $siniestro->contactos, // Pasar los contactos a la vista
             'poliza' => $siniestro->poliza, // Pasar la póliza a la vista

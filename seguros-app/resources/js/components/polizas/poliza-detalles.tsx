@@ -1,5 +1,5 @@
 import { Label } from "@/components/ui/label";
-import { Poliza } from "@/types/poliza";
+import { Poliza } from "@/types";
 
 interface Props {
     label: string;

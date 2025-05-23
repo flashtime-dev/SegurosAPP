@@ -4,7 +4,7 @@ import { ConfirmarAnulacionModal } from "./ConfirmarAnulacionModal";
 
 interface Props {
     logoUrl: string;
-    telefono: string;
+    telefono?: string;
     polizaId: number;
     numeroPoliza: string;
     onCrearSiniestro: () => void;
