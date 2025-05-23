@@ -33,11 +33,17 @@ class ContactoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_siniestro' => 'required|exists:siniestro,id',
-            'nombre' => 'required|string|max:255',
-            'cargo' => 'nullable|string|max:100',
-            'piso' => 'nullable|string|max:50',
+            'id_comunidad' => 'required|exists:comunidades,id',
+            'nombre' => 'required|string|min:2|max:255',
+            'cargo' => 'nullable|string|min:2|max:100',
+            'piso' => 'nullable|string|min:2|max:50',
             'telefono' => 'required|string|max:15',
+        ],[
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'nombre.required' => 'El nombre es obligatorio.',
+            'cargo.min' => 'El cargo debe tener al menos 2 caracteres.',
+            'piso.min' => 'El piso debe tener al menos 2 caracteres.',
+            'telefono.required' => 'El teléfono es obligatorio.',
         ]);
 
         Contacto::create($request->all()); // Crear un nuevo contacto
@@ -70,10 +76,16 @@ class ContactoController extends Controller
     {
         $request->validate([
             'id_comunidad' => 'required|exists:comunidades,id',
-            'nombre' => 'required|string|max:255',
-            'cargo' => 'nullable|string|max:100',
-            'piso' => 'nullable|string|max:50',
+            'nombre' => 'required|string|min:2|max:255',
+            'cargo' => 'nullable|string|min:2|max:100',
+            'piso' => 'nullable|string|min:2|max:50',
             'telefono' => 'required|string|max:15',
+        ],[
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'nombre.required' => 'El nombre es obligatorio.',
+            'cargo.min' => 'El cargo debe tener al menos 2 caracteres.',
+            'piso.min' => 'El piso debe tener al menos 2 caracteres.',
+            'telefono.required' => 'El teléfono es obligatorio.',
         ]);
 
         $contacto->update($request->all()); // Actualizar el contacto

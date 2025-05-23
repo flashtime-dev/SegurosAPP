@@ -93,7 +93,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                     </DialogDescription>
                 </DialogHeader>
 
-                
+
                 {/* ScrollArea para el contenido del formulario */}
                 <ScrollArea className="max-h-[70vh]">
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -103,6 +103,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                 <Select
                                     onValueChange={(value) => setData("id_poliza", value)}
                                     value={data.id_poliza}
+                                    required
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Selecciona una póliza" />
@@ -123,7 +124,12 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                 <Input
                                     id="declaracion"
                                     value={data.declaracion}
-                                    onChange={e => setData('declaracion', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setData('declaracion', value.charAt(0).toUpperCase() + value.slice(1));
+                                    }}
+                                    required
+                                    placeholder="Daños por aguan en baño principal"
                                 />
                                 <InputError message={errors.declaracion} />
                             </div>
@@ -133,7 +139,11 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                 <Input
                                     id="tramitador"
                                     value={data.tramitador}
-                                    onChange={e => setData('tramitador', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setData('tramitador', value.charAt(0).toUpperCase() + value.slice(1));
+                                    }}
+                                    placeholder="Nombre del tramitador"
                                 />
                                 <InputError message={errors.tramitador} />
                             </div>
@@ -145,6 +155,8 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                         id="expediente"
                                         value={data.expediente}
                                         onChange={e => setData('expediente', e.target.value)}
+                                        required
+                                        placeholder="SIN-2025-001"
                                     />
                                     <InputError message={errors.expediente} />
                                 </div>
@@ -155,6 +167,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                         id="exp_cia"
                                         value={data.exp_cia}
                                         onChange={e => setData('exp_cia', e.target.value)}
+                                        placeholder="CIA-2025-COM-0012045"
                                     />
                                     <InputError message={errors.exp_cia} />
                                 </div>
@@ -166,6 +179,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                     id="exp_asist"
                                     value={data.exp_asist}
                                     onChange={e => setData('exp_asist', e.target.value)}
+                                    placeholder="AST-2025-001"
                                 />
                                 <InputError message={errors.exp_asist} />
                             </div>
@@ -194,9 +208,9 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
                                     <Label>Contactos</Label>
-                                    <Button 
-                                        type="button" 
-                                        variant="outline" 
+                                    <Button
+                                        type="button"
+                                        variant="outline"
                                         onClick={() => setData('contactos', [...data.contactos, { nombre: '', cargo: '', piso: '', telefono: '' }])}
                                     >
                                         Agregar Contacto
@@ -227,9 +241,11 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                     value={contacto.nombre}
                                                     onChange={e => {
                                                         const nuevosContactos = [...data.contactos];
-                                                        nuevosContactos[index] = { ...contacto, nombre: e.target.value };
+                                                        nuevosContactos[index] = { ...contacto, nombre: e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1) };
                                                         setData('contactos', nuevosContactos);
                                                     }}
+                                                    required
+                                                    placeholder="Nombre del contacto"
                                                 />
                                             </div>
                                             <div>
@@ -239,9 +255,10 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                     value={contacto.cargo}
                                                     onChange={e => {
                                                         const nuevosContactos = [...data.contactos];
-                                                        nuevosContactos[index] = { ...contacto, cargo: e.target.value };
+                                                        nuevosContactos[index] = { ...contacto, cargo: e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1) };
                                                         setData('contactos', nuevosContactos);
                                                     }}
+                                                    placeholder="Gerente de Siniestros"
                                                 />
                                             </div>
                                             <div>
@@ -251,9 +268,10 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                     value={contacto.piso}
                                                     onChange={e => {
                                                         const nuevosContactos = [...data.contactos];
-                                                        nuevosContactos[index] = { ...contacto, piso: e.target.value };
+                                                        nuevosContactos[index] = { ...contacto, piso: e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1) };
                                                         setData('contactos', nuevosContactos);
                                                     }}
+                                                    placeholder="Piso 3"
                                                 />
                                             </div>
                                             <div>
@@ -266,6 +284,8 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                         nuevosContactos[index] = { ...contacto, telefono: e.target.value };
                                                         setData('contactos', nuevosContactos);
                                                     }}
+                                                    required
+                                                    placeholder="+34 123 456 789"
                                                 />
                                             </div>
                                         </div>

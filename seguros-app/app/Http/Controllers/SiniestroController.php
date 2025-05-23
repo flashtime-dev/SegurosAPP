@@ -57,16 +57,32 @@ class SiniestroController extends Controller
      */
     public function store(Request $request)
     {
+
+        $request->merge([
+            'declaracion' => ucfirst(($request->declaracion)),
+            'tramitador' => ucfirst(($request->tramitador)),
+        ]);
+
         $request->validate([
             'id_poliza' => 'required|exists:polizas,id',
-            'declaracion' => 'required|string',
-            'tramitador' => 'nullable|string|max:255',
-            'expediente' => 'required|string|max:50',
-            'exp_cia' => 'nullable|string|max:50',
-            'exp_asist' => 'nullable|string|max:50',
+            'declaracion' => 'required|string|min:10',
+            'tramitador' => 'nullable|string|min:2|max:255',
+            'expediente' => 'required|string|min:2|max:50',
+            'exp_cia' => 'nullable|string|min:2|max:50',
+            'exp_asist' => 'nullable|string|min:2|max:50',
             'fecha_ocurrencia' => 'nullable|date',
             'adjunto' => 'nullable|file|max:2048',
             'contactos' => 'nullable|array',
+        ], [
+            'id_poliza.required' => 'La póliza es obligatoria.',
+            'declaracion.min' => 'La declaración debe tener al menos 2 caracteres.',
+            'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
+            'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
+            'exp_cia.min' => 'La compañía debe tener al menos 2 caracteres.',
+            'exp_asist.min' => 'El asistente debe tener al menos 2 caracteres.',
+            'adjunto.file' => 'El archivo adjunto no es válido.',
+            'adjunto.mimes' => 'El archivo adjunto debe ser un archivo de tipo: pdf, jpg, jpeg, png.',
+            'adjunto.max' => 'El archivo adjunto no puede ser mayor de 2MB.',
         ]);
 
         $data = $request->except(['contactos', 'adjunto']);
@@ -124,16 +140,31 @@ class SiniestroController extends Controller
     {
         $siniestro = Siniestro::findOrFail($id);
 
+        $request->merge([
+            'declaracion' => ucfirst(($request->declaracion)),
+            'tramitador' => ucfirst(($request->tramitador)),
+        ]);
+
         $request->validate([
             'id_poliza' => 'required|exists:polizas,id',
-            'declaracion' => 'required|string',
-            'tramitador' => 'nullable|string|max:255',
-            'expediente' => 'required|string|max:50',
-            'exp_cia' => 'nullable|string|max:50',
-            'exp_asist' => 'nullable|string|max:50',
+            'declaracion' => 'required|string|min:10',
+            'tramitador' => 'nullable|string|min:2|max:255',
+            'expediente' => 'required|string|min:2|max:50',
+            'exp_cia' => 'nullable|string|min:2|max:50',
+            'exp_asist' => 'nullable|string|min:2|max:50',
             'fecha_ocurrencia' => 'nullable|date',
-            'adjunto' => 'nullable|boolean',
+            'adjunto' => 'nullable|file|max:2048',
             'contactos' => 'nullable|array',
+        ], [
+            'id_poliza.required' => 'La póliza es obligatoria.',
+            'declaracion.min' => 'La declaración debe tener al menos 2 caracteres.',
+            'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
+            'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
+            'exp_cia.min' => 'La compañía debe tener al menos 2 caracteres.',
+            'exp_asist.min' => 'El asistente debe tener al menos 2 caracteres.',
+            'adjunto.file' => 'El archivo adjunto no es válido.',
+            'adjunto.mimes' => 'El archivo adjunto debe ser un archivo de tipo: pdf, jpg, jpeg, png.',
+            'adjunto.max' => 'El archivo adjunto no puede ser mayor de 2MB.',
         ]);
 
         $siniestro->update($request->except('contactos', 'adjunto'));

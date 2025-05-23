@@ -33,8 +33,11 @@ export function ComunidadCard({ comunidad, onEdit }: { comunidad: Comunidad; onE
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <DropdownMenuTrigger
                     ref={menuButtonRef}
-                    className="absolute top-2 right-2">
-                    <EllipsisVertical className="w-6 h-6 text-gray-500 hover:text-gray-700 cursor-pointer" />
+                    // className="absolute top-2 right-2"
+                    className="absolute top-2 right-2 w-6 h-6 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
+                >
+                    {/* <EllipsisVertical className="text-gray-500 hover:text-gray-700 cursor-pointer" /> */}
+                    &#x22EE; {/* Icono de tres puntos */}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="z-10">
                     <DropdownMenuItem onSelect={handleEdit}>
