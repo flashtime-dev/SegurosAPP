@@ -38,7 +38,7 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <DropdownMenuTrigger
                     ref={menuButtonRef}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    className="absolute top-2 right-2 w-6 h-6 text-gray-500 hover:text-gray-700 focus:outline-none"
                 >
                     &#x22EE; {/* Icono de tres puntos */}
                 </DropdownMenuTrigger>

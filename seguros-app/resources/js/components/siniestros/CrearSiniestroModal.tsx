@@ -97,6 +97,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                 <Select
                                     onValueChange={(value) => setData("id_poliza", value)}
                                     defaultValue={data.id_poliza}
+                                    required
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Selecciona una póliza" />
@@ -117,7 +118,12 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                 <Input
                                     id="declaracion"
                                     value={data.declaracion}
-                                    onChange={e => setData('declaracion', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setData('declaracion', value.charAt(0).toUpperCase() + value.slice(1));
+                                    }}
+                                    required
+                                    placeholder="Daños por aguan en baño principal"
                                 />
                                 <InputError message={errors.declaracion} />
                             </div>
@@ -127,7 +133,11 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                 <Input
                                     id="tramitador"
                                     value={data.tramitador}
-                                    onChange={e => setData('tramitador', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setData('tramitador', value.charAt(0).toUpperCase() + value.slice(1));
+                                    }}
+                                    placeholder="Nombre del tramitador"
                                 />
                                 <InputError message={errors.tramitador} />
                             </div>
@@ -139,6 +149,8 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                         id="expediente"
                                         value={data.expediente}
                                         onChange={e => setData('expediente', e.target.value)}
+                                        required
+                                        placeholder="SIN-2025-001"
                                     />
                                     <InputError message={errors.expediente} />
                                 </div>
@@ -149,6 +161,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                         id="exp_cia"
                                         value={data.exp_cia}
                                         onChange={e => setData('exp_cia', e.target.value)}
+                                        placeholder="CIA-2025-COM-0012045"
                                     />
                                     <InputError message={errors.exp_cia} />
                                 </div>
@@ -160,6 +173,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                     id="exp_asist"
                                     value={data.exp_asist}
                                     onChange={e => setData('exp_asist', e.target.value)}
+                                    placeholder="AST-2025-001"
                                 />
                                 <InputError message={errors.exp_asist} />
                             </div>
@@ -211,7 +225,13 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                                 <Input
                                                     id={`nombre-${index}`}
                                                     value={contacto.nombre}
-                                                    onChange={e => actualizarContacto(index, 'nombre', e.target.value)}
+                                                    onChange={e => actualizarContacto(
+                                                        index,
+                                                        'nombre',
+                                                        e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
+                                                    )}
+                                                    required
+                                                    placeholder="Nombre del contacto"
                                                 />
                                             </div>
                                             <div>
@@ -219,7 +239,12 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                                 <Input
                                                     id={`cargo-${index}`}
                                                     value={contacto.cargo}
-                                                    onChange={e => actualizarContacto(index, 'cargo', e.target.value)}
+                                                    onChange={e => actualizarContacto(
+                                                        index,
+                                                        'cargo',
+                                                        e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
+                                                    )}
+                                                    placeholder="Gerente de Siniestros"
                                                 />
                                             </div>
                                             <div>
@@ -227,7 +252,12 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                                 <Input
                                                     id={`piso-${index}`}
                                                     value={contacto.piso}
-                                                    onChange={e => actualizarContacto(index, 'piso', e.target.value)}
+                                                    onChange={e => actualizarContacto(
+                                                        index,
+                                                        'piso',
+                                                        e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
+                                                    )}
+                                                    placeholder="Piso 3"
                                                 />
                                             </div>
                                             <div>
@@ -236,6 +266,8 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                                     id={`telefono-${index}`}
                                                     value={contacto.telefono}
                                                     onChange={e => actualizarContacto(index, 'telefono', e.target.value)}
+                                                    required
+                                                    placeholder="+34 123 456 789"
                                                 />
                                             </div>
                                         </div>
