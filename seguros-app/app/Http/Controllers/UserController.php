@@ -72,7 +72,7 @@ class UserController extends BaseController
         $request->validate([
             'name' => 'required|string|min:2|max:255',
             'email' => 'required|string|email|max:255|unique:users,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
-            'password' => 'required|string|confirmed||regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/',
+            'password' => 'required|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/',
             'id_rol' => 'required|exists:roles,id',
             'address' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:15',

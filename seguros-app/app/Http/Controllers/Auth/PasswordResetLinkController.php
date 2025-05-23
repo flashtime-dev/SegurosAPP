@@ -30,12 +30,15 @@ class PasswordResetLinkController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
+        ],[
+            'email.required' => 'El campo email es obligatorio.',
+            'email.email' => 'El formato del email es inválido.',
         ]);
 
         Password::sendResetLink(
             $request->only('email')
         );
 
-        return back()->with('status', __('A reset link will be sent if the account exists.'));
+        return back()->with('status', __('Te enviaremos un enlace para restablecer tu contraseña si la cuenta existe.'));
     }
 }
