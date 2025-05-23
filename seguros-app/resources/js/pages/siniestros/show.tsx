@@ -1,15 +1,17 @@
 import { Head, usePage } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChatSiniestro, Siniestro } from "@/types";
+import { ChatSiniestro, Poliza, Siniestro } from "@/types";
 import { SiniestroMenu } from "@/components/siniestros/SiniestroMenu";
 
 export default function Show() {
     const { props } = usePage<{ 
+        poliza: Poliza,
         siniestro: Siniestro, 
         chats: ChatSiniestro[];
         authUser: number;
     }>();
+    const { poliza } = props;
     const { siniestro } = props;
     const {chats} = props;
     const { authUser } = props;
@@ -22,7 +24,7 @@ export default function Show() {
                 <Card>
                     <CardContent className="space-y-6">
                         {/* <SiniestroHeader comunidad={poliza.comunidad.nombre} estado={poliza.estado} /> */}
-                        <SiniestroMenu siniestro={siniestro} chats={chats} authUser={authUser}/>
+                        <SiniestroMenu poliza={poliza} siniestro={siniestro} chats={chats} authUser={authUser}/>
                     </CardContent>
                 </Card>
             </div>

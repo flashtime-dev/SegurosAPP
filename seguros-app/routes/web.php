@@ -8,6 +8,7 @@ use App\Http\Controllers\PolizaController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AgenteController;
+use App\Http\Controllers\ChatSiniestroController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('empleados', [UserController::class, 'empleados'])->name('empleados.index');
     Route::resource('roles', RolController::class);
     Route::resource('comunidades', ComunidadController::class);
+    Route::post('/chat-siniestro/{siniestro}', [ChatSiniestroController::class, 'store'])->name('chat-siniestro.store');
     Route::resource('siniestros', SiniestroController::class);
     Route::resource('agentes', AgenteController::class);
 });

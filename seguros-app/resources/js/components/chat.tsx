@@ -1,4 +1,4 @@
-import { ChatPoliza } from "@/types";
+import { ChatPoliza, ChatSiniestro } from "@/types";
 import { usePage } from "@inertiajs/react";
 import { format, parseISO } from "date-fns";
 
@@ -6,7 +6,7 @@ function formatearFecha(fechaIso: string) {
     return format(parseISO(fechaIso), "dd/MM/yyyy HH:mm");
 }
 
-export function Chat({ chat, authUser }: { chat: ChatPoliza, authUser: number }) {
+export function Chat({ chat, authUser }: { chat: ChatPoliza | ChatSiniestro, authUser: number }) {
     const { auth } = usePage().props; // Obtén el usuario logueado
     const usuarioEmisor = chat.usuario.id === authUser; // Compara IDs
 

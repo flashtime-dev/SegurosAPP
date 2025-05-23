@@ -122,6 +122,17 @@ export interface ChatPoliza {
     };
 }
 
+export interface ChatSiniestro {
+    id: number;
+    id_siniestro: number;
+    mensaje: string;
+    created_at: string;
+    usuario: {
+        id: number;
+        name: string;
+    };
+}
+
 export interface Siniestro {
     id: number;
     declaracion: string;
@@ -131,10 +142,8 @@ export interface Siniestro {
     exp_asist: string;
     fecha_ocurrencia: string;
     adjunto: string | null;
-    poliza: {
-        id: number;
-        numero: string;
-    }
+    poliza: Poliza;
+    estado: string;
 }
 
 export interface Comunidad {

@@ -43,7 +43,10 @@ class ChatSiniestroController extends Controller
             'adjunto' => $request->adjunto ?? false,
         ]);
 
-        return redirect()->route('chats-siniestros.index', $idSiniestro)->with('success', 'Mensaje enviado correctamente.');
+        // Cargar el usuario para incluirlo en la respuesta
+        
+        $chat->load('usuario'); // Carga la relación usuario
+        return response()->json(['success' => true, 'chat' => $chat]);
     }
 
     /**
