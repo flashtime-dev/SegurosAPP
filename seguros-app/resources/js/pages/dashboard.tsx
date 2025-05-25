@@ -6,7 +6,7 @@ import { Building, FileText, AlertCircle } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Panel de Control',
         href: '/dashboard',
     },
 ];
@@ -14,7 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Dashboard({comunidades, polizas, siniestros}: { comunidades: number, polizas: number, siniestros: number }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title="Panel de Control" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
