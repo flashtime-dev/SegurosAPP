@@ -17,10 +17,18 @@ class UserController extends BaseController
     public function __construct()
     {
         // Aplica middleware de permisos a métodos específicos
-        $this->middleware(CheckPermiso::class . ':usuarios.ver', ['only' => ['index', 'show']]);
-        $this->middleware(CheckPermiso::class . ':usuarios.crear', ['only' => ['create', 'store']]);
-        $this->middleware(CheckPermiso::class . ':usuarios.editar', ['only' => ['edit', 'update']]);
+
+        //Usuarios
+        $this->middleware(CheckPermiso::class . ':usuarios.ver', ['only' => ['index']]);
+        $this->middleware(CheckPermiso::class . ':usuarios.crear', ['only' => ['store']]);
+        $this->middleware(CheckPermiso::class . ':usuarios.editar', ['only' => ['update']]);
         $this->middleware(CheckPermiso::class . ':usuarios.eliminar', ['only' => ['destroy']]);
+
+        //Empleados
+        $this->middleware(CheckPermiso::class . ':empleados.ver', ['only' => ['empleados']]);
+        $this->middleware(CheckPermiso::class . ':empleados.crear', ['only' => ['store']]);
+        $this->middleware(CheckPermiso::class . ':empleados.editar', ['only' => ['update']]);
+        $this->middleware(CheckPermiso::class . ':empleados.eliminar', ['only' => ['destroy']]);
     }
 
     public function index()
@@ -112,17 +120,17 @@ class UserController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
-        $user = User::findOrFail($id); // Buscar el usuario por ID
-        $user->load('rol'); // Cargar el rol del usuario
-        $roles = Rol::all(); // Obtener todos los roles
-        return Inertia::render('usuarios/show', [
-            'user' => $user, // Pasar el usuario a la vista
-            'rol' => $user->rol, // Pasar el rol del usuario a la vista
-            'roles' => $roles, // Pasar todos los roles a la vista
-        ]); // Retornar la vista con los detalles del usuario
-    }
+    // public function show($id)
+    // {
+    //     $user = User::findOrFail($id); // Buscar el usuario por ID
+    //     $user->load('rol'); // Cargar el rol del usuario
+    //     $roles = Rol::all(); // Obtener todos los roles
+    //     return Inertia::render('usuarios/show', [
+    //         'user' => $user, // Pasar el usuario a la vista
+    //         'rol' => $user->rol, // Pasar el rol del usuario a la vista
+    //         'roles' => $roles, // Pasar todos los roles a la vista
+    //     ]); // Retornar la vista con los detalles del usuario
+    // }
 
     public function update(Request $request, $id)
     {

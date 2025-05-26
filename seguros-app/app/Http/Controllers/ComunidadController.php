@@ -9,8 +9,20 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
-class ComunidadController extends Controller
+use Illuminate\Routing\Controller as BaseController;
+use App\Http\Middleware\CheckPermiso;
+class ComunidadController extends BaseController
 {
+    public function __construct()
+    {
+        // Aplica middleware de permisos a métodos específicos
+
+        //Comunidades
+        $this->middleware(CheckPermiso::class . ':comunidades.ver', ['only' => ['index']]);
+        $this->middleware(CheckPermiso::class . ':comunidades.crear', ['only' => ['store']]);
+        $this->middleware(CheckPermiso::class . ':comunidades.editar', ['only' => ['update']]);
+        $this->middleware(CheckPermiso::class . ':comunidades.eliminar', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -49,13 +61,13 @@ class ComunidadController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $usuarios = User::all(); // Obtener todos los usuarios
-        return Inertia::render('comunidades/create', [
-            'usuarios' => $usuarios, // Pasar los usuarios a la vista
-        ]); // Retornar la vista para crear una nueva comunidad
-    }
+    // public function create()
+    // {
+    //     $usuarios = User::all(); // Obtener todos los usuarios
+    //     return Inertia::render('comunidades/create', [
+    //         'usuarios' => $usuarios, // Pasar los usuarios a la vista
+    //     ]); // Retornar la vista para crear una nueva comunidad
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -104,24 +116,24 @@ class ComunidadController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
-        $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
-        return Inertia::render('Comunidad/Show', ['comunidad' => $comunidad]);
-    }
+    // public function show($id)
+    // {
+    //     $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+    //     return Inertia::render('Comunidad/Show', ['comunidad' => $comunidad]);
+    // }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
-    {
-        $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
-        $usuarios = User::all(); // Obtener todos los usuarios
-        return Inertia::render('comunidades/edit', [
-            'comunidad' => $comunidad, // Pasar la comunidad a la vista
-            'usuarios' => $usuarios, // Pasar los usuarios a la vista
-        ]); // Retornar la vista para editar la comunidad
-    }
+    // public function edit($id)
+    // {
+    //     $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+    //     $usuarios = User::all(); // Obtener todos los usuarios
+    //     return Inertia::render('comunidades/edit', [
+    //         'comunidad' => $comunidad, // Pasar la comunidad a la vista
+    //         'usuarios' => $usuarios, // Pasar los usuarios a la vista
+    //     ]); // Retornar la vista para editar la comunidad
+    // }
 
     /**
      * Update the specified resource in storage.

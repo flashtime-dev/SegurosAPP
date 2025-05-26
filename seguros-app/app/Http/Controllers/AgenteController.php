@@ -6,8 +6,20 @@ use App\Models\Agente;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class AgenteController extends Controller
+use Illuminate\Routing\Controller as BaseController;
+use App\Http\Middleware\CheckPermiso;
+class AgenteController extends BaseController
 {
+    public function __construct()
+    {
+        // Aplica middleware de permisos a métodos específicos
+
+        //Agentes
+        $this->middleware(CheckPermiso::class . ':agentes.ver', ['only' => ['index']]);
+        $this->middleware(CheckPermiso::class . ':agentes.crear', ['only' => ['store']]);
+        $this->middleware(CheckPermiso::class . ':agentes.editar', ['only' => ['update']]);
+        $this->middleware(CheckPermiso::class . ':agentes.eliminar', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */

@@ -10,8 +10,18 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
-class SiniestroController extends Controller
+use Illuminate\Routing\Controller as BaseController;
+use App\Http\Middleware\CheckPermiso;
+class SiniestroController extends BaseController
 {
+    public function __construct()
+    {
+        // Aplica middleware de permisos a métodos específicos
+        $this->middleware(CheckPermiso::class . ':siniestros.ver', ['only' => ['index', 'show']]);
+        $this->middleware(CheckPermiso::class . ':siniestros.crear', ['only' => ['store']]);
+        $this->middleware(CheckPermiso::class . ':siniestros.editar', ['only' => ['update']]);
+        $this->middleware(CheckPermiso::class . ':siniestros.eliminar', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */

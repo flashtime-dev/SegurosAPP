@@ -8,8 +8,21 @@ use App\Models\Permiso;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class RolController extends Controller
+use Illuminate\Routing\Controller as BaseController;
+use App\Http\Middleware\CheckPermiso;
+class RolController extends BaseController
 {
+    public function __construct()
+    {
+        // Aplica middleware de permisos a métodos específicos
+
+        //Roles
+        $this->middleware(CheckPermiso::class . ':roles.ver', ['only' => ['index']]);
+        $this->middleware(CheckPermiso::class . ':roles.crear', ['only' => ['store']]);
+        $this->middleware(CheckPermiso::class . ':roles.editar', ['only' => ['update']]);
+        $this->middleware(CheckPermiso::class . ':roles.eliminar', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -29,11 +42,11 @@ class RolController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        // Ya no es necesario, se utiliza el modal
-        abort(404);
-    }
+    // public function create()
+    // {
+    //     // Ya no es necesario, se utiliza el modal
+    //     abort(404);
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -85,11 +98,11 @@ class RolController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
-    {
-        // Ya no es necesario, se utiliza el modal
-        abort(404);
-    }
+    // public function edit($id)
+    // {
+    //     // Ya no es necesario, se utiliza el modal
+    //     abort(404);
+    // }
 
     /**
      * Update the specified resource in storage.

@@ -10,8 +10,21 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
-class PolizaController extends Controller
+use Illuminate\Routing\Controller as BaseController;
+use App\Http\Middleware\CheckPermiso;
+class PolizaController extends BaseController
 {
+    public function __construct()
+    {
+        // Aplica middleware de permisos a métodos específicos
+
+        //Polizas
+        $this->middleware(CheckPermiso::class . ':polizas.ver', ['only' => ['index', 'show']]);
+        $this->middleware(CheckPermiso::class . ':polizas.crear', ['only' => ['store']]);
+        $this->middleware(CheckPermiso::class . ':polizas.editar', ['only' => ['update']]);
+        $this->middleware(CheckPermiso::class . ':polizas.eliminar', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -50,14 +63,14 @@ class PolizaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $companias = Compania::all();
-        $comunidades = Comunidad::all();
-        $agentes = Agente::all();
+    // public function create()
+    // {
+    //     $companias = Compania::all();
+    //     $comunidades = Comunidad::all();
+    //     $agentes = Agente::all();
 
-        return Inertia::render('polizas/create', compact('companias', 'comunidades', 'agentes'));
-    }
+    //     return Inertia::render('polizas/create', compact('companias', 'comunidades', 'agentes'));
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -140,15 +153,15 @@ class PolizaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        $poliza = Poliza::findOrFail($id);
-        $companias = Compania::all();
-        $comunidades = Comunidad::all();
-        $agentes = Agente::all();
+    // public function edit(string $id)
+    // {
+    //     $poliza = Poliza::findOrFail($id);
+    //     $companias = Compania::all();
+    //     $comunidades = Comunidad::all();
+    //     $agentes = Agente::all();
 
-        return Inertia::render('polizas/edit', compact('poliza', 'companias', 'comunidades', 'agentes'));
-    }
+    //     return Inertia::render('polizas/edit', compact('poliza', 'companias', 'comunidades', 'agentes'));
+    // }
 
     /**
      * Update the specified resource in storage.
