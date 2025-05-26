@@ -29,7 +29,7 @@ class PasswordResetLinkController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
         ],[
             'email.required' => 'El campo email es obligatorio.',
             'email.email' => 'El formato del email es inválido.',
