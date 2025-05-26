@@ -83,28 +83,28 @@ class RolPermisoSeeder extends Seeder
             //Permisos de Siniestros
             RolPermiso::create([
                 'id_rol' => 2,
+                'id_permiso' => 27
+            ]);
+            RolPermiso::create([
+                'id_rol' => 2,
+                'id_permiso' => 28
+            ]);
+            RolPermiso::create([
+                'id_rol' => 2,
+                'id_permiso' => 29
+            ]);
+            RolPermiso::create([
+                'id_rol' => 2,
+                'id_permiso' => 30
+            ]);
+            RolPermiso::create([
+                'id_rol' => 2,
                 'id_permiso' => 31
-            ]);
-            RolPermiso::create([
-                'id_rol' => 2,
-                'id_permiso' => 32
-            ]);
-            RolPermiso::create([
-                'id_rol' => 2,
-                'id_permiso' => 33
-            ]);
-            RolPermiso::create([
-                'id_rol' => 2,
-                'id_permiso' => 34
-            ]);
-            RolPermiso::create([
-                'id_rol' => 2,
-                'id_permiso' => 35
             ]);
             //Permisos de chats de siniestros
             RolPermiso::create([
                 'id_rol' => 2,
-                'id_permiso' => 36
+                'id_permiso' => 32
             ]);
 
         //Permisos para el rol de Usuario
@@ -138,28 +138,28 @@ class RolPermisoSeeder extends Seeder
             //Permisos de Siniestros
             RolPermiso::create([
                 'id_rol' => 3,
+                'id_permiso' => 27
+            ]);
+            RolPermiso::create([
+                'id_rol' => 3,
+                'id_permiso' => 28
+            ]);
+            RolPermiso::create([
+                'id_rol' => 3,
+                'id_permiso' => 29
+            ]);
+            RolPermiso::create([
+                'id_rol' => 3,
+                'id_permiso' => 30
+            ]);
+            RolPermiso::create([
+                'id_rol' => 3,
                 'id_permiso' => 31
-            ]);
-            RolPermiso::create([
-                'id_rol' => 3,
-                'id_permiso' => 32
-            ]);
-            RolPermiso::create([
-                'id_rol' => 3,
-                'id_permiso' => 33
-            ]);
-            RolPermiso::create([
-                'id_rol' => 3,
-                'id_permiso' => 34
-            ]);
-            RolPermiso::create([
-                'id_rol' => 3,
-                'id_permiso' => 35
             ]);
             //Permisos de chats de siniestros
             RolPermiso::create([
                 'id_rol' => 3,
-                'id_permiso' => 36
+                'id_permiso' => 32
             ]);
 
     }

@@ -21,7 +21,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     //Panel de control del usuario
-    Route::get('panel-control', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Rutas para el manejo de usuarios
     Route::resource('usuarios', UserController::class)->except(['create', 'edit', 'show']);
