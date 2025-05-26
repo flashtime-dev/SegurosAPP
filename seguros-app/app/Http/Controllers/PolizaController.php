@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
+
+use App\Mail\SolicitudAnulacionPoliza;
+use Illuminate\Support\Facades\Mail;
+use App\Models\User;
+
 class PolizaController extends BaseController
 {
     public function __construct()
@@ -51,7 +56,7 @@ class PolizaController extends BaseController
             $companias = Compania::all();
             $agentes = Agente::all();
         }
-        
+
         return Inertia::render('polizas/index', [
             'polizas' => $polizas,
             'companias' => $companias,
@@ -98,7 +103,7 @@ class PolizaController extends BaseController
             'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
             'observaciones' => 'nullable|string',
             'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
-        ],[
+        ], [
             'id_compania.required' => 'La compañía es obligatoria.',
             'id_comunidad.required' => 'La comunidad es obligatoria.',
             'alias.min' => 'El alias debe tener al menos 2 caracteres.',
@@ -187,7 +192,7 @@ class PolizaController extends BaseController
             'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
             'observaciones' => 'nullable|string',
             'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
-        ],[
+        ], [
             'id_compania.required' => 'La compañía es obligatoria.',
             'id_comunidad.required' => 'La comunidad es obligatoria.',
             'alias.min' => 'El alias debe tener al menos 2 caracteres.',
@@ -214,5 +219,30 @@ class PolizaController extends BaseController
         $poliza->delete();
 
         return redirect()->route('polizas.index')->with('success', 'Póliza eliminada correctamente.');
+    }
+
+    /**
+     * Create a mail to anulate a policy
+     */
+    public function solicitarAnulacion(Poliza $poliza)
+    {
+        try {
+            // Obtener el propietario de la comunidad
+            $propietario = User::find($poliza->comunidad->id_propietario);
+
+            if (!$propietario || !$propietario->email) {
+                return redirect()->route('polizas.index')->with('error', 'El propietario no tiene un email asociado.');
+            }
+
+            // Enviar el correo de solicitud de anulación al email del propietario
+            Mail::to($propietario->email)->send(new SolicitudAnulacionPoliza($poliza));
+            // Actualizar el estado de la póliza a "Solicitada"
+            $poliza->estado = 'Solicitada';
+            $poliza->save();
+
+            return redirect()->route('polizas.index')->with('success', 'Solicitud de anulación enviada correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->route('polizas.index')->with('error', 'Error al enviar la solicitud de anulación: ' . $e->getMessage());
+        }
     }
 }

@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('polizas', PolizaController::class)->except(['create', 'edit']);
     Route::get('/polizas/{id}/pdf', [PolizaController::class, 'servePdf'])->name('polizas.pdf');
     Route::post('/chat-poliza/{poliza}', [ChatPolizaController::class, 'store'])->name('chat-poliza.store');
+    Route::post('/polizas/{poliza}/solicitar-anulacion', [PolizaController::class, 'solicitarAnulacion'])->name('polizas.solicitar-anulacion');
 
     // Rutas para el manejo de siniestros
     Route::resource('siniestros', SiniestroController::class)->except(['create', 'edit']);

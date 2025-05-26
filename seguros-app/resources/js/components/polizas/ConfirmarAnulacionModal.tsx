@@ -9,6 +9,8 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+import { router } from "@inertiajs/react";
+
 interface Props {
     isOpen: boolean;
     onClose: () => void;
@@ -19,12 +21,21 @@ interface Props {
 export function ConfirmarAnulacionModal({ isOpen, onClose, polizaId, numeroPoliza }: Props) {
     const handleConfirm = () => {
         // Enviamos la solicitud al backend para enviar el email
-        // router.post(route("polizas.solicitar-anulacion", polizaId), {}, {
-        //     onSuccess: () => {
-        //         onClose();
-        //     },
-        // });
-        console.log("Solicitud de anulación enviada para la póliza:", polizaId);
+        router.post(route("polizas.solicitar-anulacion", polizaId), {}, {
+            onSuccess: () => {
+                onClose();
+                // Aquí podrías mostrar un mensaje de éxito si lo deseas
+                console.log("Solicitud de anulación enviada para la póliza:", polizaId);
+                alert(`Solicitud de anulación enviada para la póliza número ${numeroPoliza}.`);
+            },
+            onError: (error) => {
+                onClose();
+                // Aquí podrías mostrar un mensaje de error al usuario
+                console.error("Error al enviar la solicitud de anulación:", error);
+                alert("Error al enviar la solicitud de anulación. Por favor, inténtalo de nuevo más tarde.");
+            }
+        });
+        //console.log("Solicitud de anulación enviada para la póliza:", polizaId);
     };
 
     return (
