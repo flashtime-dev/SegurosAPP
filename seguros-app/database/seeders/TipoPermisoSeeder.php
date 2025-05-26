@@ -18,19 +18,16 @@ class TipoPermisoSeeder extends Seeder
             'nombre' => 'Usuarios'
         ]);
         TipoPermiso::create([
-            'nombre' => 'Permisos'
+            'nombre' => 'Empleados'
         ]);
         TipoPermiso::create([
             'nombre' => 'Roles'
         ]);
         TipoPermiso::create([
-            'nombre' => 'Tipo de Permisos'
-        ]);
-        TipoPermiso::create([
-            'nombre' => 'Compañias'
-        ]);
-        TipoPermiso::create([
             'nombre' => 'Comunidades'
+        ]);
+        TipoPermiso::create([
+            'nombre' => 'Agentes'
         ]);
         TipoPermiso::create([
             'nombre' => 'Polizas'

@@ -15,7 +15,7 @@ class ChatPolizaController extends BaseController
     public function __construct()
     {
         // Aplica middleware de permisos a métodos específicos
-        $this->middleware(CheckPermiso::class . ':chat_poliza.crear', ['only' => ['store']]);
+        $this->middleware(CheckPermiso::class . ':chats_polizas.crear', ['only' => ['store']]);
     }
     
     public function store(Request $request, $idPoliza)

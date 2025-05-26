@@ -14,7 +14,7 @@ class ChatSiniestroController extends BaseController
     public function __construct()
     {
         // Aplica middleware de permisos a métodos específicos
-        $this->middleware(CheckPermiso::class . ':chat_siniestro.crear', ['only' => ['store']]);
+        $this->middleware(CheckPermiso::class . ':chats_siniestros.crear', ['only' => ['store']]);
     }
     /**
      * Store a newly created resource in storage.

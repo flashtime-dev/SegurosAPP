@@ -17,24 +17,44 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+// Rutas protegidas por autenticación y verificación de correo electrónico
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/polizas/{id}/pdf', [PolizaController::class, 'servePdf'])->name('polizas.pdf');
-    Route::resource('polizas', PolizaController::class);
-    Route::get('telefonos-asistencia', [CompaniaController::class, 'telefonosAsistencia'])->name('telefonos-asistencia');
-    Route::resource('companias', CompaniaController::class);
-    Route::post('/chat-poliza/{poliza}', [ChatPolizaController::class, 'store'])->name('chat-poliza.store');
-    Route::resource('usuarios', UserController::class);
+    //Panel de control del usuario
+    Route::get('panel-control', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Rutas para el manejo de usuarios
+    Route::resource('usuarios', UserController::class)->except(['create', 'edit', 'show']);
+
+    // Rutas para el manejo de roles
+    Route::resource('roles', RolController::class)->except(['create', 'edit', 'show']);
+
+    // Rutas para el manejo de empleados(reutiliza rutas de usuarios)
     Route::get('empleados', [UserController::class, 'empleados'])->name('empleados.index');
-    Route::resource('roles', RolController::class);
-    Route::resource('comunidades', ComunidadController::class);
+
+    // Rutas para el manejo de comunidades
+    Route::resource('comunidades', ComunidadController::class)->except(['create', 'edit', 'show']);
+
+    // Rutas para el manejo de agentes
+    Route::resource('agentes', AgenteController::class)->except(['create', 'edit', 'show']);
+
+    // Rutas para el manejo de pólizas
+    Route::resource('polizas', PolizaController::class)->except(['create', 'edit']);
+    Route::get('/polizas/{id}/pdf', [PolizaController::class, 'servePdf'])->name('polizas.pdf');
+    Route::post('/chat-poliza/{poliza}', [ChatPolizaController::class, 'store'])->name('chat-poliza.store');
+
+    // Rutas para el manejo de siniestros
+    Route::resource('siniestros', SiniestroController::class)->except(['create', 'edit']);
     Route::post('/chat-siniestro/{siniestro}', [ChatSiniestroController::class, 'store'])->name('chat-siniestro.store');
-    Route::resource('siniestros', SiniestroController::class);
-    Route::resource('agentes', AgenteController::class);
+
+    // Rutas para consultar los teléfonos de asistencia de las compañías
+    Route::get('telefonos-asistencia', [CompaniaController::class, 'telefonosAsistencia'])->name('telefonos-asistencia');
+
 });
 
 
-
-require __DIR__ . '/settings.php';
+// Rutas de autenticación
 require __DIR__ . '/auth.php';
+
+// Rutas de configuración de la aplicación y datos del usuario
+require __DIR__ . '/settings.php';

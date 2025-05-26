@@ -13,6 +13,7 @@ class PermisoSeeder extends Seeder
      */
     public function run(): void
     {
+        //Usuarios
         Permiso::create([
             'nombre' => 'usuarios.crear',
             'descripcion' => 'Crear Usuarios',
@@ -33,26 +34,30 @@ class PermisoSeeder extends Seeder
             'descripcion' => 'Eliminar Usuarios',
             'id_tipo' => 1
         ]);
+
+        //Empleados
         Permiso::create([
-            'nombre' => 'permisos.crear',
-            'descripcion' => 'Crear Permisos',
+            'nombre' => 'empleados.crear',
+            'descripcion' => 'Crear Empleados',
             'id_tipo' => 2
         ]);
         Permiso::create([
-            'nombre' => 'permisos.ver',
-            'descripcion' => 'Ver Permisos',
+            'nombre' => 'empleados.ver',
+            'descripcion' => 'Ver Empleados',
             'id_tipo' => 2
         ]);
         Permiso::create([
-            'nombre' => 'permisos.editar',
-            'descripcion' => 'Actualizar Permisos',
+            'nombre' => 'empleados.editar',
+            'descripcion' => 'Actualizar Empleados',
             'id_tipo' => 2
         ]);
         Permiso::create([
-            'nombre' => 'permisos.eliminar',
-            'descripcion' => 'Eliminar Permisos',
+            'nombre' => 'empleados.eliminar',
+            'descripcion' => 'Eliminar Empleados',
             'id_tipo' => 2
         ]);
+
+        //Roles
         Permiso::create([
             'nombre' => 'roles.crear',
             'descripcion' => 'Crear Roles',
@@ -73,105 +78,119 @@ class PermisoSeeder extends Seeder
             'descripcion' => 'Eliminar Roles',
             'id_tipo' => 3
         ]);
-        Permiso::create([
-            'nombre' => 'tipospermisos.crear',
-            'descripcion' => 'Crear Tipo de Permisos',
-            'id_tipo' => 4
-        ]);
-        Permiso::create([
-            'nombre' => 'tipospermisos.ver',
-            'descripcion' => 'Ver Tipo de Permisos',
-            'id_tipo' => 4
-        ]);
-        Permiso::create([
-            'nombre' => 'tipospermisos.editar',
-            'descripcion' => 'Actualizar Tipo de Permisos',
-            'id_tipo' => 4
-        ]);
-        Permiso::create([
-            'nombre' => 'tipospermisos.eliminar',
-            'descripcion' => 'Eliminar Tipo de Permisos',
-            'id_tipo' => 4
-        ]);
-        Permiso::create([
-            'nombre' => 'companias.crear',
-            'descripcion' => 'Crear Compañias',
-            'id_tipo' => 5
-        ]);
-        Permiso::create([
-            'nombre' => 'companias.ver',
-            'descripcion' => 'Ver Compañias',
-            'id_tipo' => 5
-        ]);
-        Permiso::create([
-            'nombre' => 'companias.editar',
-            'descripcion' => 'Actualizar Compañias',
-            'id_tipo' => 5
-        ]);
-        Permiso::create([
-            'nombre' => 'companias.eliminar',
-            'descripcion' => 'Eliminar Compañias',
-            'id_tipo' => 5
-        ]);
+
+        //Comunidades
         Permiso::create([
             'nombre' => 'comunidades.crear',
             'descripcion' => 'Crear Comunidades',
-            'id_tipo' => 6
+            'id_tipo' => 4
         ]);
         Permiso::create([
             'nombre' => 'comunidades.ver',
             'descripcion' => 'Ver Comunidades',
-            'id_tipo' => 6
+            'id_tipo' => 4
         ]);
         Permiso::create([
             'nombre' => 'comunidades.editar',
             'descripcion' => 'Actualizar Comunidades',
-            'id_tipo' => 6
+            'id_tipo' => 4
         ]);
         Permiso::create([
             'nombre' => 'comunidades.eliminar',
             'descripcion' => 'Eliminar Comunidades',
-            'id_tipo' => 6
+            'id_tipo' => 4
         ]);
+
+        //Agentes
+        Permiso::create([
+            'nombre' => 'agentes.crear',
+            'descripcion' => 'Crear Agentes',
+            'id_tipo' => 5
+        ]);
+        Permiso::create([
+            'nombre' => 'agentes.ver',
+            'descripcion' => 'Ver Agentes',
+            'id_tipo' => 5
+        ]);
+        Permiso::create([
+            'nombre' => 'agentes.editar',
+            'descripcion' => 'Actualizar Agentes',
+            'id_tipo' => 5
+        ]);
+        Permiso::create([
+            'nombre' => 'agentes.eliminar',
+            'descripcion' => 'Eliminar Agentes',
+            'id_tipo' => 5
+        ]);
+
+        //Polizas
         Permiso::create([
             'nombre' => 'polizas.crear',
             'descripcion' => 'Crear Polizas',
-            'id_tipo' => 7
+            'id_tipo' => 6
         ]);
         Permiso::create([
             'nombre' => 'polizas.ver',
             'descripcion' => 'Ver Polizas',
-            'id_tipo' => 7
+            'id_tipo' => 6
+        ]);
+        Permiso::create([
+            'nombre' => 'polizas.detalles',
+            'descripcion' => 'Ver Detalles de Polizas',
+            'id_tipo' => 6
         ]);
         Permiso::create([
             'nombre' => 'polizas.editar',
             'descripcion' => 'Actualizar Polizas',
-            'id_tipo' => 7
+            'id_tipo' => 6
         ]);
         Permiso::create([
             'nombre' => 'polizas.eliminar',
             'descripcion' => 'Eliminar Polizas',
-            'id_tipo' => 7
+            'id_tipo' => 6
         ]);
+
+        //ChatsPolizas
+        Permiso::create([
+            'nombre' => 'chats_polizas.crear',
+            'descripcion' => 'Escribir Chats de Polizas',
+            'id_tipo' => 6
+        ]);
+        
+        //Siniestros
         Permiso::create([
             'nombre' => 'siniestros.crear',
             'descripcion' => 'Crear Siniestros',
-            'id_tipo' => 8
+            'id_tipo' => 7
         ]);
         Permiso::create([
             'nombre' => 'siniestros.ver',
             'descripcion' => 'Ver Siniestros',
-            'id_tipo' => 8
+            'id_tipo' => 7
         ]);
+
+        Permiso::create([
+            'nombre' => 'siniestros.detalles',
+            'descripcion' => 'Ver Detalles de Siniestros',
+            'id_tipo' => 7
+        ]);
+
         Permiso::create([
             'nombre' => 'siniestros.editar',
             'descripcion' => 'Actualizar Siniestros',
-            'id_tipo' => 8
+            'id_tipo' => 7
         ]);
         Permiso::create([
             'nombre' => 'siniestros.eliminar',
             'descripcion' => 'Eliminar Siniestros',
-            'id_tipo' => 8
+            'id_tipo' => 7
+        ]);
+
+        //ChatsSiniestros
+        Permiso::create([
+            'nombre' => 'chats_siniestros.crear',
+            'descripcion' => 'Escribir Chats de Siniestros',
+            'id_tipo' => 7
         ]);
     }
 }
