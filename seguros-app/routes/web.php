@@ -59,3 +59,4 @@ require __DIR__ . '/auth.php';
 
 // Rutas de configuración de la aplicación y datos del usuario
 require __DIR__ . '/settings.php';
+
