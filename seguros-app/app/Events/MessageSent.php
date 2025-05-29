@@ -2,9 +2,7 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -32,35 +30,31 @@ class MessageSent implements ShouldBroadcastNow
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    // public function broadcastOn(): array
-    // {
-    //     $channel = 'chatPoliza.' . $this->message->id_poliza;
-    //     Log::info("📺 Broadcasting en canal: " . $channel);
-
-    //     return [
-    //         new PrivateChannel($channel),
-    //     ];
-    // }
-
 
     // En MessageSent.php - SOLO PARA PRUEBAS
     public function broadcastOn(): array
     {
         $channel = 'chatPoliza.' . $this->message->id_poliza;
-        Log::info("📺 Broadcasting en canal PÚBLICO: " . $channel);
+        Log::info("📺 Broadcasting en canal privado: " . $channel);
 
         return [
-            new Channel($channel), // Canal público en lugar de PrivateChannel
+            new PrivateChannel($channel), // Canal público en lugar de PrivateChannel
         ];
     }
 
+
     public function broadcastWith(): array
     {
+        $this->message->load('usuario');
+        
         $data = [
+            'id' => $this->message->id,
             'id_poliza' => $this->message->id_poliza,
             'id_usuario' => $this->message->id_usuario,
             'mensaje' => $this->message->mensaje,
-            'adjunto' => $this->message->adjunto
+            'adjunto' => $this->message->adjunto,
+            'created_at' => $this->message->created_at,
+            'usuario' => $this->message->usuario
         ];
 
         Log::info("📦 Datos del broadcast:", $data);

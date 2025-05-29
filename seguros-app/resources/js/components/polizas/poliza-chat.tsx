@@ -7,75 +7,36 @@ export function PolizaChat({ chats: initialChats, authUser, polizaId }: { chats:
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const [chats, setChats] = useState<ChatPoliza[]>(initialChats);
     const [mensaje, setMensaje] = useState("");
-
-    // // Efecto para desplazar el scroll hacia abajo cuando se actualizan los chats
-    // useEffect(() => {
-    //     if (chatContainerRef.current) {
-    //         chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    //     }
-        
-    //     console.log(`🔌 Conectando al canal: chatPoliza.${polizaId}`);
-    //     const channel = window.Echo.private(`chatPoliza.${polizaId}`);
-
-    //     // Debug: Verificar eventos del canal
-    //     channel
-    //         .subscribed(() => {
-    //             console.log('✅ Suscrito exitosamente al canal');
-    //         })
-    //         .error((error: any) => {
-    //             console.error('❌ Error al suscribirse:', error);
-    //         });
-
-    //     channel.listen('MessageSent', (e: any) => {
-    //         console.log("📨 Mensaje recibido por WebSocket:", e);
-    //         console.log("📨 Datos del mensaje:", JSON.stringify(e, null, 2));
-            
-    //         setChats((prev) => {
-    //             console.log("🔄 Actualizando chats. Chats anteriores:", prev.length);
-    //             const newChats = [...prev, e];
-    //             console.log("🔄 Nuevos chats:", newChats.length);
-    //             return newChats;
-    //         });
-    //     });
-
-    //     // Debug: Escuchar todos los eventos para ver qué llega
-    //     channel.listenForWhisper('.client-typing', (e: any) => {
-    //         console.log('👂 Whisper recibido:', e);
-    //     });
-
-    //     return () => {
-    //         console.log(`🔌 Desconectando del canal: chatPoliza.${polizaId}`);
-    //         window.Echo.leave(`chatPoliza.${polizaId}`);
-    //     };
-    // }, [polizaId, chats]);
-
-    // En poliza-chat.tsx - SOLO PARA PRUEBAS
-useEffect(() => {
-    if (chatContainerRef.current) {
-        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
     
-    console.log(`🔌 Conectando al canal PÚBLICO: chatPoliza.${polizaId}`);
-    const channel = window.Echo.channel(`chatPoliza.${polizaId}`); // channel() en lugar de private()
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [chats]);
 
-    channel
-        .subscribed(() => {
-            console.log('✅ Suscrito exitosamente al canal público');
-        })
-        .error((error: any) => {
-            console.error('❌ Error al suscribirse:', error);
+    useEffect(() => {
+        console.log(`🔌 Conectando al canal privado: chatPoliza.${polizaId}`);
+        //const channel = window.Echo.channel(`chatPoliza.${polizaId}`); // channel() en lugar de private()
+        const channel = window.Echo.private(`chatPoliza.${polizaId}`); // Asegúrate de que el canal sea privado si es necesario
+
+        channel
+            .subscribed(() => {
+                console.log('✅ Suscrito exitosamente al canal privado');
+            })
+            .error((error: any) => {
+                console.error('❌ Error al suscribirse:', error);
+            });
+
+        channel.listen('MessageSent', (e: any) => {
+            console.log("📨 Mensaje recibido por WebSocket:", e);
+            setChats((prev) => [...prev, e]); // Actualiza el estado con el nuevo mensaje
         });
 
-    channel.listen('MessageSent', (e: any) => {
-        console.log("📨 Mensaje recibido por WebSocket:", e);
-        setChats((prev) => [...prev, e]);
-    });
-
-    return () => {
-        console.log(`🔌 Desconectando del canal: chatPoliza.${polizaId}`);
-        window.Echo.leave(`chatPoliza.${polizaId}`);
-    };
-}, [polizaId, chats]);
+        return () => {
+            console.log(`🔌 Desconectando del canal: chatPoliza.${polizaId}`);
+            window.Echo.leave(`chatPoliza.${polizaId}`);
+        };
+    }, [polizaId]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -86,7 +47,7 @@ useEffect(() => {
         try {
             const response = await axios.post(`/chat-poliza/${polizaId}`, { mensaje });
             console.log("✅ Respuesta del servidor:", response.data);
-            
+
             // Temporalmente agregar el mensaje aquí también para debug
             setChats([...chats, response.data.chat]);
             setMensaje("");
