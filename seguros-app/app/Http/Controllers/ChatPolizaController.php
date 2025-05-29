@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatPoliza;
-use App\Models\Poliza;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\MessageSent;

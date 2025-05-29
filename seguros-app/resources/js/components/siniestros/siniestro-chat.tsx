@@ -15,12 +15,41 @@ export function SiniestroChat({ chats: initialChats, authUser, siniestroId }: { 
         }
     }, [chats]);
 
+    
+    useEffect(() => {
+        console.log(`🔌 Conectando al canal privado: chatSiniestro.${siniestroId}`);
+        //const channel = window.Echo.channel(`chatPoliza.${polizaId}`); // channel() en lugar de private()
+        const channel = window.Echo.private(`chatSiniestro.${siniestroId}`); // Asegúrate de que el canal sea privado si es necesario
+
+        channel
+            .subscribed(() => {
+                console.log('✅ Suscrito exitosamente al canal privado');
+            })
+            .error((error: any) => {
+                console.error('❌ Error al suscribirse:', error);
+            });
+
+        channel.listen('MessageSentSiniestro', (e: any) => {
+            console.log("📨 Mensaje recibido por WebSocket:", e);
+            setChats((prev) => [...prev, e]); // Actualiza el estado con el nuevo mensaje
+        });
+
+        return () => {
+            console.log(`🔌 Desconectando del canal: chatSiniestro.${siniestroId}`);
+            window.Echo.leave(`chatSiniestro.${siniestroId}`);
+        };
+    }, [siniestroId]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // Evita que la página se recargue
         if (!mensaje.trim()) return; // No enviar si el mensaje está vacío
 
+        console.log("📤 Enviando mensaje:", mensaje);
+
         try {
             const response = await axios.post(`/chat-siniestro/${siniestroId}`, { mensaje });
+            console.log("✅ Respuesta del servidor:", response.data);
+
             setChats([...chats, response.data.chat]); // Agrega el nuevo mensaje al estado
             setMensaje(""); // Limpia el campo de entrada
         } catch (error) {
@@ -31,6 +60,9 @@ export function SiniestroChat({ chats: initialChats, authUser, siniestroId }: { 
     return (
         <div className="mt-4">
             <h3 className="text-lg font-semibold">Chat</h3>
+            <div className="mb-2 text-sm text-gray-600">
+                Debug: Canal: chatSiniestro.{siniestroId} | Mensajes: {chats.length}
+            </div>
             <div
                 ref={chatContainerRef}
                 className="bg-gray-100 border rounded-md p-4 h-[calc(100vh-200px)] sm:h-[400px] overflow-y-scroll overflow-x-hidden w-full"

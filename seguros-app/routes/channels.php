@@ -21,12 +21,24 @@ Broadcast::channel('chatPoliza.{id_poliza}', function ($user, $id_poliza) {
     
     Log::info('❌ Usuario no autorizado');
     return false;
+});
+
+
+Broadcast::channel('chatSiniestro.{id_siniestro}', function ($user, $id_siniestro) {
+    // Debug: Log para ver qué está pasando
+    Log::info('🔐 Autorización de canal solicitada', [
+        'user_id' => $user ? $user->id : 'null',
+        'siniestro_id' => $id_siniestro,
+        'user_data' => $user ? $user->toArray() : 'no user'
+    ]);
+
+    // Por ahora, simplemente autorizar a todos los usuarios autenticados
+    // Más tarde puedes agregar lógica más específica
+    if ($user) {
+        Log::info('✅ Usuario autorizado para el canal');
+        return true;
+    }
     
-    // Comentado tu código original para referencia:
-    // if ($this->middleware(CheckPermiso::class . ':chats_polizas.crear')){
-    //     return true;
-    // }else{
-    //     return false;
-    // }
-    //return (int) $user->id === (int) $id_poliza;
+    Log::info('❌ Usuario no autorizado');
+    return false;
 });

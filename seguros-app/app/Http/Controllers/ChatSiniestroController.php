@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatSiniestro;
-use App\Models\Siniestro;
+use App\Events\MessageSentSiniestro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Log;
 use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
+
 class ChatSiniestroController extends BaseController
 {
     public function __construct()
@@ -36,6 +37,16 @@ class ChatSiniestroController extends BaseController
         // Cargar el usuario para incluirlo en la respuesta
         
         $chat->load('usuario'); // Carga la relación usuario
+
+        Log::info("💾 Chat creado", [
+            'chat_id' => $chat->id,
+            'chat_data' => $chat->toArray()
+        ]);
+
+        Log::info("📡 Enviando broadcast");
+        broadcast(new MessageSentSiniestro($chat))->toOthers();
+        Log::info("📡 Broadcast enviado");
+
         return response()->json(['success' => true, 'chat' => $chat]);
     }
 
