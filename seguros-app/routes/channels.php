@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
-use App\Http\Middleware\CheckPermiso;
 use Illuminate\Support\Facades\Log;
 
 Broadcast::channel('chatPoliza.{id_poliza}', function ($user, $id_poliza) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Poliza;
 use App\Models\Compania;
 use App\Models\Comunidad;
@@ -241,7 +242,7 @@ class PolizaController extends BaseController
             $poliza->save();
 
             return redirect()->route('polizas.index')->with('success', 'Solicitud de anulación enviada correctamente.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return redirect()->route('polizas.index')->with('error', 'Error al enviar la solicitud de anulación: ' . $e->getMessage());
         }
     }

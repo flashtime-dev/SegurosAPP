@@ -59,9 +59,9 @@ export function PolizaChat({ chats: initialChats, authUser, polizaId }: { chats:
     return (
         <div className="mt-4">
             <h3 className="text-lg font-semibold">Chat</h3>
-            <div className="mb-2 text-sm text-gray-600">
+            {/* <div className="mb-2 text-sm text-gray-600">
                 Debug: Canal: chatPoliza.{polizaId} | Mensajes: {chats.length}
-            </div>
+            </div> */}
             <div
                 ref={chatContainerRef}
                 className="bg-gray-100 border rounded-md p-4 h-[calc(100vh-200px)] sm:h-[400px] overflow-y-scroll overflow-x-hidden w-full"

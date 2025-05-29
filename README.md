@@ -61,3 +61,9 @@ mediante un chat en vivo.
     npm run build
     php artisan serve
     ```
+
+9. Instalar broadcasting e iniciar reverb
+    ```bash
+    php artisan install:broadcasting
+    php artisan reverb:start
+    ```
