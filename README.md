@@ -24,21 +24,20 @@ mediante un chat en vivo.
     ```bash
     git clone https://github.com/cvaclop1911/proyecto-daw.git
     ```
+2. Copiar el archivo `.env.example` a `.env`
+    Configurar las variables base de nuestra aplicacion como la Base de Datos, el nombre de la aplicacion...
 
-2. Instalacion de las dependencias de PHP
+3. Instalacion de las dependencias de PHP
     ```bash
     composer global require laravel/installer
     composer install
     ```
 
-3. En caso de tener XAMPP puede que no nos deje instalar algunos paquetes.
+4. En caso de tener XAMPP puede que no nos deje instalar algunos paquetes.
     Deberremos ir al archivo `php.ini`, buscar y descomentar la siguiente línea:
     ```ini
     extension=zip
     ```
-
-4. Copiar el archivo `.env.example` a `.env`
-    Configurar las variables base de nuestra aplicacion como la Base de Datos, el nombre de la aplicacion...
 
 5. Crear una app-key para el archivo `.env`
     ``` bash

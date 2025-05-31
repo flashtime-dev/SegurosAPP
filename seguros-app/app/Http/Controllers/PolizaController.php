@@ -237,9 +237,6 @@ class PolizaController extends BaseController
 
             // Enviar el correo de solicitud de anulación al email del propietario
             Mail::to($propietario->email)->send(new SolicitudAnulacionPoliza($poliza));
-            // Actualizar el estado de la póliza a "Solicitada"
-            $poliza->estado = 'Solicitada';
-            $poliza->save();
 
             return redirect()->route('polizas.index')->with('success', 'Solicitud de anulación enviada correctamente.');
         } catch (Exception $e) {
