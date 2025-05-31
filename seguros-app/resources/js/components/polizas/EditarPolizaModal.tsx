@@ -27,7 +27,8 @@ type Props = {
 };
 
 export default function EditarPolizaModal({ isOpen, onClose, companias, comunidades, agentes, poliza }: Props & { poliza?: any }) {
-    const { data, setData, put, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
+        _method: "PUT", // Importante: agregar este campo para simular PUT
         id_compania: "",
         id_comunidad: "",
         id_agente: "",
@@ -51,6 +52,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
             };
 
             setData({
+                _method: "PUT", // Mantener el método
                 id_compania: String(poliza.id_compania) || "",
                 id_comunidad: String(poliza.id_comunidad) || "",
                 id_agente: String(poliza.id_agente) || "",
@@ -65,15 +67,15 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                 observaciones: poliza.observaciones || "",
                 estado: poliza.estado || "",
             });
-        } else {
-            reset();
         }
     }, [poliza, companias, comunidades, agentes]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (poliza) {
-            put(route("polizas.update", poliza.id), {
+            // Usar POST en lugar de PUT para manejar archivos correctamente
+            post(route("polizas.update", poliza.id), {
+                forceFormData: true, // Forzar el uso de FormData
                 onSuccess: () => {
                     reset();
                     onClose();
@@ -276,8 +278,8 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <Input
                                 id="pdf_poliza"
                                 type="file"
-                                accept=".pdf" // Solo permite archivos PDF
-                                onChange={(e) => setData("pdf_poliza", e.target.files?.[0] || null)} // Solo selecciona un archivo
+                                accept=".pdf"
+                                onChange={(e) => setData("pdf_poliza", e.target.files?.[0] || null)}
                                 disabled={processing}
                             />
                             <InputError message={errors.pdf_poliza} className="mt-2" />

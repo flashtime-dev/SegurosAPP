@@ -27,7 +27,9 @@ export function PolizaDetalles({ poliza }: { poliza: Poliza }) {
             {poliza.pdf_poliza && (
                 <DetailItem
                     label="Poliza PDF"
-                    value={<a href={poliza.pdf_poliza} className="text-blue-600 underline" target="_blank">Ver la póliza</a>}
+                    value={<a href={`/polizas/${poliza.id}/pdf`} target="_blank" className="text-blue-600 underline">
+                        Ver la póliza
+                    </a>}
                 />
             )}
             {poliza.observaciones && <DetailItem label="Observaciones" value={poliza.observaciones} />}

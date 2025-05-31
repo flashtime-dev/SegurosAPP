@@ -11,7 +11,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\CheckPermiso;
-
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 use App\Mail\SolicitudAnulacionPoliza;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
@@ -82,6 +83,7 @@ class PolizaController extends Controller
     public function store(Request $request)
     {
 
+        //dd($request);
         // Capitalizar solo la primera palabra del alias antes de la validación
         $request->merge([
             'alias' => ucfirst(($request->alias))
@@ -122,7 +124,7 @@ class PolizaController extends Controller
             $pdf_poliza = $request->file('pdf_poliza');
 
             // Intentar almacenar el archivo en el servidor
-            $path = $pdf_poliza->storeAs('polizas', $pdf_poliza->getClientOriginalName(), 'public');
+            $path = $pdf_poliza->storeAs('polizas', $pdf_poliza->getClientOriginalName());
 
             if ($path) {
                 // Si el almacenamiento es exitoso, generar la URL del archivo
@@ -142,11 +144,11 @@ class PolizaController extends Controller
     public function show(string $id)
     {
 
-        
+
         $poliza = Poliza::with(['compania', 'comunidad', 'siniestros', 'agente', 'chats.usuario'])->findOrFail($id);
 
         $this->authorize('view', $poliza);
-        
+
         $siniestros = $poliza->siniestros;
         $chats = $poliza->chats()->with('usuario')->orderBy('created_at')->get();
         $authUser = Auth::id();
@@ -167,10 +169,10 @@ class PolizaController extends Controller
     //     $companias = Compania::all();
     //     $comunidades = Comunidad::all();
     //     $agentes = Agente::all();
-    
+
     //     return Inertia::render('polizas/edit', compact('poliza', 'companias', 'comunidades', 'agentes'));
     // }
-    
+
     /**
      * Update the specified resource in storage.
      */
@@ -179,11 +181,12 @@ class PolizaController extends Controller
         $poliza = Poliza::findOrFail($id);
         $this->authorize('update', $poliza);
 
+        //dd($request);
         // Capitalizar solo la primera palabra del alias antes de la validación
         $request->merge([
             'alias' => ucfirst(($request->alias))
         ]);
-        
+
         $request->validate([
             'id_compania' => 'required|exists:companias,id',
             'id_comunidad' => 'required|exists:comunidades,id',
@@ -210,10 +213,34 @@ class PolizaController extends Controller
             'estado.required' => 'El estado es obligatorio.',
         ]);
 
-        
-        $poliza->update($request->all());
-        
-        return redirect()->route('polizas.index')->with('success', 'Póliza actualizada correctamente.');
+        // Prepara los datos que se van a actualizar (sin incluir el campo pdf_poliza)
+        $data = $request->except('pdf_poliza');
+
+        // Si se subió un nuevo PDF, procesamos borrado del antiguo y guardado del nuevo
+        if ($request->hasFile('pdf_poliza')) {
+            // Borrar el PDF viejo (si existía)
+            if ($poliza->pdf_poliza) {
+                // Obtenemos la ruta relativa en el disco privado
+                // (asumimos que el campo $poliza->pdf_poliza almacena algo como "polizas/archivo.pdf")
+                if (Storage::disk('private')->exists($poliza->pdf_poliza)) {
+                    Storage::disk('private')->delete($poliza->pdf_poliza);
+                }
+            }
+
+            // Guardar el nuevo PDF en el disco "private" dentro de la carpeta "polizas"
+            $archivo   = $request->file('pdf_poliza');
+            $filename  = time() . '_' . $archivo->getClientOriginalName();
+            $path      = $archivo->storeAs('polizas', $filename, 'private');
+            // Almacenamos en la BD la ruta relativa (p.ej. "polizas/1652345678_documento.pdf")
+            $data['pdf_poliza'] = $path;
+        }
+
+        // Actualiza el modelo con $data (que incluye o no el campo pdf_poliza)
+        $poliza->update($data);
+
+        return redirect()
+            ->route('polizas.index')
+            ->with('success', 'Póliza actualizada correctamente.');
     }
 
     /**
@@ -224,9 +251,19 @@ class PolizaController extends Controller
         $poliza = Poliza::findOrFail($id);
         $this->authorize('delete', $poliza);
 
+        // Si existe un PDF asociado, lo borramos del disco privado
+        if ($poliza->pdf_poliza) {
+            if (Storage::disk('private')->exists($poliza->pdf_poliza)) {
+                Storage::disk('private')->delete($poliza->pdf_poliza);
+            }
+        }
+
+        // Eliminamos el registro de la BD
         $poliza->delete();
 
-        return redirect()->route('polizas.index')->with('success', 'Póliza eliminada correctamente.');
+        return redirect()
+            ->route('polizas.index')
+            ->with('success', 'Póliza eliminada correctamente.');
     }
 
     /**
@@ -249,5 +286,28 @@ class PolizaController extends Controller
         } catch (Exception $e) {
             return redirect()->route('polizas.index')->with('error', 'Error al enviar la solicitud de anulación: ' . $e->getMessage());
         }
+    }
+
+    public function servePDF($id)
+    {
+        $poliza = Poliza::findOrFail($id);
+
+        // Verifica autorización
+        $this->authorize('view', $poliza);
+
+        // Obtiene solo el nombre del archivo desde la URL
+        $filename = basename($poliza->pdf_poliza);
+        $path = storage_path("app/private/polizas/{$filename}");
+
+        // Verifica si existe el archivo
+        if (!file_exists($path)) {
+            abort(404, 'Archivo no encontrado.');
+        }
+
+        // Retorna el archivo como respuesta de descarga
+        return Response::file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"'
+        ]);
     }
 }
