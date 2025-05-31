@@ -9,9 +9,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
-use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
-class ComunidadController extends BaseController
+class ComunidadController extends Controller
 {
     public function __construct()
     {
@@ -141,6 +140,7 @@ class ComunidadController extends BaseController
     public function update(Request $request, $id)
     {
         $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+        $this->authorize('update', $comunidad);
         
         $request->merge([
             'nombre' => ucfirst(($request->nombre)),

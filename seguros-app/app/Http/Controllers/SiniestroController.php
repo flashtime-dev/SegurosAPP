@@ -10,9 +10,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
-use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
-class SiniestroController extends BaseController
+class SiniestroController extends Controller
 {
     public function __construct()
     {
@@ -125,6 +124,7 @@ class SiniestroController extends BaseController
     public function show($id)
     {
         $siniestro = Siniestro::with('poliza.compania', 'contactos', 'chats.usuario')->findOrFail($id); // Buscar el siniestro por ID
+        $this->authorize('view', $siniestro);
         //dd($siniestro); // Debugging: Verificar el siniestro cargado
         return Inertia::render('siniestros/show', [
             'chats' => $siniestro->chats, // Pasar los chats a la vista
@@ -151,6 +151,7 @@ class SiniestroController extends BaseController
     public function update(Request $request, $id)
     {
         $siniestro = Siniestro::findOrFail($id);
+        $this->authorize('update', $siniestro);
 
         $request->merge([
             'declaracion' => ucfirst(($request->declaracion)),
@@ -212,6 +213,8 @@ class SiniestroController extends BaseController
     public function destroy($id)
     {
         $siniestro = Siniestro::findOrFail($id);
+        $this->authorize('delete', $siniestro);
+
         $siniestro->contactos()->delete(); // Eliminar todos los contactos asociados
         $siniestro->delete(); // Eliminar el siniestro
 

@@ -10,15 +10,13 @@ use App\Models\Agente;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
-
-use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
 
 use App\Mail\SolicitudAnulacionPoliza;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 
-class PolizaController extends BaseController
+class PolizaController extends Controller
 {
     public function __construct()
     {
@@ -144,7 +142,11 @@ class PolizaController extends BaseController
     public function show(string $id)
     {
 
+        
         $poliza = Poliza::with(['compania', 'comunidad', 'siniestros', 'agente', 'chats.usuario'])->findOrFail($id);
+
+        $this->authorize('view', $poliza);
+        
         $siniestros = $poliza->siniestros;
         $chats = $poliza->chats()->with('usuario')->orderBy('created_at')->get();
         $authUser = Auth::id();
@@ -165,20 +167,23 @@ class PolizaController extends BaseController
     //     $companias = Compania::all();
     //     $comunidades = Comunidad::all();
     //     $agentes = Agente::all();
-
+    
     //     return Inertia::render('polizas/edit', compact('poliza', 'companias', 'comunidades', 'agentes'));
     // }
-
+    
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
+        $poliza = Poliza::findOrFail($id);
+        $this->authorize('update', $poliza);
+
         // Capitalizar solo la primera palabra del alias antes de la validación
         $request->merge([
             'alias' => ucfirst(($request->alias))
         ]);
-
+        
         $request->validate([
             'id_compania' => 'required|exists:companias,id',
             'id_comunidad' => 'required|exists:comunidades,id',
@@ -205,9 +210,9 @@ class PolizaController extends BaseController
             'estado.required' => 'El estado es obligatorio.',
         ]);
 
-        $poliza = Poliza::findOrFail($id);
+        
         $poliza->update($request->all());
-
+        
         return redirect()->route('polizas.index')->with('success', 'Póliza actualizada correctamente.');
     }
 
@@ -217,6 +222,8 @@ class PolizaController extends BaseController
     public function destroy($id)
     {
         $poliza = Poliza::findOrFail($id);
+        $this->authorize('delete', $poliza);
+
         $poliza->delete();
 
         return redirect()->route('polizas.index')->with('success', 'Póliza eliminada correctamente.');
