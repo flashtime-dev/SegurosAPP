@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
+use Throwable;
+use Illuminate\Support\Facades\Log;
 use App\Models\Poliza;
 use App\Models\Compania;
 use App\Models\Comunidad;
@@ -83,59 +84,62 @@ class PolizaController extends Controller
     public function store(Request $request)
     {
 
-        //dd($request);
-        // Capitalizar solo la primera palabra del alias antes de la validación
-        $request->merge([
-            'alias' => ucfirst(($request->alias))
-        ]);
+        try {
+            // Capitalizar solo la primera palabra del alias antes de la validación
+            $request->merge([
+                'alias' => ucfirst(($request->alias))
+            ]);
 
-        // Validar los campos del formulario
-        $request->validate([
-            'id_compania' => 'required|exists:companias,id',
-            'id_comunidad' => 'required|exists:comunidades,id',
-            'id_agente' => 'nullable|exists:agentes,id',
-            'alias' => 'nullable|string|min:2|max:255',
-            'numero' => 'nullable|string|max:20',
-            'fecha_efecto' => 'required|date',
-            'cuenta' => 'nullable|string|max:24',
-            'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
-            'prima_neta' => 'required|numeric|min:0',
-            'prima_total' => 'required|numeric|min:0',
-            'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
-            'observaciones' => 'nullable|string',
-            'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
-        ], [
-            'id_compania.required' => 'La compañía es obligatoria.',
-            'id_comunidad.required' => 'La comunidad es obligatoria.',
-            'alias.min' => 'El alias debe tener al menos 2 caracteres.',
-            'cuenta.min' => 'La cuenta debe tener al menos 20 caracteres.',
-            'forma_pago.required' => 'La forma de pago es obligatoria.',
-            'pdf_poliza.mimes' => 'El archivo debe ser un PDF.',
-            'pdf_poliza.max' => 'El archivo no debe exceder los 2MB.',
-            'pdf_poliza.file' => 'El archivo no es válido.',
-            'estado.required' => 'El estado es obligatorio.',
-        ]);
+            // Validar los campos del formulario
+            $request->validate([
+                'id_compania' => 'required|exists:companias,id',
+                'id_comunidad' => 'required|exists:comunidades,id',
+                'id_agente' => 'nullable|exists:agentes,id',
+                'alias' => 'nullable|string|min:2|max:255',
+                'numero' => 'nullable|string|max:20',
+                'fecha_efecto' => 'required|date',
+                'cuenta' => 'nullable|string|max:24',
+                'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
+                'prima_neta' => 'required|numeric|min:0',
+                'prima_total' => 'required|numeric|min:0',
+                'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
+                'observaciones' => 'nullable|string',
+                'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
+            ], [
+                'id_compania.required' => 'La compañía es obligatoria.',
+                'id_comunidad.required' => 'La comunidad es obligatoria.',
+                'alias.min' => 'El alias debe tener al menos 2 caracteres.',
+                'cuenta.min' => 'La cuenta debe tener al menos 20 caracteres.',
+                'forma_pago.required' => 'La forma de pago es obligatoria.',
+                'pdf_poliza.mimes' => 'El archivo debe ser un PDF.',
+                'pdf_poliza.max' => 'El archivo no debe exceder los 2MB.',
+                'pdf_poliza.file' => 'El archivo no es válido.',
+                'estado.required' => 'El estado es obligatorio.',
+            ]);
 
-        // Inicializar la variable para la URL del PDF
-        $pdfUrl = null;
+            // Inicializar la variable para la URL del PDF
+            $pdfUrl = null;
 
-        // Verificar si se subió un archivo PDF
-        if ($request->hasFile('pdf_poliza')) {
-            $pdf_poliza = $request->file('pdf_poliza');
+            // Verificar si se subió un archivo PDF
+            if ($request->hasFile('pdf_poliza')) {
+                $pdf_poliza = $request->file('pdf_poliza');
 
-            // Intentar almacenar el archivo en el servidor
-            $path = $pdf_poliza->storeAs('polizas', $pdf_poliza->getClientOriginalName());
+                // Intentar almacenar el archivo en el servidor
+                $path = $pdf_poliza->storeAs('polizas', $pdf_poliza->getClientOriginalName());
 
-            if ($path) {
-                // Si el almacenamiento es exitoso, generar la URL del archivo
-                $pdfUrl = asset('storage/' . $path);
+                if ($path) {
+                    // Si el almacenamiento es exitoso, generar la URL del archivo
+                    $pdfUrl = asset('storage/' . $path);
+                }
             }
+
+            // Crear la póliza con los datos del formulario y la URL del PDF
+            Poliza::create(array_merge($request->all(), ['pdf_poliza' => $pdfUrl]));
+            return redirect()->route('polizas.index')->with('success', 'Póliza creada correctamente.');
+        } catch (Throwable  $e) {
+            Log::error('Error al crear póliza: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->route('polizas.index')->with('error', 'Error al crear la póliza: ' . $e->getMessage());
         }
-
-        // Crear la póliza con los datos del formulario y la URL del PDF
-        Poliza::create(array_merge($request->all(), ['pdf_poliza' => $pdfUrl]));
-
-        return redirect()->route('polizas.index')->with('success', 'Póliza creada correctamente.');
     }
 
     /**
@@ -143,10 +147,7 @@ class PolizaController extends Controller
      */
     public function show(string $id)
     {
-
-
         $poliza = Poliza::with(['compania', 'comunidad', 'siniestros', 'agente', 'chats.usuario'])->findOrFail($id);
-
         $this->authorize('view', $poliza);
 
         $siniestros = $poliza->siniestros;
@@ -178,69 +179,72 @@ class PolizaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $poliza = Poliza::findOrFail($id);
-        $this->authorize('update', $poliza);
+        try {
+            $poliza = Poliza::findOrFail($id);
+            $this->authorize('update', $poliza);
+            
+            // Capitalizar solo la primera palabra del alias antes de la validación
+            $request->merge([
+                'alias' => ucfirst(($request->alias))
+            ]);
 
-        //dd($request);
-        // Capitalizar solo la primera palabra del alias antes de la validación
-        $request->merge([
-            'alias' => ucfirst(($request->alias))
-        ]);
+            $request->validate([
+                'id_compania' => 'required|exists:companias,id',
+                'id_comunidad' => 'required|exists:comunidades,id',
+                'id_agente' => 'nullable|exists:agentes,id',
+                'alias' => 'nullable|string|min:2|max:255',
+                'numero' => 'nullable|string|max:20',
+                'fecha_efecto' => 'required|date',
+                'cuenta' => 'nullable|string|min:20|max:24',
+                'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
+                'prima_neta' => 'required|numeric|min:0',
+                'prima_total' => 'required|numeric|min:0',
+                'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
+                'observaciones' => 'nullable|string',
+                'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
+            ], [
+                'id_compania.required' => 'La compañía es obligatoria.',
+                'id_comunidad.required' => 'La comunidad es obligatoria.',
+                'alias.min' => 'El alias debe tener al menos 2 caracteres.',
+                'cuenta.min' => 'La cuenta debe tener al menos 20 caracteres.',
+                'forma_pago.required' => 'La forma de pago es obligatoria.',
+                'pdf_poliza.mimes' => 'El archivo debe ser un PDF.',
+                'pdf_poliza.max' => 'El archivo no debe exceder los 2MB.',
+                'pdf_poliza.file' => 'El archivo no es válido.',
+                'estado.required' => 'El estado es obligatorio.',
+            ]);
 
-        $request->validate([
-            'id_compania' => 'required|exists:companias,id',
-            'id_comunidad' => 'required|exists:comunidades,id',
-            'id_agente' => 'nullable|exists:agentes,id',
-            'alias' => 'nullable|string|min:2|max:255',
-            'numero' => 'nullable|string|max:20',
-            'fecha_efecto' => 'required|date',
-            'cuenta' => 'nullable|string|min:20|max:24',
-            'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
-            'prima_neta' => 'required|numeric|min:0',
-            'prima_total' => 'required|numeric|min:0',
-            'pdf_poliza' => 'nullable|file|mimes:pdf|max:2048', // Validar que sea un archivo PDF
-            'observaciones' => 'nullable|string',
-            'estado' => 'required|in:En Vigor,Anulada,Solicitada,Externa,Vencida',
-        ], [
-            'id_compania.required' => 'La compañía es obligatoria.',
-            'id_comunidad.required' => 'La comunidad es obligatoria.',
-            'alias.min' => 'El alias debe tener al menos 2 caracteres.',
-            'cuenta.min' => 'La cuenta debe tener al menos 20 caracteres.',
-            'forma_pago.required' => 'La forma de pago es obligatoria.',
-            'pdf_poliza.mimes' => 'El archivo debe ser un PDF.',
-            'pdf_poliza.max' => 'El archivo no debe exceder los 2MB.',
-            'pdf_poliza.file' => 'El archivo no es válido.',
-            'estado.required' => 'El estado es obligatorio.',
-        ]);
+            // Prepara los datos que se van a actualizar (sin incluir el campo pdf_poliza)
+            $data = $request->except('pdf_poliza');
 
-        // Prepara los datos que se van a actualizar (sin incluir el campo pdf_poliza)
-        $data = $request->except('pdf_poliza');
-
-        // Si se subió un nuevo PDF, procesamos borrado del antiguo y guardado del nuevo
-        if ($request->hasFile('pdf_poliza')) {
-            // Borrar el PDF viejo (si existía)
-            if ($poliza->pdf_poliza) {
-                // Obtenemos la ruta relativa en el disco privado
-                // (asumimos que el campo $poliza->pdf_poliza almacena algo como "polizas/archivo.pdf")
-                if (Storage::disk('private')->exists($poliza->pdf_poliza)) {
-                    Storage::disk('private')->delete($poliza->pdf_poliza);
+            // Si se subió un nuevo PDF, procesamos borrado del antiguo y guardado del nuevo
+            if ($request->hasFile('pdf_poliza')) {
+                // Borrar el PDF viejo (si existía)
+                if ($poliza->pdf_poliza) {
+                    // Obtenemos la ruta relativa en el disco privado
+                    // (asumimos que el campo $poliza->pdf_poliza almacena algo como "polizas/archivo.pdf")
+                    if (Storage::disk('private')->exists($poliza->pdf_poliza)) {
+                        Storage::disk('private')->delete($poliza->pdf_poliza);
+                    }
                 }
+
+                // Guardar el nuevo PDF en el disco "private" dentro de la carpeta "polizas"
+                $archivo   = $request->file('pdf_poliza');
+                $filename  = time() . '_' . $archivo->getClientOriginalName();
+                $path      = $archivo->storeAs('polizas', $filename, 'private');
+                // Almacenamos en la BD la ruta relativa (p.ej. "polizas/1652345678_documento.pdf")
+                $data['pdf_poliza'] = $path;
             }
 
-            // Guardar el nuevo PDF en el disco "private" dentro de la carpeta "polizas"
-            $archivo   = $request->file('pdf_poliza');
-            $filename  = time() . '_' . $archivo->getClientOriginalName();
-            $path      = $archivo->storeAs('polizas', $filename, 'private');
-            // Almacenamos en la BD la ruta relativa (p.ej. "polizas/1652345678_documento.pdf")
-            $data['pdf_poliza'] = $path;
+            // Actualiza el modelo con $data (que incluye o no el campo pdf_poliza)
+            $poliza->update($data);
+            return redirect()
+                ->route('polizas.index')
+                ->with('success', 'Póliza actualizada correctamente.');
+        } catch (Throwable $e) {
+            Log::error('Error al actualizar póliza: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->route('polizas.index')->with('error', 'Error al actualizar la póliza: ' . $e->getMessage());
         }
-
-        // Actualiza el modelo con $data (que incluye o no el campo pdf_poliza)
-        $poliza->update($data);
-
-        return redirect()
-            ->route('polizas.index')
-            ->with('success', 'Póliza actualizada correctamente.');
     }
 
     /**
@@ -248,22 +252,27 @@ class PolizaController extends Controller
      */
     public function destroy($id)
     {
-        $poliza = Poliza::findOrFail($id);
-        $this->authorize('delete', $poliza);
+        try {
+            $poliza = Poliza::findOrFail($id);
+            $this->authorize('delete', $poliza);
 
-        // Si existe un PDF asociado, lo borramos del disco privado
-        if ($poliza->pdf_poliza) {
-            if (Storage::disk('private')->exists($poliza->pdf_poliza)) {
-                Storage::disk('private')->delete($poliza->pdf_poliza);
+            // Si existe un PDF asociado, lo borramos del disco privado
+            if ($poliza->pdf_poliza) {
+                if (Storage::disk('private')->exists($poliza->pdf_poliza)) {
+                    Storage::disk('private')->delete($poliza->pdf_poliza);
+                }
             }
+
+            // Eliminamos el registro de la BD
+            $poliza->delete();
+
+            return redirect()
+                ->route('polizas.index')
+                ->with('success', 'Póliza eliminada correctamente.');
+        } catch (Throwable $e) {
+            Log::error('Error al eliminar póliza: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->route('polizas.index')->with('error', 'Error al eliminar la póliza: ' . $e->getMessage());
         }
-
-        // Eliminamos el registro de la BD
-        $poliza->delete();
-
-        return redirect()
-            ->route('polizas.index')
-            ->with('success', 'Póliza eliminada correctamente.');
     }
 
     /**
@@ -283,31 +292,37 @@ class PolizaController extends Controller
             Mail::to($propietario->email)->send(new SolicitudAnulacionPoliza($poliza));
 
             return redirect()->route('polizas.index')->with('success', 'Solicitud de anulación enviada correctamente.');
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            Log::error('Error al enviar solicitud de anulación: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->route('polizas.index')->with('error', 'Error al enviar la solicitud de anulación: ' . $e->getMessage());
         }
     }
 
     public function servePDF($id)
     {
-        $poliza = Poliza::findOrFail($id);
+        try {
+            $poliza = Poliza::findOrFail($id);
 
-        // Verifica autorización
-        $this->authorize('view', $poliza);
+            // Verifica autorización
+            $this->authorize('view', $poliza);
 
-        // Obtiene solo el nombre del archivo desde la URL
-        $filename = basename($poliza->pdf_poliza);
-        $path = storage_path("app/private/polizas/{$filename}");
+            // Obtiene solo el nombre del archivo desde la URL
+            $filename = basename($poliza->pdf_poliza);
+            $path = storage_path("app/private/polizas/{$filename}");
 
-        // Verifica si existe el archivo
-        if (!file_exists($path)) {
-            abort(404, 'Archivo no encontrado.');
+            // Verifica si existe el archivo
+            if (!file_exists($path)) {
+                abort(404, 'Archivo no encontrado.');
+            }
+
+            // Retorna el archivo como respuesta de descarga
+            return Response::file($path, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $filename . '"'
+            ]);
+        } catch (Throwable $e) {
+            Log::error('Error al mostrar el archivo PDF: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->route('polizas.index')->with('error', 'Error al mostrar el archivo PDF: ' . $e->getMessage());
         }
-
-        // Retorna el archivo como respuesta de descarga
-        return Response::file($path, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $filename . '"'
-        ]);
     }
 }

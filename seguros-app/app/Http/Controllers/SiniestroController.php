@@ -9,8 +9,10 @@ use App\Models\Comunidad;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 use App\Http\Middleware\CheckPermiso;
+use Throwable;
 
 class SiniestroController extends Controller
 {
@@ -27,29 +29,33 @@ class SiniestroController extends Controller
      */
     public function index()
     {
-        $user = Auth::user(); // Obtener el usuario autenticado
+        try{
+            $user = Auth::user(); // Obtener el usuario autenticado
+            // Verificar si el usuario tiene el rol de administrador
+            if ($user->rol->nombre == 'Superadministrador') {
+                $siniestros = Siniestro::with('poliza', 'contactos')->get(); // Obtener todos los siniestros con sus relaciones
+                $polizas = Poliza::all(); // Obtener todas las pólizas
+            } else {
+                // Obtener comunidades donde el usuario es propietario O está asignado como usuario
+                $comunidades = Comunidad::where('id_propietario', $user->id)
+                    ->orWhereHas('users', function ($query) use ($user) {
+                        $query->where('users.id', $user->id);
+                    })
+                    ->get();
+                $siniestros = Siniestro::whereIn('id_poliza', Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->pluck('id'))
+                    ->with(['poliza', 'contactos'])
+                    ->get();
+                $polizas = Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->get(); // Obtener pólizas de las comunidades del usuario
+            }
 
-        // Verificar si el usuario tiene el rol de administrador
-        if ($user->rol->nombre == 'Superadministrador') {
-            $siniestros = Siniestro::with('poliza', 'contactos')->get(); // Obtener todos los siniestros con sus relaciones
-            $polizas = Poliza::all(); // Obtener todas las pólizas
-        } else {
-            // Obtener comunidades donde el usuario es propietario O está asignado como usuario
-            $comunidades = Comunidad::where('id_propietario', $user->id)
-                ->orWhereHas('users', function ($query) use ($user) {
-                    $query->where('users.id', $user->id);
-                })
-                ->get();
-            $siniestros = Siniestro::whereIn('id_poliza', Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->pluck('id'))
-                ->with(['poliza', 'contactos'])
-                ->get();
-            $polizas = Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->get(); // Obtener pólizas de las comunidades del usuario
+            return Inertia::render('siniestros/index', [
+                'siniestros' => $siniestros,
+                'polizas' => $polizas,
+            ]); // Retornar la vista con la lista de siniestros
+        } catch (Throwable $e) {
+            Log::error('Error en SiniestroController@index: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->route('home')->with('error', 'Error al cargar la lista de siniestros.');
         }
-
-        return Inertia::render('siniestros/index', [
-            'siniestros' => $siniestros,
-            'polizas' => $polizas,
-        ]); // Retornar la vista con la lista de siniestros
     }
 
     /**
@@ -67,64 +73,66 @@ class SiniestroController extends Controller
      */
     public function store(Request $request)
     {
+        try{
+            $request->merge([
+                'declaracion' => ucfirst(($request->declaracion)),
+                'tramitador' => ucfirst(($request->tramitador)),
+            ]);
 
-        $request->merge([
-            'declaracion' => ucfirst(($request->declaracion)),
-            'tramitador' => ucfirst(($request->tramitador)),
-        ]);
+            $request->validate([
+                'id_poliza' => 'required|exists:polizas,id',
+                'declaracion' => 'required|string|min:10',
+                'tramitador' => 'nullable|string|min:2|max:255',
+                'expediente' => 'required|string|min:2|max:50',
+                'exp_cia' => 'nullable|string|min:2|max:50',
+                'exp_asist' => 'nullable|string|min:2|max:50',
+                'fecha_ocurrencia' => 'nullable|date',
+                'adjunto' => 'nullable|file|max:2048',
+                'contactos' => 'nullable|array',
 
-        $request->validate([
-            'id_poliza' => 'required|exists:polizas,id',
-            'declaracion' => 'required|string|min:10',
-            'tramitador' => 'nullable|string|min:2|max:255',
-            'expediente' => 'required|string|min:2|max:50',
-            'exp_cia' => 'nullable|string|min:2|max:50',
-            'exp_asist' => 'nullable|string|min:2|max:50',
-            'fecha_ocurrencia' => 'nullable|date',
-            'adjunto' => 'nullable|file|max:2048',
-            'contactos' => 'nullable|array',
+                // Validación de contactos
+                'contactos.*.nombre' => 'required|string|min:2|max:100',
+                'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+            ], [
+                'id_poliza.required' => 'La póliza es obligatoria.',
+                'declaracion.min' => 'La declaración debe tener al menos 10 caracteres.',
+                'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
+                'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
+                'exp_cia.min' => 'La compañía debe tener al menos 2 caracteres.',
+                'exp_asist.min' => 'El asistente debe tener al menos 2 caracteres.',
+                'adjunto.file' => 'El archivo adjunto no es válido.',
+                'adjunto.mimes' => 'El archivo adjunto debe ser un archivo de tipo: pdf, jpg, jpeg, png.',
+                'adjunto.max' => 'El archivo adjunto no puede ser mayor de 2MB.',
+                'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
+                'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
+                'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
+                'contactos.*.telefono' => 'Formato de teléfono incorrecto',
+            ]);
 
-            // Validación de contactos
-            'contactos.*.nombre' => 'required|string|min:2|max:100',
-            'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-        ], [
-            'id_poliza.required' => 'La póliza es obligatoria.',
-            'declaracion.min' => 'La declaración debe tener al menos 10 caracteres.',
-            'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
-            'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
-            'exp_cia.min' => 'La compañía debe tener al menos 2 caracteres.',
-            'exp_asist.min' => 'El asistente debe tener al menos 2 caracteres.',
-            'adjunto.file' => 'El archivo adjunto no es válido.',
-            'adjunto.mimes' => 'El archivo adjunto debe ser un archivo de tipo: pdf, jpg, jpeg, png.',
-            'adjunto.max' => 'El archivo adjunto no puede ser mayor de 2MB.',
-            'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
-            'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
-            'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
-            'contactos.*.telefono' => 'Formato de teléfono incorrecto',
-        ]);
-
-        $data = $request->except(['contactos', 'adjunto']);
-
-        // Manejar el archivo adjunto
-        if ($request->hasFile('adjunto')) {
-            $file = $request->file('adjunto');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/adjuntos', $fileName);
-            $data['adjunto'] = true; // Si hay archivo, guardamos true
-        } else {
-            $data['adjunto'] = false; // Si no hay archivo, guardamos false
-        }
-
-        $siniestro = Siniestro::create($data);
-
-        if ($request->has('contactos')) {
-            foreach ($request->contactos as $contacto) {
-                $siniestro->contactos()->create($contacto);
+            $data = $request->except(['contactos', 'adjunto']);
+            // Manejar el archivo adjunto
+            if ($request->hasFile('adjunto')) {
+                $file = $request->file('adjunto');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/adjuntos', $fileName);
+                $data['adjunto'] = true; // Si hay archivo, guardamos true
+            } else {
+                $data['adjunto'] = false; // Si no hay archivo, guardamos false
             }
-        }
 
-        return redirect()->route('siniestros.index')
-            ->with('success', 'Siniestro creado correctamente.');
+            $siniestro = Siniestro::create($data);
+            if ($request->has('contactos')) {
+                foreach ($request->contactos as $contacto) {
+                    $siniestro->contactos()->create($contacto);
+                }
+            }
+
+            return redirect()->route('siniestros.index')
+                ->with('success', 'Siniestro creado correctamente.');
+        } catch (Throwable $e) {
+            Log::error('Error en SiniestroController@store: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->back()->withInput()->with('error', 'Error al crear el siniestro.');
+        }
     }
 
     /**
@@ -132,16 +140,21 @@ class SiniestroController extends Controller
      */
     public function show($id)
     {
-        $siniestro = Siniestro::with('poliza.compania', 'contactos', 'chats.usuario')->findOrFail($id); // Buscar el siniestro por ID
-        $this->authorize('view', $siniestro);
-        //dd($siniestro); // Debugging: Verificar el siniestro cargado
-        return Inertia::render('siniestros/show', [
-            'chats' => $siniestro->chats, // Pasar los chats a la vista
-            'authUser' => Auth::id(), // Pasar el ID del usuario autenticado a la vista
-            'siniestro' => $siniestro, // Pasar el siniestro a la vista
-            'contactos' => $siniestro->contactos, // Pasar los contactos a la vista
-            'poliza' => $siniestro->poliza, // Pasar la póliza a la vista
-        ]); // Retornar la vista con los detalles del siniestro
+        try{
+            $siniestro = Siniestro::with('poliza.compania', 'contactos', 'chats.usuario')->findOrFail($id); // Buscar el siniestro por ID
+            $this->authorize('view', $siniestro);
+            //dd($siniestro); // Debugging: Verificar el siniestro cargado
+            return Inertia::render('siniestros/show', [
+                'chats' => $siniestro->chats, // Pasar los chats a la vista
+                'authUser' => Auth::id(), // Pasar el ID del usuario autenticado a la vista
+                'siniestro' => $siniestro, // Pasar el siniestro a la vista
+                'contactos' => $siniestro->contactos, // Pasar los contactos a la vista
+                'poliza' => $siniestro->poliza, // Pasar la póliza a la vista
+            ]); // Retornar la vista con los detalles del siniestro
+        } catch (Throwable $e) {
+            Log::error('Error en SiniestroController@show: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->route('siniestros.index')->with('error', 'Error al cargar el siniestro.');
+        }
     }
 
     /**
@@ -159,69 +172,74 @@ class SiniestroController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $siniestro = Siniestro::findOrFail($id);
-        $this->authorize('update', $siniestro);
+        try{
+            $siniestro = Siniestro::findOrFail($id);
+            $this->authorize('update', $siniestro);
 
-        $request->merge([
-            'declaracion' => ucfirst(($request->declaracion)),
-            'tramitador' => ucfirst(($request->tramitador)),
-        ]);
+            $request->merge([
+                'declaracion' => ucfirst(($request->declaracion)),
+                'tramitador' => ucfirst(($request->tramitador)),
+            ]);
 
-        $request->validate([
-            'id_poliza' => 'required|exists:polizas,id',
-            'declaracion' => 'required|string|min:10',
-            'tramitador' => 'nullable|string|min:2|max:255',
-            'expediente' => 'required|string|min:2|max:50',
-            'exp_cia' => 'nullable|string|min:2|max:50',
-            'exp_asist' => 'nullable|string|min:2|max:50',
-            'fecha_ocurrencia' => 'nullable|date',
-            'adjunto' => 'nullable|file|max:2048',
-            'contactos' => 'nullable|array',
+            $request->validate([
+                'id_poliza' => 'required|exists:polizas,id',
+                'declaracion' => 'required|string|min:10',
+                'tramitador' => 'nullable|string|min:2|max:255',
+                'expediente' => 'required|string|min:2|max:50',
+                'exp_cia' => 'nullable|string|min:2|max:50',
+                'exp_asist' => 'nullable|string|min:2|max:50',
+                'fecha_ocurrencia' => 'nullable|date',
+                'adjunto' => 'nullable|file|max:2048',
+                'contactos' => 'nullable|array',
 
-            // Validación de contactos
-            'contactos.*.nombre' => 'required|string|min:2|max:100',
-            'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-        ], [
-            'id_poliza.required' => 'La póliza es obligatoria.',
-            'declaracion.min' => 'La declaración debe tener al menos 2 caracteres.',
-            'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
-            'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
-            'exp_cia.min' => 'La compañía debe tener al menos 2 caracteres.',
-            'exp_asist.min' => 'El asistente debe tener al menos 2 caracteres.',
-            'adjunto.file' => 'El archivo adjunto no es válido.',
-            'adjunto.mimes' => 'El archivo adjunto debe ser un archivo de tipo: pdf, jpg, jpeg, png.',
-            'adjunto.max' => 'El archivo adjunto no puede ser mayor de 2MB.',
-            'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
-            'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
-            'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
-            'contactos.*.telefono' => 'Formato de teléfono incorrecto',
-        ]);
+                // Validación de contactos
+                'contactos.*.nombre' => 'required|string|min:2|max:100',
+                'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+            ], [
+                'id_poliza.required' => 'La póliza es obligatoria.',
+                'declaracion.min' => 'La declaración debe tener al menos 2 caracteres.',
+                'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
+                'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
+                'exp_cia.min' => 'La compañía debe tener al menos 2 caracteres.',
+                'exp_asist.min' => 'El asistente debe tener al menos 2 caracteres.',
+                'adjunto.file' => 'El archivo adjunto no es válido.',
+                'adjunto.mimes' => 'El archivo adjunto debe ser un archivo de tipo: pdf, jpg, jpeg, png.',
+                'adjunto.max' => 'El archivo adjunto no puede ser mayor de 2MB.',
+                'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
+                'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
+                'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
+                'contactos.*.telefono' => 'Formato de teléfono incorrecto',
+            ]);
 
-        $siniestro->update($request->except('contactos', 'adjunto'));
-        // Manejar el archivo adjunto
-        if ($request->hasFile('adjunto')) {
-            $file = $request->file('adjunto');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/adjuntos', $fileName);
-            $data['adjunto'] = true; // Si hay archivo, guardamos true
-        } else {
-            $data['adjunto'] = false; // Si no hay archivo, guardamos false
-        }
-        $siniestro->adjunto = $data['adjunto'];
-        $siniestro->save();
-
-        if ($request->has('contactos')) {
-            // Eliminar contactos existentes
-            $siniestro->contactos()->delete();
-
-            // Crear nuevos contactos
-            foreach ($request->contactos as $contacto) {
-                $siniestro->contactos()->create($contacto);
+            $siniestro->update($request->except('contactos', 'adjunto'));
+            // Manejar el archivo adjunto
+            if ($request->hasFile('adjunto')) {
+                $file = $request->file('adjunto');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/adjuntos', $fileName);
+                $data['adjunto'] = true; // Si hay archivo, guardamos true
+            } else {
+                $data['adjunto'] = false; // Si no hay archivo, guardamos false
             }
-        }
+            $siniestro->adjunto = $data['adjunto'];
+            $siniestro->save();
 
-        return redirect()->route('siniestros.index')
-            ->with('success', 'Siniestro actualizado correctamente.');
+            if ($request->has('contactos')) {
+                // Eliminar contactos existentes
+                $siniestro->contactos()->delete();
+
+                // Crear nuevos contactos
+                foreach ($request->contactos as $contacto) {
+                    $siniestro->contactos()->create($contacto);
+                }
+            }
+
+            return redirect()->route('siniestros.index')
+                ->with('success', 'Siniestro actualizado correctamente.');
+        } catch (Throwable $e) {
+            Log::error('Error en SiniestroController@update: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->back()->withInput()->with('error', 'Error al actualizar el siniestro.');
+        }
     }
 
     /**
@@ -229,13 +247,18 @@ class SiniestroController extends Controller
      */
     public function destroy($id)
     {
-        $siniestro = Siniestro::findOrFail($id);
-        $this->authorize('delete', $siniestro);
+        try{
+            $siniestro = Siniestro::findOrFail($id);
+            $this->authorize('delete', $siniestro);
 
-        $siniestro->contactos()->delete(); // Eliminar todos los contactos asociados
-        $siniestro->delete(); // Eliminar el siniestro
+            $siniestro->contactos()->delete(); // Eliminar todos los contactos asociados
+            $siniestro->delete(); // Eliminar el siniestro
 
-        return redirect()->route('siniestros.index')
-            ->with('success', 'Siniestro eliminado correctamente.');
+            return redirect()->route('siniestros.index')
+                ->with('success', 'Siniestro eliminado correctamente.');
+        } catch (Throwable $e) {
+            Log::error('Error en SiniestroController@destroy: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->route('siniestros.index')->with('error', 'Error al eliminar el siniestro.');
+        }
     }
 }

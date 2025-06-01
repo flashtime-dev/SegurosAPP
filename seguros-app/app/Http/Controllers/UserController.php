@@ -11,6 +11,8 @@ use App\Http\Middleware\CheckPermiso;
 use App\Models\Subusuario;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class UserController extends BaseController
 {
@@ -57,7 +59,7 @@ class UserController extends BaseController
 
         $userLogged = User::findOrFail($user->id); // Obtener el usuario autenticado
         $userLogged->load(
-            'rol', 
+            'rol',
             'subusuarios.usuario:id,id_rol,name,email,address,phone,state',
             'usuarioCreador.usuarioCreador:id,id_rol,name,email,address,phone,state'); // Cargar el rol del usuario autenticado
 
@@ -71,51 +73,54 @@ class UserController extends BaseController
 
     public function store(Request $request)
     {
-        // Capitalizar cada palabra del nombre antes de la validación
-        $request->merge([
-            'name' => ucfirst(($request->name)),
-            'address' => ucfirst($request->address)
-        ]);
-
-        $request->validate([
-            'name' => 'required|string|min:2|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
-            'password' => 'required|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/',
-            'id_rol' => 'required|exists:roles,id',
-            'address' => 'nullable|string|max:500',
-            'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-            'state' => 'nullable|boolean',
-            'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
-        ], [
-            'name.min' => 'El nombre debe tener al menos 2 caracteres',
-            'email.required' => 'El correo electrónico es obligatorio',
-            'email.unique' => 'El correo electrónico ya está en uso',
-            'email.regex' => 'El formato del correo electrónico es inválido',
-            'id_rol.required' => 'Debes seleccionar un rol',
-            'password.confirmed' => 'Las contraseñas no coinciden',
-            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
-            'phone' => 'Formato de teléfono incorrecto',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'id_rol' => $request->id_rol,
-            'address' => $request->address,
-            'phone' => $request->phone,
-            'state' => $request->boolean('state'), // Convertir a booleano
-        ]);
-
-        if ($user && $request->filled('id_usuario_creador')) {
-            Subusuario::create([
-                'id' => $user->id,
-                'id_usuario_creador' => $request->id_usuario_creador,
+        try {
+            // Capitalizar cada palabra del nombre antes de la validación
+            $request->merge([
+                'name' => ucfirst(($request->name)),
+                'address' => ucfirst($request->address)
             ]);
+
+            $request->validate([
+                'name' => 'required|string|min:2|max:255',
+                'email' => 'required|string|email|max:255|unique:users,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
+                'password' => 'required|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/',
+                'id_rol' => 'required|exists:roles,id',
+                'address' => 'nullable|string|max:500',
+                'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+                'state' => 'nullable|boolean',
+                'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
+            ], [
+                'name.min' => 'El nombre debe tener al menos 2 caracteres',
+                'email.required' => 'El correo electrónico es obligatorio',
+                'email.unique' => 'El correo electrónico ya está en uso',
+                'email.regex' => 'El formato del correo electrónico es inválido',
+                'id_rol.required' => 'Debes seleccionar un rol',
+                'password.confirmed' => 'Las contraseñas no coinciden',
+                'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
+                'phone' => 'Formato de teléfono incorrecto',
+            ]);
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'id_rol' => $request->id_rol,
+                'address' => $request->address,
+                'phone' => $request->phone,
+                'state' => $request->boolean('state'), // Convertir a booleano
+            ]);
+
+            if ($user && $request->filled('id_usuario_creador')) {
+                Subusuario::create([
+                    'id' => $user->id,
+                    'id_usuario_creador' => $request->id_usuario_creador,
+                ]);
+            }
+            //return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
+        } catch (Throwable $e) {
+            Log::error('Error al crear usuario: '.$e->getMessage(), ['exception' => $e]);
+            return redirect()->back()->withInput()->withErrors(['error' => 'Error al crear el usuario.']);
         }
-
-
-        //return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
     }
 
     /**
@@ -135,67 +140,70 @@ class UserController extends BaseController
 
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id); // Buscar el usuario por ID
+        try {
+            $user = User::findOrFail($id); // Buscar el usuario por ID
+            // Capitalizar cada palabra del nombre antes de la validación
+            $request->merge([
+                'name' => ucfirst($request->name),
+                'address' => ucfirst($request->address)
+            ]);
 
-        // Capitalizar cada palabra del nombre antes de la validación
-        $request->merge([
-            'name' => ucfirst($request->name),
-            'address' => ucfirst($request->address)
-        ]);
+            // Validar los datos del formulario
+            $request->validate([
+                'name' => 'required|string|min:2|max:255',
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    'max:255',
+                    'unique:users,email,' . $user->id, // Excluir el correo actual del usuario
+                    'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i', // Validar formato de correo electrónico
+                ],
+                'password' => 'nullable|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/', // Contraseña opcional
+                'id_rol' => 'required|exists:roles,id',
+                'address' => 'nullable|string|max:500',
+                'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+                'state' => 'nullable|boolean',
+                'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
+            ], [
+                'name.min' => 'El nombre debe tener al menos 2 caracteres',
+                'email.regex' => 'El formato del correo electrónico es inválido.',
+                'password.confirmed' => 'Las contraseñas no coinciden.',
+                'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
+                'phone' => 'Formato de teléfono incorrecto',
+            ]);
 
-        // Validar los datos del formulario
-        $request->validate([
-            'name' => 'required|string|min:2|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users,email,' . $user->id, // Excluir el correo actual del usuario
-                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i', // Validar formato de correo electrónico
-            ],
-            'password' => 'nullable|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/', // Contraseña opcional
-            'id_rol' => 'required|exists:roles,id',
-            'address' => 'nullable|string|max:500',
-            'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-            'state' => 'nullable|boolean',
-            'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
-        ], [
-            'name.min' => 'El nombre debe tener al menos 2 caracteres',
-            'email.regex' => 'El formato del correo electrónico es inválido.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
-            'phone' => 'Formato de teléfono incorrecto',
-        ]);
+            // Actualizar los datos del usuario
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email ?? $user->email, // Mantener el correo actual si no se cambia
+                'password' => $request->filled('password') ? Hash::make($request->password) : $user->password, // Mantener la contraseña actual si no se proporciona una nueva
+                'id_rol' => $request->id_rol,
+                'address' => $request->address,
+                'phone' => $request->phone,
+                'state' => $request->state ?? $user->state,
+            ]);
 
-        // Actualizar los datos del usuario
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email ?? $user->email, // Mantener el correo actual si no se cambia
-            'password' => $request->filled('password') ? Hash::make($request->password) : $user->password, // Mantener la contraseña actual si no se proporciona una nueva
-            'id_rol' => $request->id_rol,
-            'address' => $request->address,
-            'phone' => $request->phone,
-            'state' => $request->state ?? $user->state,
-        ]);
-
-        if ($user && $request->filled('id_usuario_creador')) {
-            // Si el usuario tiene un id_usuario_creador, actualizarlo
-            $subusuario = Subusuario::where('id', $user->id)->first();
-            if ($subusuario) {
-                $subusuario->update([
-                    'id_usuario_creador' => $request->id_usuario_creador,
-                ]);
-            } else {
-                // Si no existe, crear uno nuevo
-                Subusuario::create([
-                    'id' => $user->id,
-                    'id_usuario_creador' => $request->id_usuario_creador,
-                ]);
+            if ($user && $request->filled('id_usuario_creador')) {
+                // Si el usuario tiene un id_usuario_creador, actualizarlo
+                $subusuario = Subusuario::where('id', $user->id)->first();
+                if ($subusuario) {
+                    $subusuario->update([
+                        'id_usuario_creador' => $request->id_usuario_creador,
+                    ]);
+                } else {
+                    // Si no existe, crear uno nuevo
+                    Subusuario::create([
+                        'id' => $user->id,
+                        'id_usuario_creador' => $request->id_usuario_creador,
+                    ]);
+                }
             }
+            //return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+        } catch (Throwable $e) {
+            Log::error('Error al actualizar usuario: '.$e->getMessage(), ['exception' => $e]);
+            return redirect()->back()->withInput()->withErrors(['error' => 'Error al actualizar el usuario.']);
         }
-
-        //return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
     }
 
     /**
@@ -203,8 +211,13 @@ class UserController extends BaseController
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id); // Buscar el usuario por ID
-        $user->delete(); // Eliminar el usuario
-        //return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado correctamente.');
+        try{
+            $user = User::findOrFail($id); // Buscar el usuario por ID
+            $user->delete(); // Eliminar el usuario
+            //return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado correctamente.');
+        } catch (Throwable $e) {
+            Log::error('Error al eliminar usuario: '.$e->getMessage(), ['exception' => $e]);
+            return redirect()->back()->withErrors(['error' => 'Error al eliminar el usuario.']);
+        }
     }
 }
