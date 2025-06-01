@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
 use App\Http\Middleware\CheckPermiso;
+
 class SiniestroController extends Controller
 {
     public function __construct()
@@ -82,9 +83,13 @@ class SiniestroController extends Controller
             'fecha_ocurrencia' => 'nullable|date',
             'adjunto' => 'nullable|file|max:2048',
             'contactos' => 'nullable|array',
+
+            // Validación de contactos
+            'contactos.*.nombre' => 'required|string|min:2|max:100',
+            'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
         ], [
             'id_poliza.required' => 'La póliza es obligatoria.',
-            'declaracion.min' => 'La declaración debe tener al menos 2 caracteres.',
+            'declaracion.min' => 'La declaración debe tener al menos 10 caracteres.',
             'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
             'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
             'exp_cia.min' => 'La compañía debe tener al menos 2 caracteres.',
@@ -92,6 +97,10 @@ class SiniestroController extends Controller
             'adjunto.file' => 'El archivo adjunto no es válido.',
             'adjunto.mimes' => 'El archivo adjunto debe ser un archivo de tipo: pdf, jpg, jpeg, png.',
             'adjunto.max' => 'El archivo adjunto no puede ser mayor de 2MB.',
+            'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
+            'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
+            'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
+            'contactos.*.telefono' => 'Formato de teléfono incorrecto',
         ]);
 
         $data = $request->except(['contactos', 'adjunto']);
@@ -168,6 +177,10 @@ class SiniestroController extends Controller
             'fecha_ocurrencia' => 'nullable|date',
             'adjunto' => 'nullable|file|max:2048',
             'contactos' => 'nullable|array',
+
+            // Validación de contactos
+            'contactos.*.nombre' => 'required|string|min:2|max:100',
+            'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
         ], [
             'id_poliza.required' => 'La póliza es obligatoria.',
             'declaracion.min' => 'La declaración debe tener al menos 2 caracteres.',
@@ -178,6 +191,10 @@ class SiniestroController extends Controller
             'adjunto.file' => 'El archivo adjunto no es válido.',
             'adjunto.mimes' => 'El archivo adjunto debe ser un archivo de tipo: pdf, jpg, jpeg, png.',
             'adjunto.max' => 'El archivo adjunto no puede ser mayor de 2MB.',
+            'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
+            'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
+            'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
+            'contactos.*.telefono' => 'Formato de teléfono incorrecto',
         ]);
 
         $siniestro->update($request->except('contactos', 'adjunto'));

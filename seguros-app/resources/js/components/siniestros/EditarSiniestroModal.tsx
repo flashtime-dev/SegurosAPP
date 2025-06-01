@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm } from "@inertiajs/react";
 import {
     Dialog,
@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Poliza } from "@/types";
+import PhoneInputField from "@/components/PhoneInputField";
 
 type Props = {
     isOpen: boolean;
@@ -49,27 +50,42 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
         contactos: []
     });
 
+    // dentro de tu componente:
+    const wasOpenedRef = useRef(false);
     useEffect(() => {
-        if (siniestro) {
+        if (isOpen && siniestro && !wasOpenedRef.current) {
+            wasOpenedRef.current = true;
             const formatFecha = (fecha: string) => {
                 const date = new Date(fecha);
                 return date.toISOString().split("T")[0]; // Convierte a "yyyy-MM-dd"
             };
             setData({
-                id_poliza: String(siniestro.id_poliza),
-                declaracion: siniestro.declaracion,
-                tramitador: siniestro.tramitador,
-                expediente: siniestro.expediente,
-                exp_cia: siniestro.exp_cia,
-                exp_asist: siniestro.exp_asist,
-                fecha_ocurrencia: formatFecha(siniestro.fecha_ocurrencia),
+                id_poliza: String(siniestro.id_poliza ?? ''),
+                declaracion: siniestro.declaracion ?? '',
+                tramitador: siniestro.tramitador ?? '',
+                expediente: siniestro.expediente ?? '',
+                exp_cia: siniestro.exp_cia ?? '',
+                exp_asist: siniestro.exp_asist ?? '',
+                fecha_ocurrencia: siniestro.fecha_ocurrencia
+                    ? formatFecha(siniestro.fecha_ocurrencia)
+                    : '',
                 adjunto: null,
-                contactos: siniestro.contactos || []
+                contactos: Array.isArray(siniestro.contactos)
+                    ? siniestro.contactos.map((c: any) => ({
+                        nombre: c?.nombre ?? '',
+                        cargo: c?.cargo ?? '',
+                        piso: c?.piso ?? '',
+                        telefono: c?.telefono ?? '',
+                    }))
+                    : [],
             });
-        } else {
-            reset();
+
         }
-    }, [polizas, siniestro]);
+        if (!isOpen) {
+            reset();
+            wasOpenedRef.current = false;
+        }
+    }, [isOpen, polizas, siniestro]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -81,6 +97,16 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                 },
             });
         }
+    };
+
+    const actualizarContacto = (
+        index: number,
+        campo: keyof FormData["contactos"][0],
+        valor: string
+    ) => {
+        const nuevos = [...data.contactos];
+        nuevos[index] = { ...nuevos[index], [campo]: valor };
+        setData("contactos", nuevos);
     };
 
     return (
@@ -247,6 +273,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                     required
                                                     placeholder="Nombre del contacto"
                                                 />
+                                                <InputError message={(errors as Record<string, string>)[`contactos.${index}.nombre`]} />
                                             </div>
                                             <div>
                                                 <Label htmlFor={`cargo-${index}`}>Cargo</Label>
@@ -275,17 +302,15 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                 />
                                             </div>
                                             <div>
-                                                <Label htmlFor={`telefono-${index}`}>Teléfono</Label>
-                                                <Input
-                                                    id={`telefono-${index}`}
+                                                <Label htmlFor="telefono">Teléfono</Label>
+                                                <PhoneInputField
                                                     value={contacto.telefono}
-                                                    onChange={e => {
-                                                        const nuevosContactos = [...data.contactos];
-                                                        nuevosContactos[index] = { ...contacto, telefono: e.target.value };
-                                                        setData('contactos', nuevosContactos);
+                                                    onChange={(value) => {
+                                                        const cleaned = value.replace(/\s/g, "");
+                                                        const normalized = cleaned === "" ? "" : (cleaned.startsWith("+") ? cleaned : `+${cleaned}`);
+                                                        actualizarContacto(index, 'telefono', normalized);
                                                     }}
-                                                    required
-                                                    placeholder="+34 123 456 789"
+                                                    error={(errors as Record<string, string>)[`contactos.${index}.telefono`]}
                                                 />
                                             </div>
                                         </div>

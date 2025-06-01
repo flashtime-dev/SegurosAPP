@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Rol, User } from "@/types";
+import PhoneInputField from "@/components/PhoneInputField";
 
 type Props = {
     usuarios: User[];
@@ -159,14 +160,19 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
 
                             <div>
                                 <Label htmlFor="phone">Teléfono</Label>
-                                <Input
-                                    id="phone"
+                                <PhoneInputField
                                     value={data.phone}
-                                    onChange={(e) => setData('phone', e.target.value)}
-                                    disabled={processing}
-                                    placeholder="+34 123 456 789"
+                                    onChange={(value) => {
+                                        if (!value) {
+                                            setData("phone", "");
+                                            return;
+                                        }
+                                        const cleaned = value.replace(/\s/g, "");
+                                        const normalized = cleaned === "" ? "" : (cleaned.startsWith("+") ? cleaned : `+${cleaned}`);
+                                        setData("phone", normalized);
+                                    }}
+                                    error={errors.phone}
                                 />
-                                <InputError message={errors.phone} className="mt-2" />
                             </div>
 
                             <div>

@@ -89,7 +89,7 @@ class ComunidadController extends Controller
             'direccion' => 'nullable|string|max:255',
             'ubi_catastral' => 'nullable|string|max:255',
             'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
-            'telefono' => 'nullable|string|max:15',
+            'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
         ],[
@@ -97,6 +97,7 @@ class ComunidadController extends Controller
             'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
             'cif.unique' => 'El CIF ya está en uso.',
             'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
+            'telefono' => 'Formato de teléfono incorrecto',
         ]);
         
         $request->merge(['id_propietario' => $user->id]); // Asignar el ID del propietario al request
@@ -156,7 +157,7 @@ class ComunidadController extends Controller
             'direccion' => 'nullable|string|max:255',
             'ubi_catastral' => 'nullable|string|max:255',
             'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
-            'telefono' => 'nullable|string|max:15',
+            'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
         ],[
@@ -164,6 +165,7 @@ class ComunidadController extends Controller
             'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
             'cif.unique' => 'El CIF ya está en uso.',
             'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
+            'telefono' => 'Formato de teléfono incorrecto',
         ]);
 
         // Actualizar los datos de la comunidad excepto los usuarios

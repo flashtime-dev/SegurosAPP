@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Siniestro } from "@/types";
-import { format, parseISO } from "date-fns";
+import { isValid, parseISO, format } from "date-fns";
 import { es } from "date-fns/locale";
 import { FileIcon } from "lucide-react";
 
@@ -12,9 +12,16 @@ interface Props {
 const DetailItem = ({ label, value }: Props) => (
     <div className="space-y-1">
         <Label>{label}</Label>
-        <div className="text-sm text-muted-foreground">{value ?? '-'}</div>
+        <div className="text-sm text-muted-foreground">{value || '-'}</div>
     </div>
 );
+
+function safeFormatDate(fecha?: string | null) {
+    if (!fecha) return "-";
+    const parsed = parseISO(fecha);
+    if (!isValid(parsed)) return "-";
+    return format(parsed, "d 'de' MMMM 'de' yyyy", { locale: es });
+}
 
 export function SiniestroDetalles({ siniestro }: { siniestro: Siniestro }) {
     return (
@@ -35,7 +42,7 @@ export function SiniestroDetalles({ siniestro }: { siniestro: Siniestro }) {
                 />
                 <DetailItem
                     label="Fecha de Ocurrencia"
-                    value={format(parseISO(siniestro.fecha_ocurrencia), "d 'de' MMMM 'de' yyyy", { locale: es })}
+                    value={safeFormatDate(siniestro.fecha_ocurrencia)}
                 />
                 <DetailItem
                     label="Tramitador"

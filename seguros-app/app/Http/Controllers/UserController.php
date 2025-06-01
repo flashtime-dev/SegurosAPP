@@ -20,15 +20,15 @@ class UserController extends BaseController
 
         //Usuarios
         $this->middleware(CheckPermiso::class . ':usuarios.ver', ['only' => ['index']]);
-        $this->middleware(CheckPermiso::class . ':usuarios.crear', ['only' => ['store']]);
-        $this->middleware(CheckPermiso::class . ':usuarios.editar', ['only' => ['update']]);
-        $this->middleware(CheckPermiso::class . ':usuarios.eliminar', ['only' => ['destroy']]);
+        $this->middleware(CheckPermiso::class . ':usuarios.crear|empleados.crear', ['only' => ['store']]);
+        $this->middleware(CheckPermiso::class . ':usuarios.editar|empleados.editar', ['only' => ['update']]);
+        $this->middleware(CheckPermiso::class . ':usuarios.eliminar|empleados.eliminar', ['only' => ['destroy']]);
 
         //Empleados
         $this->middleware(CheckPermiso::class . ':empleados.ver', ['only' => ['empleados']]);
-        $this->middleware(CheckPermiso::class . ':empleados.crear', ['only' => ['store']]);
-        $this->middleware(CheckPermiso::class . ':empleados.editar', ['only' => ['update']]);
-        $this->middleware(CheckPermiso::class . ':empleados.eliminar', ['only' => ['destroy']]);
+        // $this->middleware(CheckPermiso::class . ':empleados.crear', ['only' => ['store']]);
+        // $this->middleware(CheckPermiso::class . ':empleados.editar', ['only' => ['update']]);
+        // $this->middleware(CheckPermiso::class . ':empleados.eliminar', ['only' => ['destroy']]);
     }
 
     public function index()
@@ -83,17 +83,18 @@ class UserController extends BaseController
             'password' => 'required|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/',
             'id_rol' => 'required|exists:roles,id',
             'address' => 'nullable|string|max:500',
-            'phone' => 'nullable|string|max:15',
+            'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
             'state' => 'nullable|boolean',
             'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
         ], [
-            'name.min' => 'El nombre debe tener al menos 3 caracteres',
+            'name.min' => 'El nombre debe tener al menos 2 caracteres',
             'email.required' => 'El correo electrónico es obligatorio',
             'email.unique' => 'El correo electrónico ya está en uso',
             'email.regex' => 'El formato del correo electrónico es inválido',
             'id_rol.required' => 'Debes seleccionar un rol',
             'password.confirmed' => 'Las contraseñas no coinciden',
             'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
+            'phone' => 'Formato de teléfono incorrecto',
         ]);
 
         $user = User::create([
@@ -156,14 +157,15 @@ class UserController extends BaseController
             'password' => 'nullable|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/', // Contraseña opcional
             'id_rol' => 'required|exists:roles,id',
             'address' => 'nullable|string|max:500',
-            'phone' => 'nullable|string|max:15',
+            'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
             'state' => 'nullable|boolean',
             'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
         ], [
-            'name.min' => 'El nombre debe tener al menos 3 caracteres',
+            'name.min' => 'El nombre debe tener al menos 2 caracteres',
             'email.regex' => 'El formato del correo electrónico es inválido.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
             'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
+            'phone' => 'Formato de teléfono incorrecto',
         ]);
 
         // Actualizar los datos del usuario

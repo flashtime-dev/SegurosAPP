@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Rol, User } from "@/types";
+import PhoneInputField from "@/components/PhoneInputField";
 
 type Props = {
     usuarios: User[];
@@ -24,7 +25,7 @@ type Props = {
     roles: Rol[];
 };
 
-export default function CrearUsuarioModal({usuarios, isOpen, onClose, roles }: Props) {
+export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: Props) {
     const empleados = usuarios.filter((usuario) => usuario.usuario_creador === null);
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
@@ -137,7 +138,7 @@ export default function CrearUsuarioModal({usuarios, isOpen, onClose, roles }: P
                                 <InputError message={errors.address} className="mt-2" />
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <Label htmlFor="phone">Teléfono</Label>
                                 <Input
                                     id="phone"
@@ -147,6 +148,22 @@ export default function CrearUsuarioModal({usuarios, isOpen, onClose, roles }: P
                                     placeholder="+34 123 456 789"
                                 />
                                 <InputError message={errors.phone} className="mt-2" />
+                            </div> */}
+                            <div>
+                                <Label htmlFor="phone">Teléfono</Label>
+                                <PhoneInputField
+                                    value={data.phone}
+                                    onChange={(value) => {
+                                        if (!value) {
+                                            setData("phone", "");
+                                            return;
+                                        }
+                                        const cleaned = value.replace(/\s/g, "");
+                                        const normalized = cleaned === "" ? "" : (cleaned.startsWith("+") ? cleaned : `+${cleaned}`);
+                                            setData("phone", normalized);
+                                    }}
+                                    error={errors.phone}
+                                />
                             </div>
 
                             <div>

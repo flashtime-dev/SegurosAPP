@@ -52,12 +52,13 @@ class AgenteController extends BaseController
 
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
-            'telefono' => 'nullable|string|max:15',
+            'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
             'email' => 'nullable|string|email|max:255|unique:agentes,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
         ],[
             'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
             'email.unique' => 'El email ya está en uso.',
             'email.regex' => 'El formato del email es inválido.',
+            'telefono' => 'Formato de teléfono incorrecto',
         ]);
 
         Agente::create($request->all()); // Crear un nuevo agente

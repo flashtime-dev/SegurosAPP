@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, Comunidad } from "@/types";
+import PhoneInputField from "@/components/PhoneInputField";
 
 type Props = {
     isOpen: boolean;
@@ -149,15 +150,19 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
 
                             <div>
                                 <Label htmlFor="telefono">Teléfono</Label>
-                                <Input
-                                    id="telefono"
-                                    type="tel"
+                                <PhoneInputField
                                     value={data.telefono}
-                                    onChange={(e) => setData('telefono', e.target.value)}
-                                    disabled={processing}
-                                    placeholder="+34 123 456 789"
+                                    onChange={(value) => {
+                                        if (!value) {
+                                            setData("telefono", "");
+                                            return;
+                                        }
+                                        const cleaned = value.replace(/\s/g, "");
+                                        const normalized = cleaned.startsWith("+") ? cleaned : `+${cleaned}`;
+                                        setData("telefono", normalized);
+                                    }}
+                                    error={errors.telefono}
                                 />
-                                <InputError message={errors.telefono} className="mt-2" />
                             </div>
 
                             {/* Campo para añadir usuarios */}
