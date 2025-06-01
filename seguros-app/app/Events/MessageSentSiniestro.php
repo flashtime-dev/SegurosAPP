@@ -9,6 +9,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\ChatSiniestro;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class MessageSentSiniestro implements ShouldBroadcastNow
 {
@@ -19,10 +20,16 @@ class MessageSentSiniestro implements ShouldBroadcastNow
      */
     public function __construct(public ChatSiniestro $message)
     {
-        Log::info("🎯 Evento MessageSent creado", [
-            'message_id' => $this->message->id,
-            'siniestro_id' => $this->message->id_siniestro
-        ]);
+        try {
+            Log::info("🎯 Evento MessageSentSiniestro creado", [
+                'message_id' => $this->message->id,
+                'siniestro_id' => $this->message->id_siniestro
+            ]);
+        } catch (Throwable $e) {
+            Log::error("❌ Error en constructor de MessageSentSiniestro: " . $e->getMessage(), [
+                'exception' => $e,
+            ]);
+        }
     }
 
     /**
@@ -35,29 +42,44 @@ class MessageSentSiniestro implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         $channel = 'chatSiniestro.' . $this->message->id_siniestro;
-        Log::info("📺 Broadcasting en canal privado: " . $channel);
+        try {
+            Log::info("📺 Broadcasting en canal privado: " . $channel);
+        } catch (Throwable $e) {
+            Log::error("❌ Error al definir canal de broadcast: " . $e->getMessage(), [
+                'exception' => $e,
+            ]);
+        }
 
         return [
-            new PrivateChannel($channel), // Canal público en lugar de PrivateChannel
+            new PrivateChannel($channel),
         ];
     }
 
 
     public function broadcastWith(): array
     {
-        $this->message->load('usuario');
+        try {
+            $this->message->load('usuario');
         
-        $data = [
-            'id' => $this->message->id,
-            'id_siniestro' => $this->message->id_poliza,
-            'id_usuario' => $this->message->id_usuario,
-            'mensaje' => $this->message->mensaje,
-            'adjunto' => $this->message->adjunto,
-            'created_at' => $this->message->created_at,
-            'usuario' => $this->message->usuario
-        ];
+            $data = [
+                'id' => $this->message->id,
+                'id_siniestro' => $this->message->id_siniestro,
+                'id_usuario' => $this->message->id_usuario,
+                'mensaje' => $this->message->mensaje,
+                'adjunto' => $this->message->adjunto,
+                'created_at' => $this->message->created_at,
+                'usuario' => $this->message->usuario
+            ];
 
-        Log::info("📦 Datos del broadcast:", $data);
-        return $data;
+            Log::info("📦 Datos del broadcast:", $data);
+            return $data;
+        } catch (Throwable $e) {
+            Log::error("❌ Error al preparar datos para el broadcast: " . $e->getMessage(), [
+                'exception' => $e,
+                'message_id' => $this->message->id ?? null,
+            ]);
+
+            return [];
+        }
     }
 }
