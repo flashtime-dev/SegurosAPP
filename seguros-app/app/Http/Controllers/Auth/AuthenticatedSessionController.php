@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -18,10 +20,19 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(Request $request): Response
     {
-        return Inertia::render('auth/login', [
-            'canResetPassword' => Route::has('password.request'),
-            'status' => $request->session()->get('status'),
-        ]);
+        try {
+            return Inertia::render('auth/login', [
+                'canResetPassword' => Route::has('password.request'),
+                'status' => $request->session()->get('status'),
+            ]);
+        } catch (Throwable $e) {
+            Log::error('❌ Error al mostrar la página de login: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
+
+            // Opcional: Puedes mostrar una vista de error o redirigir
+            abort(500, 'Error interno al mostrar la página de login.');
+        }
     }
 
     /**
@@ -29,11 +40,22 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        try {
+            $request->authenticate();
+            $request->session()->regenerate();
 
-        $request->session()->regenerate();
+            return redirect()->intended(route('dashboard', absolute: false));
+        } catch (Throwable $e) {
+            Log::error('❌ Error durante la autenticación: ' . $e->getMessage(), [
+                'exception' => $e,
+                'input' => $request->only('email'),
+            ]);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+            // Puedes redirigir de nuevo con mensaje de error
+            return redirect()->back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Error al iniciar sesión. Por favor verifica tus credenciales.']);
+        }
     }
 
     /**
@@ -41,11 +63,21 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        try {
+            Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        return redirect('/');
+            return redirect('/');
+        } catch (Throwable $e) {
+            Log::error('❌ Error al cerrar sesión: ' . $e->getMessage(), [
+                'exception' => $e,
+                'user_id' => Auth::id(),
+            ]);
+
+            // En caso de error, puedes redirigir con mensaje o abortar
+            return redirect('/')->withErrors(['logout' => 'Error al cerrar sesión. Intenta nuevamente.']);
+        }
     }
 }

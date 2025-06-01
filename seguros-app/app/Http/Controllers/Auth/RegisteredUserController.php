@@ -9,9 +9,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class RegisteredUserController extends Controller
 {
@@ -20,7 +23,15 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('auth/register');
+        try {
+            return Inertia::render('auth/register');
+        } catch (Throwable $e) {
+            Log::error('❌ Error al mostrar la página de registro: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
+
+            abort(500, 'Error interno al mostrar la página de registro.');
+        }
     }
 
     /**
@@ -30,30 +41,39 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|min:2|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults(),'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/'],
-        ],[
-            'name.required' => 'El campo nombre es obligatorio.',
-            'email.required' => 'El campo email es obligatorio.',
-            'email.email' => 'El formato del email es inválido.',
-            'email.unique' => 'El email ya está en uso.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|min:2|max:255',
+                'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+                'password' => ['required', 'confirmed', Rules\Password::defaults(),'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/'],
+            ],[
+                'name.required' => 'El campo nombre es obligatorio.',
+                'email.required' => 'El campo email es obligatorio.',
+                'email.email' => 'El formato del email es inválido.',
+                'email.unique' => 'El email ya está en uso.',
+                'password.required' => 'La contraseña es obligatoria.',
+                'password.confirmed' => 'Las contraseñas no coinciden.',
+                'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
+            ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        event(new Registered($user));
+            event(new Registered($user));
+            Auth::login($user);
+            return to_route('dashboard');
+        } catch (ValidationException $ve) {
+            throw $ve;
+        } catch (Throwable $e) {
+            Log::error('❌ Error durante el registro de usuario: ' . $e->getMessage(), [
+                'exception' => $e,
+                'email' => $request->email ?? null,
+            ]);
 
-        Auth::login($user);
-
-        return to_route('dashboard');
+            abort(500, 'Error interno durante el registro del usuario.');
+        }
     }
 }
