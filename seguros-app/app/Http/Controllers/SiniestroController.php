@@ -31,7 +31,7 @@ class SiniestroController extends Controller
      */
     public function index()
     {
-        try{
+        try {
             $user = Auth::user(); // Obtener el usuario autenticado
             // Verificar si el usuario tiene el rol de administrador
             if ($user->rol->nombre == 'Superadministrador') {
@@ -75,7 +75,7 @@ class SiniestroController extends Controller
      */
     public function store(Request $request)
     {
-        try{
+        try {
             $request->merge([
                 'declaracion' => ucfirst($request->declaracion),
                 'tramitador' => ucfirst($request->tramitador),
@@ -159,7 +159,7 @@ class SiniestroController extends Controller
      */
     public function show($id)
     {
-        try{
+        try {
             $siniestro = Siniestro::with('poliza.compania', 'contactos', 'chats.usuario', 'adjuntos')->findOrFail($id); // Buscar el siniestro por ID
             $this->authorize('view', $siniestro);
             //dd($siniestro); // Debugging: Verificar el siniestro cargado
@@ -191,102 +191,102 @@ class SiniestroController extends Controller
      */
     public function update(Request $request, Siniestro $siniestro)
     {
-        try{
-        // Normalizar mayúsculas en ciertos campos
-        $request->merge([
-            'declaracion' => ucfirst($request->declaracion),
-            'tramitador'  => ucfirst($request->tramitador),
-        ]);
+        try {
+            // Normalizar mayúsculas en ciertos campos
+            $request->merge([
+                'declaracion' => ucfirst($request->declaracion),
+                'tramitador'  => ucfirst($request->tramitador),
+            ]);
 
-        // Validación
-        $request->validate([
-            'id_poliza'        => 'required|exists:polizas,id',
-            'declaracion'      => 'required|string|min:10',
-            'tramitador'       => 'nullable|string|min:2|max:255',
-            'expediente'       => 'required|string|min:2|max:50',
-            'exp_cia'          => 'nullable|string|min:2|max:50',
-            'exp_asist'        => 'nullable|string|min:2|max:50',
-            'fecha_ocurrencia' => 'nullable|date',
-            'files'            => 'nullable|array',
-            'files.*'          => 'file|max:2048|mimes:pdf,jpg,jpeg,png',
-            'contactos'        => 'nullable|array',
-            // Validación de contactos
+            // Validación
+            $request->validate([
+                'id_poliza'        => 'required|exists:polizas,id',
+                'declaracion'      => 'required|string|min:10',
+                'tramitador'       => 'nullable|string|min:2|max:255',
+                'expediente'       => 'required|string|min:2|max:50',
+                'exp_cia'          => 'nullable|string|min:2|max:50',
+                'exp_asist'        => 'nullable|string|min:2|max:50',
+                'fecha_ocurrencia' => 'nullable|date',
+                'files'            => 'nullable|array',
+                'files.*'          => 'file|max:2048|mimes:pdf,jpg,jpeg,png',
+                'contactos'        => 'nullable|array',
+                // Validación de contactos
                 'contactos.*.nombre' => 'required|string|min:2|max:100',
                 'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-        ], [
-            'id_poliza.required'     => 'La póliza es obligatoria.',
-            'declaracion.min'        => 'La declaración debe tener al menos 10 caracteres.',
-            'tramitador.min'         => 'El tramitador debe tener al menos 2 caracteres.',
-            'expediente.min'         => 'El expediente debe tener al menos 2 caracteres.',
-            'exp_cia.min'            => 'La compañía debe tener al menos 2 caracteres.',
-            'exp_asist.min'          => 'El asistente debe tener al menos 2 caracteres.',
-            'files.array'            => 'Los archivos deben ser un arreglo.',
-            'files.*.file'           => 'Cada archivo no es válido.',
-            'files.*.mimes'          => 'Cada archivo debe ser pdf, jpg, jpeg o png.',
-            'files.*.max'            => 'Cada archivo no puede ser mayor de 2MB.',
-            'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
-            'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
-            'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
-            'contactos.*.telefono' => 'Formato de teléfono incorrecto',
-        ]);
+            ], [
+                'id_poliza.required'     => 'La póliza es obligatoria.',
+                'declaracion.min'        => 'La declaración debe tener al menos 10 caracteres.',
+                'tramitador.min'         => 'El tramitador debe tener al menos 2 caracteres.',
+                'expediente.min'         => 'El expediente debe tener al menos 2 caracteres.',
+                'exp_cia.min'            => 'La compañía debe tener al menos 2 caracteres.',
+                'exp_asist.min'          => 'El asistente debe tener al menos 2 caracteres.',
+                'files.array'            => 'Los archivos deben ser un arreglo.',
+                'files.*.file'           => 'Cada archivo no es válido.',
+                'files.*.mimes'          => 'Cada archivo debe ser pdf, jpg, jpeg o png.',
+                'files.*.max'            => 'Cada archivo no puede ser mayor de 2MB.',
+                'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
+                'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
+                'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
+                'contactos.*.telefono' => 'Formato de teléfono incorrecto',
+            ]);
 
-        // Preparar datos excepto contactos y archivos
-        $data = $request->except(['contactos', 'files']);
+            // Preparar datos excepto contactos y archivos
+            $data = $request->except(['contactos', 'files']);
 
-        // Determinar nuevo valor para el campo adjunto si llegan archivos
-        $data['adjunto'] = count($request->file('files')) > 0;
+            // Determinar nuevo valor para el campo adjunto si llegan archivos
+            $data['adjunto'] = count($request->file('files')) > 0;
 
-        // Actualizar el siniestro en la BD
-        $siniestro->update($data);
+            // Actualizar el siniestro en la BD
+            $siniestro->update($data);
 
-        // Si vienen archivos nuevos, borrar primero los anteriores (físicos y registros)
-        if ($request->hasFile('files')) {
-            // Eliminar toda la carpeta física de adjuntos de este siniestro
-            $carpeta = "siniestros/s-{$siniestro->id}";
-            if (Storage::exists($carpeta)) {
-                Storage::deleteDirectory($carpeta);
-            }
-
-            // Borrar todos los registros de adjuntos en la BD relacionados con este siniestro
-            $siniestro->adjuntos()->delete();
-
-            // Subir y guardar cada archivo nuevo, generando su registro en adjuntos_siniestros
-            foreach ($request->file('files') as $file) {
-                // Usamos storeAs para mantener el nombre original dentro de la carpeta del siniestro
-                $ruta = $file->storeAs($carpeta, $file->getClientOriginalName());
-
-                if ($ruta) {
-                    // Generar la URL pública (asumiendo que storage:link ya está creado)
-                    $url = asset("storage/{$ruta}");
-                } else {
-                    $url = null;
+            // Si vienen archivos nuevos, borrar primero los anteriores (físicos y registros)
+            if ($request->hasFile('files')) {
+                // Eliminar toda la carpeta física de adjuntos de este siniestro
+                $carpeta = "siniestros/s-{$siniestro->id}";
+                if (Storage::exists($carpeta)) {
+                    Storage::deleteDirectory($carpeta);
                 }
 
-                // Crear registro en la relación "adjuntos"
-                $siniestro->adjuntos()->create([
-                    'nombre'       => $file->getClientOriginalName(),
-                    'url_adjunto'  => $url,
-                    // 'id_chat'   => null // si necesitas ese campo, agrégalo
-                ]);
+                // Borrar todos los registros de adjuntos en la BD relacionados con este siniestro
+                $siniestro->adjuntos()->delete();
+
+                // Subir y guardar cada archivo nuevo, generando su registro en adjuntos_siniestros
+                foreach ($request->file('files') as $file) {
+                    // Usamos storeAs para mantener el nombre original dentro de la carpeta del siniestro
+                    $ruta = $file->storeAs($carpeta, $file->getClientOriginalName());
+
+                    if ($ruta) {
+                        // Generar la URL pública (asumiendo que storage:link ya está creado)
+                        $url = asset("storage/{$ruta}");
+                    } else {
+                        $url = null;
+                    }
+
+                    // Crear registro en la relación "adjuntos"
+                    $siniestro->adjuntos()->create([
+                        'nombre'       => $file->getClientOriginalName(),
+                        'url_adjunto'  => $url,
+                        // 'id_chat'   => null // si necesitas ese campo, agrégalo
+                    ]);
+                }
             }
-        }
 
-        // Gestionar contactos: eliminar los viejos y crear los nuevos (si vienen)
-        if ($request->has('contactos')) {
-            // Borrar contactos anteriores
-            $siniestro->contactos()->delete();
+            // Gestionar contactos: eliminar los viejos y crear los nuevos (si vienen)
+            if ($request->has('contactos')) {
+                // Borrar contactos anteriores
+                $siniestro->contactos()->delete();
 
-            // Crear nuevos registros de contactos
-            foreach ($request->contactos as $contacto) {
-                $siniestro->contactos()->create($contacto);
+                // Crear nuevos registros de contactos
+                foreach ($request->contactos as $contacto) {
+                    $siniestro->contactos()->create($contacto);
+                }
             }
-        }
 
-        // Redirigir con mensaje de éxito
-        return redirect()
-            ->route('siniestros.index')
-            ->with('success', 'Siniestro actualizado correctamente.');
-    } catch (Throwable $e) {
+            // Redirigir con mensaje de éxito
+            return redirect()
+                ->route('siniestros.index')
+                ->with('success', 'Siniestro actualizado correctamente.');
+        } catch (Throwable $e) {
             Log::error('Error en SiniestroController@update: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->withInput()->with('error', 'Error al actualizar el siniestro.');
         }
@@ -297,30 +297,29 @@ class SiniestroController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             $siniestro = Siniestro::findOrFail($id);
             $this->authorize('delete', $siniestro);
 
-        // Borrar toda la carpeta de archivos (si existe).
-        $carpeta = "siniestros/s-{$siniestro->id}";
-        if (Storage::exists($carpeta)) {
-            Storage::deleteDirectory($carpeta);
-        }
+            // Borrar toda la carpeta de archivos (si existe).
+            $carpeta = "siniestros/s-{$siniestro->id}";
+            if (Storage::exists($carpeta)) {
+                Storage::deleteDirectory($carpeta);
+            }
 
-        // Eliminar todos los registros de adjuntos en la BD de una sola vez
-        $siniestro->adjuntos()->delete();
+            // Eliminar todos los registros de adjuntos en la BD de una sola vez
+            $siniestro->adjuntos()->delete();
 
-        // Borrar todos los contactos asociados
-        $siniestro->contactos()->delete();
+            // Borrar todos los contactos asociados
+            $siniestro->contactos()->delete();
 
-        // Eliminar el siniestro
-        $siniestro->delete();
+            // Eliminar el siniestro
+            $siniestro->delete();
 
-        return redirect()
-            ->route('siniestros.index')
-            ->with('success', 'Siniestro y archivos eliminados correctamente.');
-
-    } catch (Throwable $e) {
+            return redirect()
+                ->route('siniestros.index')
+                ->with('success', 'Siniestro y archivos eliminados correctamente.');
+        } catch (Throwable $e) {
             Log::error('Error en SiniestroController@destroy: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->route('siniestros.index')->with('error', 'Error al eliminar el siniestro.');
         }
