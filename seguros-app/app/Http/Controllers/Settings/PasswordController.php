@@ -37,7 +37,12 @@ class PasswordController extends Controller
                 'password' => Hash::make($validated['password']),
             ]);
 
-            return back();
+            Log::info('🔒 Contraseña actualizada correctamente.', [
+                'user_id' => $request->user()->id ?? null,
+                'email' => $request->user()->email ?? null,
+            ]);
+
+            return back()->with('success', 'Tu contraseña ha sido actualizada correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al actualizar la contraseña del usuario: ' . $e->getMessage(), [
                 'exception' => $e,

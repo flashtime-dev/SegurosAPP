@@ -39,7 +39,13 @@ class ProfileController extends Controller
             }
 
             $request->user()->save();
-            return to_route('profile.edit');
+
+            Log::info('✅ Perfil actualizado correctamente.', [
+                'user_id' => $request->user()->id,
+                'email' => $request->user()->email,
+            ]);
+
+            return to_route('profile.edit')->with('success', 'Tu perfil ha sido actualizado correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al actualizar el perfil del usuario: ' . $e->getMessage(), [
                 'exception' => $e,
@@ -48,7 +54,7 @@ class ProfileController extends Controller
             ]);
 
             return back()->withErrors([
-                'profile' => 'Ocurrió un error al actualizar tu perfil. Intenta nuevamente.',
+                'profile' => 'Ocurrió un error al actualizar tu perfil. Intentalo de nuevo.',
             ]);
         }
     }
@@ -69,7 +75,12 @@ class ProfileController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect('/');
+            Log::info('🗑️ Cuenta de usuario eliminada correctamente.', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+            ]);
+
+            return redirect('/')->with('success', 'Tu cuenta ha sido eliminada correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al eliminar la cuenta del usuario: ' . $e->getMessage(), [
                 'exception' => $e,
