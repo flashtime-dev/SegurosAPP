@@ -44,7 +44,13 @@ class AuthenticatedSessionController extends Controller
             $request->authenticate();
             $request->session()->regenerate();
 
-            return redirect()->intended(route('dashboard', absolute: false));
+            Log::info('✅ Usuario autenticado correctamente.', [
+                'user_id' => Auth::id(),
+                'email' => $request->input('email'),
+            ]);
+
+            return redirect()->intended(route('dashboard', absolute: false))
+                ->with('success', 'Has iniciado sesión correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error durante la autenticación: ' . $e->getMessage(), [
                 'exception' => $e,
@@ -69,7 +75,11 @@ class AuthenticatedSessionController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect('/');
+            Log::info('👋 Usuario cerró sesión correctamente.', [
+                'user_id' => Auth::id(),
+            ]);
+
+            return redirect('/')->with('success', 'Has cerrado sesión correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al cerrar sesión: ' . $e->getMessage(), [
                 'exception' => $e,

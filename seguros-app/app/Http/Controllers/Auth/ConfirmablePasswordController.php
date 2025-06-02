@@ -46,7 +46,13 @@ class ConfirmablePasswordController extends Controller
             }
             $request->session()->put('auth.password_confirmed_at', time());
 
-            return redirect()->intended(route('dashboard', absolute: false));
+            Log::info('🔐 Contraseña confirmada correctamente.', [
+                'user_id' => $request->user()->id,
+                'email' => $request->user()->email,
+            ]);
+
+            return redirect()->intended(route('dashboard', absolute: false))
+                ->with('success', 'Contraseña confirmada exitosamente.');
         } catch (ValidationException $ve) {
             // Errores de validación normales, no los logueamos como errores de sistema
             throw $ve;

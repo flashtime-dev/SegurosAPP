@@ -26,6 +26,11 @@ class VerifyEmailController extends Controller
                 $user = $request->user();
 
                 event(new Verified($user));
+
+                Log::info('✅ Email verificado correctamente.', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                ]);
             }
 
             return redirect()->intended(route('dashboard', absolute: false).'?verified=1');

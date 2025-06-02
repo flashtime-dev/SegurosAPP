@@ -64,7 +64,13 @@ class RegisteredUserController extends Controller
 
             event(new Registered($user));
             Auth::login($user);
-            return to_route('dashboard');
+
+            Log::info('✅ Usuario registrado y autenticado correctamente', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+            ]);
+
+            return to_route('dashboard')->with('status', '¡Registro exitoso! Bienvenido, ' . $user->name . '.');
         } catch (ValidationException $ve) {
             throw $ve;
         } catch (Throwable $e) {

@@ -47,11 +47,18 @@ class PasswordResetLinkController extends Controller
                 'email.email' => 'El formato del email es inválido.',
             ]);
 
-            Password::sendResetLink(
+            $status = Password::sendResetLink(
                 $request->only('email')
             );
 
-            return back()->with('status', __('Te enviaremos un enlace para restablecer tu contraseña si la cuenta existe.'));
+            if ($status === Password::RESET_LINK_SENT) {
+                Log::info('✔ Enlace de restablecimiento de contraseña enviado', ['email' => $request->email]);
+                return back()->with('status', __('Te enviaremos un enlace para restablecer tu contraseña si la cuenta existe.'));
+            }
+
+            throw ValidationException::withMessages([
+                'email' => [__($status)],
+            ]);
         } catch (ValidationException $ve) {
             throw $ve; // Laravel mostrará los errores en la UI
         } catch (Throwable $e) {

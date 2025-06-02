@@ -21,7 +21,12 @@ class EmailVerificationNotificationController extends Controller
             }
             $request->user()->sendEmailVerificationNotification();
 
-            return back()->with('status', 'verification-link-sent');
+            Log::info('📧 Enlace de verificación de email enviado.', [
+                'user_id' => $request->user()->id,
+                'email' => $request->user()->email,
+            ]);
+
+            return back()->with('success', 'Se ha enviado un nuevo enlace de verificación a tu correo electrónico.');
         } catch (Throwable $e) {
             Log::error('❌ Error al enviar notificación de verificación de email: ' . $e->getMessage(), [
                 'exception' => $e,
