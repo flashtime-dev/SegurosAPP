@@ -47,10 +47,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para el manejo de siniestros
     Route::resource('siniestros', SiniestroController::class)->except(['create', 'edit']);
     Route::post('/chat-siniestro/{siniestro}', [ChatSiniestroController::class, 'store'])->name('chat-siniestro.store');
+    Route::get('/siniestros/{id}/archivo/{filename}', [SiniestroController::class, 'servePdf'])->name('siniestro.pdf');
 
     // Rutas para consultar los teléfonos de asistencia de las compañías
     Route::get('telefonos-asistencia', [CompaniaController::class, 'telefonosAsistencia'])->name('telefonos-asistencia');
-
 });
 
 
@@ -59,4 +59,3 @@ require __DIR__ . '/auth.php';
 
 // Rutas de configuración de la aplicación y datos del usuario
 require __DIR__ . '/settings.php';
-

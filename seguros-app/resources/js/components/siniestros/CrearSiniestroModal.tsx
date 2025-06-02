@@ -24,19 +24,19 @@ type Props = {
     polizaSeleccionada?: string;
 };
 
-export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSeleccionada }: Props) {
-    type FormData = {
-        id_poliza: string;
-        declaracion: string;
-        tramitador: string;
-        expediente: string;
-        exp_cia: string;
-        exp_asist: string;
-        fecha_ocurrencia: string;
-        adjunto: File | null;
-        contactos: { nombre: string; cargo: string; piso: string; telefono: string }[];
-    };
+type FormData = {
+    id_poliza: string;
+    declaracion: string;
+    tramitador: string;
+    expediente: string;
+    exp_cia: string;
+    exp_asist: string;
+    fecha_ocurrencia: string;
+    files: File[]; // cambiamos a array de archivos
+    contactos: { nombre: string; cargo: string; piso: string; telefono: string }[];
+};
 
+export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSeleccionada }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
         id_poliza: polizaSeleccionada || '',
         declaracion: '',
@@ -45,7 +45,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
         exp_cia: '',
         exp_asist: '',
         fecha_ocurrencia: '',
-        adjunto: null,
+        files: [],  // iniciar vacío
         contactos: []
     });
 
@@ -192,11 +192,19 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                             <div>
                                 <Label htmlFor="adjunto">Adjunto</Label>
                                 <Input
-                                    id="adjunto"
+                                    id="files"
                                     type="file"
-                                    onChange={e => setData('adjunto', e.target.files?.[0] || null)}
+                                    multiple
+                                    onChange={e => {
+                                        if (e.target.files) {
+                                            setData('files', Array.from(e.target.files));
+                                        } else {
+                                            setData('files', []);
+                                        }
+                                    }}
                                 />
-                                <InputError message={errors.adjunto} />
+                                <InputError message={errors.files} />
+                                {/* <InputError message={errors['files.*']} /> */}
                             </div>
 
                             <div className="space-y-4">

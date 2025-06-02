@@ -15,16 +15,17 @@ import InputError from "@/components/input-error";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Poliza } from "@/types";
+import { Poliza, Siniestro } from "@/types";
 
 type Props = {
     isOpen: boolean;
     onClose: () => void;
     polizas: Poliza[];
-    siniestro: any;
+    siniestro: any; // El siniestro completo que vamos a editar, incluye contactos, id_poliza, etc.
 };
 
 type FormData = {
+    _method: "PUT",
     id_poliza: string;
     declaracion: string;
     tramitador: string;
@@ -32,55 +33,92 @@ type FormData = {
     exp_cia: string;
     exp_asist: string;
     fecha_ocurrencia: string;
-    adjunto: File | null;
+    files: File[]; // Ahora el arreglo se llama `files`, tal como el backend espera
     contactos: { nombre: string; cargo: string; piso: string; telefono: string }[];
 };
 
 export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniestro }: Props) {
-    const { data, setData, put, processing, errors, reset } = useForm<FormData>({
-        id_poliza: '',
-        declaracion: '',
-        tramitador: '',
-        expediente: '',
-        exp_cia: '',
-        exp_asist: '',
-        fecha_ocurrencia: '',
-        adjunto: null,
-        contactos: []
+    const { data, setData, post, processing, errors, reset } = useForm<FormData>({
+        _method: "PUT", // Importante: agregar este campo para simular PUT
+        id_poliza: "",
+        declaracion: "",
+        tramitador: "",
+        expediente: "",
+        exp_cia: "",
+        exp_asist: "",
+        fecha_ocurrencia: "",
+        files: [],       // inicializamos empty array
+        contactos: [],   // inicializamos vacío y luego lo llenamos en useEffect
     });
 
     useEffect(() => {
         if (siniestro) {
+            // Formateamos la fecha a "yyyy-MM-dd" para el input type="date"
             const formatFecha = (fecha: string) => {
+                if (!fecha) return "";
                 const date = new Date(fecha);
-                return date.toISOString().split("T")[0]; // Convierte a "yyyy-MM-dd"
+                return date.toISOString().split("T")[0];
             };
+
             setData({
+                _method: "PUT", // Mantener el método
                 id_poliza: String(siniestro.id_poliza),
-                declaracion: siniestro.declaracion,
-                tramitador: siniestro.tramitador,
-                expediente: siniestro.expediente,
-                exp_cia: siniestro.exp_cia,
-                exp_asist: siniestro.exp_asist,
+                declaracion: siniestro.declaracion || "",
+                tramitador: siniestro.tramitador || "",
+                expediente: siniestro.expediente || "",
+                exp_cia: siniestro.exp_cia || "",
+                exp_asist: siniestro.exp_asist || "",
                 fecha_ocurrencia: formatFecha(siniestro.fecha_ocurrencia),
-                adjunto: null,
-                contactos: siniestro.contactos || []
+                files: [], // siempre empezamos vacío; si el usuario sube nuevos archivos, reemplazaremos
+                contactos: siniestro.contactos
+                    ? siniestro.contactos.map((c: any) => ({
+                        nombre: c.nombre || "",
+                        cargo: c.cargo || "",
+                        piso: c.piso || "",
+                        telefono: c.telefono || "",
+                    }))
+                    : [],
             });
         } else {
             reset();
         }
-    }, [polizas, siniestro]);
+    }, [siniestro]);
+
+    const agregarContacto = () => {
+        setData("contactos", [
+            ...data.contactos,
+            { nombre: "", cargo: "", piso: "", telefono: "" },
+        ]);
+    };
+
+    const actualizarContacto = (
+        index: number,
+        campo: keyof FormData["contactos"][number],
+        valor: string
+    ) => {
+        const nuevosContactos = [...data.contactos];
+        nuevosContactos[index] = { ...nuevosContactos[index], [campo]: valor };
+        setData("contactos", nuevosContactos);
+    };
+
+    const eliminarContacto = (index: number) => {
+        setData(
+            "contactos",
+            data.contactos.filter((_, i) => i !== index)
+        );
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (siniestro) {
-            put(route("siniestros.update", siniestro.id), {
-                onSuccess: () => {
-                    reset();
-                    onClose();
-                },
-            });
-        }
+        if (!siniestro) return;
+
+        post(route("siniestros.update", siniestro.id), {
+            // Al hacer put, Inertia enviará data.files como archivos
+            onSuccess: () => {
+                reset();
+                onClose();
+            },
+        });
     };
 
     return (
@@ -93,11 +131,10 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                     </DialogDescription>
                 </DialogHeader>
 
-
-                {/* ScrollArea para el contenido del formulario */}
                 <ScrollArea className="max-h-[70vh]">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid gap-4">
+                            {/* Póliza */}
                             <div>
                                 <Label htmlFor="id_poliza">Póliza</Label>
                                 <Select
@@ -119,6 +156,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                 <InputError message={errors.id_poliza} />
                             </div>
 
+                            {/* Declaración */}
                             <div>
                                 <Label htmlFor="declaracion">Declaración</Label>
                                 <Input
@@ -126,14 +164,18 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                     value={data.declaracion}
                                     onChange={(e) => {
                                         const value = e.target.value;
-                                        setData('declaracion', value.charAt(0).toUpperCase() + value.slice(1));
+                                        setData(
+                                            "declaracion",
+                                            value.charAt(0).toUpperCase() + value.slice(1)
+                                        );
                                     }}
                                     required
-                                    placeholder="Daños por aguan en baño principal"
+                                    placeholder="Daños por agua en baño principal"
                                 />
                                 <InputError message={errors.declaracion} />
                             </div>
 
+                            {/* Tramitador */}
                             <div>
                                 <Label htmlFor="tramitador">Tramitador</Label>
                                 <Input
@@ -141,20 +183,24 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                     value={data.tramitador}
                                     onChange={(e) => {
                                         const value = e.target.value;
-                                        setData('tramitador', value.charAt(0).toUpperCase() + value.slice(1));
+                                        setData(
+                                            "tramitador",
+                                            value.charAt(0).toUpperCase() + value.slice(1)
+                                        );
                                     }}
                                     placeholder="Nombre del tramitador"
                                 />
                                 <InputError message={errors.tramitador} />
                             </div>
 
+                            {/* Expediente / Exp_CIA */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <Label htmlFor="expediente">Expediente</Label>
                                     <Input
                                         id="expediente"
                                         value={data.expediente}
-                                        onChange={e => setData('expediente', e.target.value)}
+                                        onChange={(e) => setData("expediente", e.target.value)}
                                         required
                                         placeholder="SIN-2025-001"
                                     />
@@ -166,53 +212,64 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                     <Input
                                         id="exp_cia"
                                         value={data.exp_cia}
-                                        onChange={e => setData('exp_cia', e.target.value)}
+                                        onChange={(e) => setData("exp_cia", e.target.value)}
                                         placeholder="CIA-2025-COM-0012045"
                                     />
                                     <InputError message={errors.exp_cia} />
                                 </div>
                             </div>
 
+                            {/* Expediente Asistencia */}
                             <div>
                                 <Label htmlFor="exp_asist">Expediente Asistencia</Label>
                                 <Input
                                     id="exp_asist"
                                     value={data.exp_asist}
-                                    onChange={e => setData('exp_asist', e.target.value)}
+                                    onChange={(e) => setData("exp_asist", e.target.value)}
                                     placeholder="AST-2025-001"
                                 />
                                 <InputError message={errors.exp_asist} />
                             </div>
 
+                            {/* Fecha de Ocurrencia */}
                             <div>
                                 <Label htmlFor="fecha_ocurrencia">Fecha de Ocurrencia</Label>
                                 <Input
                                     id="fecha_ocurrencia"
                                     type="date"
                                     value={data.fecha_ocurrencia}
-                                    onChange={e => setData('fecha_ocurrencia', e.target.value)}
+                                    onChange={(e) =>
+                                        setData("fecha_ocurrencia", e.target.value)
+                                    }
                                 />
                                 <InputError message={errors.fecha_ocurrencia} />
                             </div>
 
+                            {/* Archivos (files) */}
                             <div>
-                                <Label htmlFor="adjunto">Adjunto</Label>
+                                <Label htmlFor="files">Adjunto</Label>
                                 <Input
-                                    id="adjunto"
+                                    id="files"
                                     type="file"
-                                    onChange={e => setData('adjunto', e.target.files?.[0] || null)}
+                                    multiple
+                                    onChange={(e) => {
+                                        const archivos = e.target.files
+                                            ? Array.from(e.target.files)
+                                            : [];
+                                        setData("files", archivos);
+                                    }}
                                 />
-                                <InputError message={errors.adjunto} />
+                                <InputError message={errors.files} />
+                                {/* Si quieres mostrar el error de cada archivo, podrías descomentar:
+                                    <InputError message={errors["files.*"]} />
+                                */}
                             </div>
 
+                            {/* Contactos */}
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
                                     <Label>Contactos</Label>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => setData('contactos', [...data.contactos, { nombre: '', cargo: '', piso: '', telefono: '' }])}
-                                    >
+                                    <Button type="button" variant="outline" onClick={agregarContacto}>
                                         Agregar Contacto
                                     </Button>
                                 </div>
@@ -224,11 +281,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                 type="button"
                                                 variant="destructive"
                                                 size="sm"
-                                                onClick={() => {
-                                                    const nuevosContactos = [...data.contactos];
-                                                    nuevosContactos.splice(index, 1);
-                                                    setData('contactos', nuevosContactos);
-                                                }}
+                                                onClick={() => eliminarContacto(index)}
                                             >
                                                 Eliminar
                                             </Button>
@@ -239,11 +292,14 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                 <Input
                                                     id={`nombre-${index}`}
                                                     value={contacto.nombre}
-                                                    onChange={e => {
-                                                        const nuevosContactos = [...data.contactos];
-                                                        nuevosContactos[index] = { ...contacto, nombre: e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1) };
-                                                        setData('contactos', nuevosContactos);
-                                                    }}
+                                                    onChange={(e) =>
+                                                        actualizarContacto(
+                                                            index,
+                                                            "nombre",
+                                                            e.target.value.charAt(0).toUpperCase() +
+                                                            e.target.value.slice(1)
+                                                        )
+                                                    }
                                                     required
                                                     placeholder="Nombre del contacto"
                                                 />
@@ -253,11 +309,14 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                 <Input
                                                     id={`cargo-${index}`}
                                                     value={contacto.cargo}
-                                                    onChange={e => {
-                                                        const nuevosContactos = [...data.contactos];
-                                                        nuevosContactos[index] = { ...contacto, cargo: e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1) };
-                                                        setData('contactos', nuevosContactos);
-                                                    }}
+                                                    onChange={(e) =>
+                                                        actualizarContacto(
+                                                            index,
+                                                            "cargo",
+                                                            e.target.value.charAt(0).toUpperCase() +
+                                                            e.target.value.slice(1)
+                                                        )
+                                                    }
                                                     placeholder="Gerente de Siniestros"
                                                 />
                                             </div>
@@ -266,11 +325,14 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                 <Input
                                                     id={`piso-${index}`}
                                                     value={contacto.piso}
-                                                    onChange={e => {
-                                                        const nuevosContactos = [...data.contactos];
-                                                        nuevosContactos[index] = { ...contacto, piso: e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1) };
-                                                        setData('contactos', nuevosContactos);
-                                                    }}
+                                                    onChange={(e) =>
+                                                        actualizarContacto(
+                                                            index,
+                                                            "piso",
+                                                            e.target.value.charAt(0).toUpperCase() +
+                                                            e.target.value.slice(1)
+                                                        )
+                                                    }
                                                     placeholder="Piso 3"
                                                 />
                                             </div>
@@ -279,11 +341,13 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                 <Input
                                                     id={`telefono-${index}`}
                                                     value={contacto.telefono}
-                                                    onChange={e => {
-                                                        const nuevosContactos = [...data.contactos];
-                                                        nuevosContactos[index] = { ...contacto, telefono: e.target.value };
-                                                        setData('contactos', nuevosContactos);
-                                                    }}
+                                                    onChange={(e) =>
+                                                        actualizarContacto(
+                                                            index,
+                                                            "telefono",
+                                                            e.target.value
+                                                        )
+                                                    }
                                                     required
                                                     placeholder="+34 123 456 789"
                                                 />

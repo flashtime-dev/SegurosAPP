@@ -60,20 +60,27 @@ export function SiniestroDetalles({ siniestro }: { siniestro: Siniestro }) {
             </div>
 
             {/* Documentación */}
-            {siniestro.adjunto && (
+            {siniestro.adjuntos && siniestro.adjuntos.length > 0 && (
                 <div className="space-y-2">
                     <Label>Documentación</Label>
-                    <a
-                        href={siniestro.adjunto}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
-                    >
-                        <FileIcon className="h-4 w-4" />
-                        <span>Ver documento adjunto</span>
-                    </a>
+                    <ul className="space-y-1">
+                        {siniestro.adjuntos.map((archivo, index) => (
+                            <li key={index}>
+                                <a
+                                    href={`/siniestros/${siniestro.id}/archivo/${archivo.nombre}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+                                >
+                                    <FileIcon className="h-4 w-4" />
+                                    <span>{archivo.nombre || 'Documento adjunto'}</span>
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             )}
+
         </div>
     );
 }

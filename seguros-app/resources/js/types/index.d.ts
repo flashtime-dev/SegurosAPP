@@ -144,6 +144,10 @@ export interface Siniestro {
     adjunto: string | null;
     poliza: Poliza;
     estado: string;
+    adjuntos: {
+        'nombre',
+        'url_adjunto';
+    }[]
 }
 
 export interface Comunidad {
