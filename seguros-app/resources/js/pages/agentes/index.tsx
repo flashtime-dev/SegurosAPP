@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/input-error';
+import PhoneInputField from "@/components/PhoneInputField";
 import {
     Dialog,
     DialogContent,
@@ -16,7 +17,7 @@ import {
 } from '@/components/ui/dialog';
 import { Agente } from '@/types';
 
-export default function Index({ agentes }: {agentes: Agente[]}) {
+export default function Index({ agentes }: { agentes: Agente[] }) {
     const [editingAgente, setEditingAgente] = useState<Agente | null>(null);
     const [isCreating, setIsCreating] = useState(false); // Estado para el modal de creación
     const { data, setData, post, put, processing, errors, reset } = useForm({
@@ -131,7 +132,7 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                         id="nombre"
                                         value={data.nombre}
                                         onChange={(e) => {
-                                        const value = e.target.value;
+                                            const value = e.target.value;
                                             setData('nombre', value.charAt(0).toUpperCase() + value.slice(1));
                                         }}
                                         disabled={processing}
@@ -157,15 +158,19 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
 
                                 <div>
                                     <Label htmlFor="telefono">Teléfono</Label>
-                                    <Input
-                                        id="telefono"
+                                    <PhoneInputField
                                         value={data.telefono}
-                                        onChange={(e) => setData('telefono', e.target.value)}
-                                        disabled={processing}
-                                        required
-                                        placeholder="+34 123 456 789"
+                                        onChange={(value) => {
+                                            if (!value) {
+                                                setData("telefono", "");
+                                                return;
+                                            }
+                                            const cleaned = value.replace(/\s/g, "");
+                                            const normalized = cleaned === "" ? "" : (cleaned.startsWith("+") ? cleaned : `+${cleaned}`);
+                                            setData("telefono", normalized);
+                                        }}
+                                        error={errors.telefono}
                                     />
-                                    <InputError message={errors.telefono} className="mt-2" />
                                 </div>
 
                                 <DialogFooter>
@@ -198,7 +203,7 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
                                         id="nombre"
                                         value={data.nombre}
                                         onChange={(e) => {
-                                        const value = e.target.value;
+                                            const value = e.target.value;
                                             setData('nombre', value.charAt(0).toUpperCase() + value.slice(1));
                                         }}
                                         disabled={processing}
@@ -223,14 +228,19 @@ export default function Index({ agentes }: {agentes: Agente[]}) {
 
                                 <div>
                                     <Label htmlFor="telefono">Teléfono</Label>
-                                    <Input
-                                        id="telefono"
+                                    <PhoneInputField
                                         value={data.telefono}
-                                        onChange={(e) => setData('telefono', e.target.value)}
-                                        disabled={processing}
-                                        placeholder="+34 123 456 789"
+                                        onChange={(value) => {
+                                            if (!value) {
+                                                setData("telefono", "");
+                                                return;
+                                            }
+                                            const cleaned = value.replace(/\s/g, "");
+                                            const normalized = cleaned === "" ? "" : (cleaned.startsWith("+") ? cleaned : `+${cleaned}`);
+                                            setData("telefono", normalized);
+                                        }}
+                                        error={errors.telefono}
                                     />
-                                    <InputError message={errors.telefono} className="mt-2" />
                                 </div>
 
                                 <DialogFooter>

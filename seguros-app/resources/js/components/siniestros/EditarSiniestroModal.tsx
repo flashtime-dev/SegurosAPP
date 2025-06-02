@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm } from "@inertiajs/react";
 import {
     Dialog,
@@ -51,6 +51,8 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
         contactos: [],   // inicializamos vacío y luego lo llenamos en useEffect
     });
 
+    // dentro de tu componente:
+    const wasOpenedRef = useRef(false);
     useEffect(() => {
         if (siniestro) {
             // Formateamos la fecha a "yyyy-MM-dd" para el input type="date"
@@ -79,8 +81,11 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                     }))
                     : [],
             });
-        } else {
+
+        }
+        if (!isOpen) {
             reset();
+            wasOpenedRef.current = false;
         }
     }, [siniestro]);
 
@@ -303,6 +308,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                     required
                                                     placeholder="Nombre del contacto"
                                                 />
+                                                <InputError message={(errors as Record<string, string>)[`contactos.${index}.nombre`]} />
                                             </div>
                                             <div>
                                                 <Label htmlFor={`cargo-${index}`}>Cargo</Label>
@@ -337,9 +343,8 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                 />
                                             </div>
                                             <div>
-                                                <Label htmlFor={`telefono-${index}`}>Teléfono</Label>
-                                                <Input
-                                                    id={`telefono-${index}`}
+                                                <Label htmlFor="telefono">Teléfono</Label>
+                                                <PhoneInputField
                                                     value={contacto.telefono}
                                                     onChange={(e) =>
                                                         actualizarContacto(

@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 use App\Http\Middleware\CheckPermiso;
 class ComunidadController extends Controller
@@ -27,34 +29,38 @@ class ComunidadController extends Controller
      */
     public function index()
     {
-        $user = Auth::user(); // Obtener el usuario autenticado
-        
-        // Verificar si el usuario tiene el rol de administrador
-        if ($user->rol->nombre == 'Superadministrador') {
-            $comunidades = Comunidad::with('users')->get(); // Obtener todas las comunidades
-            $usuarios = User::all(); // Obtener todos los usuarios
-        } else {
-            // Obtener comunidades donde el usuario es propietario O está asignado como usuario
-            $comunidades = Comunidad::where('id_propietario', $user->id)
-                ->orWhereHas('users', function($query) use ($user) {
-                    $query->where('users.id', $user->id);
-                })
-                ->with('users')
-                ->get();
-            $empleados = Subusuario::where('id_usuario_creador', $user->id)->get(); // Obtener empleados
+        try{
+            $user = Auth::user(); // Obtener el usuario autenticado
             
-            if ($empleados->isEmpty()) {
-                $usuarios = []; // Obtener todos los usuarios si no hay empleados
+            // Verificar si el usuario tiene el rol de administrador
+            if ($user->rol->nombre == 'Superadministrador') {
+                $comunidades = Comunidad::with('users')->get(); // Obtener todas las comunidades
+                $usuarios = User::all(); // Obtener todos los usuarios
             } else {
-                $usuarios = User::where('id', $empleados->pluck('id'))->get(); // Obtener usuarios según los empleados
+                // Obtener comunidades donde el usuario es propietario O está asignado como usuario
+                $comunidades = Comunidad::where('id_propietario', $user->id)
+                    ->orWhereHas('users', function($query) use ($user) {
+                        $query->where('users.id', $user->id);
+                    })
+                    ->with('users')
+                    ->get();
+                $empleados = Subusuario::where('id_usuario_creador', $user->id)->get(); // Obtener empleados
+                
+                if ($empleados->isEmpty()) {
+                    $usuarios = []; // Obtener todos los usuarios si no hay empleados
+                } else {
+                    $usuarios = User::where('id', $empleados->pluck('id'))->get(); // Obtener usuarios según los empleados
+                }
             }
-        }
         
-
-        return Inertia::render('comunidades/index', [
-            'comunidades' => $comunidades,
-            'usuarios' => $usuarios,
-        ]); // Retornar la vista con los datos
+            return Inertia::render('comunidades/index', [
+                'comunidades' => $comunidades,
+                'usuarios' => $usuarios,
+            ]); // Retornar la vista con los datos
+        } catch (Throwable $e) {
+            Log::error('❌ Error al cargar comunidades:', ['exception' => $e]);
+            return redirect()->back()->withErrors('Ocurrió un error al cargar comunidades.');
+        }
     }
 
     /**
@@ -73,43 +79,47 @@ class ComunidadController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user(); // Obtener el usuario autenticado
+        try{
+            $user = Auth::user(); // Obtener el usuario autenticado
+            $request->merge([
+                'nombre' => ucfirst(($request->nombre)),
+                'cif' => strtoupper($request->cif),
+                'direccion' => ucfirst(($request->direccion)),
+                'ubi_catastral' => ucfirst(($request->ubi_catastral)),
+                'ref_catastral' => strtoupper($request->ref_catastral)
+            ]);
 
-        $request->merge([
-            'nombre' => ucfirst(($request->nombre)),
-            'cif' => strtoupper($request->cif),
-            'direccion' => ucfirst(($request->direccion)),
-            'ubi_catastral' => ucfirst(($request->ubi_catastral)),
-            'ref_catastral' => strtoupper($request->ref_catastral)
-        ]);
-
-        $request->validate([
-            'nombre' => 'required|string|min:2|max:255',
-            'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif',
-            'direccion' => 'nullable|string|max:255',
-            'ubi_catastral' => 'nullable|string|max:255',
-            'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
-            'telefono' => 'nullable|string|max:15',
-            'usuarios' => 'array', // Validar que usuarios sea un array
-            'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
-        ],[
-            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
-            'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
-            'cif.unique' => 'El CIF ya está en uso.',
-            'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
-        ]);
+            $request->validate([
+                'nombre' => 'required|string|min:2|max:255',
+                'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif',
+                'direccion' => 'nullable|string|max:255',
+                'ubi_catastral' => 'nullable|string|max:255',
+                'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
+                'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+                'usuarios' => 'array', // Validar que usuarios sea un array
+                'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
+            ],[
+                'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+                'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
+                'cif.unique' => 'El CIF ya está en uso.',
+                'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
+                'telefono' => 'Formato de teléfono incorrecto',
+            ]);
         
-        $request->merge(['id_propietario' => $user->id]); // Asignar el ID del propietario al request
+            $request->merge(['id_propietario' => $user->id]); // Asignar el ID del propietario al request
+            // Crear la comunidad sin los usuarios
+            $comunidad = Comunidad::create($request->except('usuarios'));
+            
+            // Sincronizar los usuarios seleccionados con la tabla pivote
+            if ($request->has('usuarios')) {
+                $comunidad->users()->sync($request->usuarios);
+            }
 
-        // Crear la comunidad sin los usuarios
-        $comunidad = Comunidad::create($request->except('usuarios'));
-        
-        // Sincronizar los usuarios seleccionados con la tabla pivote
-        if ($request->has('usuarios')) {
-            $comunidad->users()->sync($request->usuarios);
+            return redirect()->route('comunidades.index')->with('success', 'Comunidad creada correctamente.');
+        } catch (Throwable $e) {
+            Log::error('❌ Error al crear comunidad:', ['exception' => $e]);
+            return redirect()->back()->withErrors('Ocurrió un error al crear la comunidad.');
         }
-
-        return redirect()->route('comunidades.index')->with('success', 'Comunidad creada correctamente.');
     }
 
     /**
@@ -139,42 +149,48 @@ class ComunidadController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
-        $this->authorize('update', $comunidad);
-        
-        $request->merge([
-            'nombre' => ucfirst(($request->nombre)),
-            'cif' => strtoupper($request->cif),
-            'direccion' => ucfirst(($request->direccion)),
-            'ubi_catastral' => ucfirst(($request->ubi_catastral)),
-            'ref_catastral' => strtoupper($request->ref_catastral)
-        ]);
+        try {
+            $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+            $this->authorize('update', $comunidad);
             
-        $request->validate([
-            'nombre' => 'required|string|min:2|max:255',
-            'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
-            'direccion' => 'nullable|string|max:255',
-            'ubi_catastral' => 'nullable|string|max:255',
-            'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
-            'telefono' => 'nullable|string|max:15',
-            'usuarios' => 'array', // Validar que usuarios sea un array
-            'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
-        ],[
-            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
-            'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
-            'cif.unique' => 'El CIF ya está en uso.',
-            'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
-        ]);
+            $request->merge([
+                'nombre' => ucfirst(($request->nombre)),
+                'cif' => strtoupper($request->cif),
+                'direccion' => ucfirst(($request->direccion)),
+                'ubi_catastral' => ucfirst(($request->ubi_catastral)),
+                'ref_catastral' => strtoupper($request->ref_catastral)
+            ]);
+            
+            $request->validate([
+                'nombre' => 'required|string|min:2|max:255',
+                'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
+                'direccion' => 'nullable|string|max:255',
+                'ubi_catastral' => 'nullable|string|max:255',
+                'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
+                'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+                'usuarios' => 'array', // Validar que usuarios sea un array
+                'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
+            ],[
+                'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+                'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
+                'cif.unique' => 'El CIF ya está en uso.',
+                'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
+                'telefono' => 'Formato de teléfono incorrecto',
+            ]);
 
-        // Actualizar los datos de la comunidad excepto los usuarios
-        $comunidad->update($request->except('usuarios'));
+            // Actualizar los datos de la comunidad excepto los usuarios
+            $comunidad->update($request->except('usuarios'));
 
-        // Sincronizar los usuarios seleccionados con la tabla pivote
-        if ($request->has('usuarios')) {
-            $comunidad->users()->sync($request->usuarios);
+            // Sincronizar los usuarios seleccionados con la tabla pivote
+            if ($request->has('usuarios')) {
+                $comunidad->users()->sync($request->usuarios);
+            }
+
+            return redirect()->route('comunidades.index')->with('success', 'Comunidad actualizada correctamente.');
+        } catch (Throwable $e) {
+            Log::error('❌ Error al actualizar comunidad:', ['exception' => $e]);
+            return redirect()->back()->withErrors('Ocurrió un error al actualizar la comunidad.');
         }
-
-        return redirect()->route('comunidades.index')->with('success', 'Comunidad actualizada correctamente.');
     }
 
     /**
@@ -182,12 +198,17 @@ class ComunidadController extends Controller
      */
     public function destroy($id)
     {
-        $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
-        $comunidad->users()->detach(); // Desvincular usuarios de la comunidad
-        $comunidad->caracteristica()->delete(); // Eliminar la característica asociada
-        $comunidad->presupuestos()->delete(); // Eliminar los presupuestos asociados
-        $comunidad->polizas()->delete(); // Eliminar las pólizas asociadas
-        $comunidad->delete(); // Eliminar la comunidad
-        return redirect()->route('comunidades.index')->with('success', 'Comunidad eliminada correctamente.');
+        try {
+            $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+            $comunidad->users()->detach(); // Desvincular usuarios de la comunidad
+            $comunidad->caracteristica()->delete(); // Eliminar la característica asociada
+            $comunidad->presupuestos()->delete(); // Eliminar los presupuestos asociados
+            $comunidad->polizas()->delete(); // Eliminar las pólizas asociadas
+            $comunidad->delete(); // Eliminar la comunidad
+            return redirect()->route('comunidades.index')->with('success', 'Comunidad eliminada correctamente.');
+        } catch (Throwable $e) {
+            Log::error('❌ Error al eliminar comunidad:', ['exception' => $e]);
+            return redirect()->back()->withErrors('Ocurrió un error al eliminar la comunidad.');
+        }
     }
 }

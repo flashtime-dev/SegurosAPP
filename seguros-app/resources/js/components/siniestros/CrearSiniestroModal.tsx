@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Poliza } from "@/types";
+import PhoneInputField from "@/components/PhoneInputField";
 
 type Props = {
     isOpen: boolean;
@@ -241,6 +242,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                                     required
                                                     placeholder="Nombre del contacto"
                                                 />
+                                                <InputError message={(errors as Record<string, string>)[`contactos.${index}.nombre`]} />
                                             </div>
                                             <div>
                                                 <Label htmlFor={`cargo-${index}`}>Cargo</Label>
@@ -269,13 +271,15 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                                 />
                                             </div>
                                             <div>
-                                                <Label htmlFor={`telefono-${index}`}>Teléfono</Label>
-                                                <Input
-                                                    id={`telefono-${index}`}
+                                                <Label htmlFor="telefono">Teléfono</Label>
+                                                <PhoneInputField
                                                     value={contacto.telefono}
-                                                    onChange={e => actualizarContacto(index, 'telefono', e.target.value)}
-                                                    required
-                                                    placeholder="+34 123 456 789"
+                                                    onChange={(value) => {
+                                                        const cleaned = value.replace(/\s/g, "");
+                                                        const normalized = cleaned === "" ? "" : (cleaned.startsWith("+") ? cleaned : `+${cleaned}`);
+                                                        actualizarContacto(index, 'telefono', normalized);
+                                                    }}
+                                                    error={(errors as Record<string, string>)[`contactos.${index}.telefono`]}
                                                 />
                                             </div>
                                         </div>

@@ -8,8 +8,10 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class ProfileController extends Controller
 {
@@ -29,15 +31,32 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        try {
+            $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+            if ($request->user()->isDirty('email')) {
+                $request->user()->email_verified_at = null;
+            }
+
+            $request->user()->save();
+
+            Log::info('✅ Perfil actualizado correctamente.', [
+                'user_id' => $request->user()->id,
+                'email' => $request->user()->email,
+            ]);
+
+            return to_route('profile.edit')->with('success', 'Tu perfil ha sido actualizado correctamente.');
+        } catch (Throwable $e) {
+            Log::error('❌ Error al actualizar el perfil del usuario: ' . $e->getMessage(), [
+                'exception' => $e,
+                'user_id' => $request->user()->id ?? null,
+                'email' => $request->user()->email ?? null,
+            ]);
+
+            return back()->withErrors([
+                'profile' => 'Ocurrió un error al actualizar tu perfil. Intentalo de nuevo.',
+            ]);
         }
-
-        $request->user()->save();
-
-        return to_route('profile.edit');
     }
 
     /**
@@ -45,19 +64,33 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
+        try {
+            $request->validate([
+                'password' => ['required', 'current_password'],
+            ]);
+            $user = $request->user();
 
-        $user = $request->user();
+            Auth::logout();
+            $user->delete();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        Auth::logout();
+            Log::info('🗑️ Cuenta de usuario eliminada correctamente.', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+            ]);
 
-        $user->delete();
+            return redirect('/')->with('success', 'Tu cuenta ha sido eliminada correctamente.');
+        } catch (Throwable $e) {
+            Log::error('❌ Error al eliminar la cuenta del usuario: ' . $e->getMessage(), [
+                'exception' => $e,
+                'user_id' => $request->user()->id ?? null,
+                'email' => $request->user()->email ?? null,
+            ]);
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/');
+            return back()->withErrors([
+                'account_deletion' => 'Ocurrió un error al eliminar tu cuenta. Intenta nuevamente.',
+            ]);
+        }
     }
 }

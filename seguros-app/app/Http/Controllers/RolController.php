@@ -10,6 +10,8 @@ use Inertia\Inertia;
 
 use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
+use Throwable;
+use Illuminate\Support\Facades\Log;
 class RolController extends BaseController
 {
     public function __construct()
@@ -53,31 +55,36 @@ class RolController extends BaseController
      */
     public function store(Request $request)
     {
-        // Capitalizar solo la primera palabra del nombre antes de la validación
-        $request->merge([
-            'nombre' => ucfirst(($request->nombre))
-        ]);
+        try{
+            // Capitalizar solo la primera palabra del nombre antes de la validación
+            $request->merge([
+                'nombre' => ucfirst(($request->nombre))
+            ]);
 
-        $request->validate([
-            'nombre' => 'required|string|min:2|max:50',
-            'permisos' => 'nullable|array',
-            'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
-        ]);
+            $request->validate([
+                'nombre' => 'required|string|min:2|max:50',
+                'permisos' => 'nullable|array',
+                'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
+            ]);
 
-        $rol = Rol::create([
-            'nombre' => $request->nombre,
-        ]);
+            $rol = Rol::create([
+                'nombre' => $request->nombre,
+            ]);
 
-        // se esta mandando un array de permisos con solo los ids
-        //dd($request->permisos); // Debugging: Verificar los datos de los permisos
+            // se esta mandando un array de permisos con solo los ids
+            //dd($request->permisos); // Debugging: Verificar los datos de los permisos
 
-        if ($request->has('permisos')) {
-            $rol->permisos()->attach($request->permisos); // Crear la relación entre el rol y los permisos
-        } else {
-            $rol->permisos()->detach(); // Eliminar la relación entre el rol y los permisos
+            if ($request->has('permisos')) {
+                $rol->permisos()->attach($request->permisos); // Crear la relación entre el rol y los permisos
+            } else {
+                $rol->permisos()->detach(); // Eliminar la relación entre el rol y los permisos
+            }
+
+            return redirect()->route('roles.index')->with('success', 'Rol creado correctamente.');
+        } catch (Throwable $t) {
+            Log::error('Error al crear rol: ' . $t->getMessage(), ['exception' => $t]);
+            return redirect()->route('roles.index')->with('error', 'Error al crear el rol.');
         }
-
-        return redirect()->route('roles.index')->with('success', 'Rol creado correctamente.');
     }
 
     /**
@@ -109,28 +116,32 @@ class RolController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        $rol = Rol::findOrFail($id); // Buscar el rol por ID
+        try{
+            $rol = Rol::findOrFail($id); // Buscar el rol por ID
+            // Capitalizar solo la primera palabra del nombre antes de la validación
+            $request->merge([
+                'nombre' => ucfirst(($request->nombre))
+            ]);
 
-        // Capitalizar solo la primera palabra del nombre antes de la validación
-        $request->merge([
-            'nombre' => ucfirst(($request->nombre))
-        ]);
+            $request->validate([
+                'nombre' => 'required|string|min:2|max:50',
+                'permisos' => 'nullable|array',
+                'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
+            ]);
 
-        $request->validate([
-            'nombre' => 'required|string|min:2|max:50',
-            'permisos' => 'nullable|array',
-            'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
-        ]);
+            $rol->update([
+                'nombre' => $request->nombre,
+            ]);
 
-        $rol->update([
-            'nombre' => $request->nombre,
-        ]);
+            if ($request->has('permisos')) {
+                $rol->permisos()->sync($request->permisos); // Actualizar permisos del rol
+            }
 
-        if ($request->has('permisos')) {
-            $rol->permisos()->sync($request->permisos); // Actualizar permisos del rol
+            return redirect()->route('roles.index')->with('success', 'Rol actualizado correctamente.');
+        } catch (Throwable $t) {
+            Log::error('Error al actualizar rol: ' . $t->getMessage(), ['exception' => $t]);
+            return redirect()->route('roles.index')->with('error', 'Error al actualizar el rol.');
         }
-
-        return redirect()->route('roles.index')->with('success', 'Rol actualizado correctamente.');
     }
 
     /**
@@ -138,18 +149,22 @@ class RolController extends BaseController
      */
     public function destroy($id)
     {
-        $rol = Rol::findOrFail($id); // Buscar el rol por ID
+        try{
+            $rol = Rol::findOrFail($id); // Buscar el rol por ID
+            // Verificar si el rol tiene permisos asignados
+            if ($rol->permisos()->count() > 0) {
+                //borrar las relaciones con permisos
+                $rol->permisos()->detach(); // Eliminar las relaciones con permisos
+            }
 
-        // Verificar si el rol tiene permisos asignados
-        if ($rol->permisos()->count() > 0) {
-            //borrar las relaciones con permisos
+            // Eliminar el rol y sus relaciones con permisos
             $rol->permisos()->detach(); // Eliminar las relaciones con permisos
+            $rol->delete(); // Eliminar el rol
+
+            return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
+        } catch (Throwable $t) {
+            Log::error('Error al eliminar rol: ' . $t->getMessage(), ['exception' => $t]);
+            return redirect()->route('roles.index')->with('error', 'Error al eliminar el rol.');
         }
-
-        // Eliminar el rol y sus relaciones con permisos
-        $rol->permisos()->detach(); // Eliminar las relaciones con permisos
-        $rol->delete(); // Eliminar el rol
-
-        return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
     }
 }
