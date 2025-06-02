@@ -45,19 +45,19 @@ class NewPasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        try {
-            $request->validate([
-                'token' => 'required',
-                'email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
-                'password' => ['required', 'confirmed', Rules\Password::defaults(),'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/'],
-            ],[
-                'email.required' => 'El campo email es obligatorio.',
-                'email.regex' => 'El formato del correo electrónico es inválido',
-                'password.required' => 'La contraseña es obligatoria.',
-                'password.confirmed' => 'Las contraseñas no coinciden.',
-                'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
-            ]);
 
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
+            'password' => ['required', 'confirmed', Rules\Password::defaults(), 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/'],
+        ], [
+            'email.required' => 'El campo email es obligatorio.',
+            'email.regex' => 'El formato del correo electrónico es inválido',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
+        ]);
+        try {
             // Here we will attempt to reset the user's password. If it is successful we
             // will update the password on an actual user model and persist it to the
             // database. Otherwise we will parse the error and return the response.

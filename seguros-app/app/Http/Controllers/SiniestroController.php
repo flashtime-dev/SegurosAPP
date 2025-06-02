@@ -76,43 +76,43 @@ class SiniestroController extends Controller
      */
     public function store(Request $request)
     {
+
+        $request->merge([
+            'declaracion' => ucfirst($request->declaracion),
+            'tramitador' => ucfirst($request->tramitador),
+        ]);
+
+        $request->validate([
+            'id_poliza' => 'required|exists:polizas,id',
+            'declaracion' => 'required|string|min:10',
+            'tramitador' => 'nullable|string|min:2|max:255',
+            'expediente' => 'required|string|min:2|max:50',
+            'exp_cia' => 'nullable|string|min:2|max:50',
+            'exp_asist' => 'nullable|string|min:2|max:50',
+            'fecha_ocurrencia' => 'nullable|date',
+            'files' => 'nullable|array',
+            'files.*' => 'file|max:2048|mimes:pdf,jpg,jpeg,png',
+            'contactos' => 'nullable|array',
+            // Validación de contactos
+            'contactos.*.nombre' => 'required|string|min:2|max:100',
+            'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+        ], [
+            'id_poliza.required' => 'La póliza es obligatoria.',
+            'declaracion.min' => 'La declaración debe tener al menos 10 caracteres.',
+            'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
+            'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
+            'exp_cia.min' => 'La compañía debe tener al menos 2 caracteres.',
+            'exp_asist.min' => 'El asistente debe tener al menos 2 caracteres.',
+            'files.array' => 'Los archivos deben ser un arreglo.',
+            'files.*.file' => 'Cada archivo no es válido.',
+            'files.*.mimes' => 'Cada archivo debe ser pdf, jpg, jpeg o png.',
+            'files.*.max' => 'Cada archivo no puede ser mayor de 2MB.',
+            'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
+            'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
+            'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
+            'contactos.*.telefono' => 'Formato de teléfono incorrecto',
+        ]);
         try {
-            $request->merge([
-                'declaracion' => ucfirst($request->declaracion),
-                'tramitador' => ucfirst($request->tramitador),
-            ]);
-
-            $request->validate([
-                'id_poliza' => 'required|exists:polizas,id',
-                'declaracion' => 'required|string|min:10',
-                'tramitador' => 'nullable|string|min:2|max:255',
-                'expediente' => 'required|string|min:2|max:50',
-                'exp_cia' => 'nullable|string|min:2|max:50',
-                'exp_asist' => 'nullable|string|min:2|max:50',
-                'fecha_ocurrencia' => 'nullable|date',
-                'files' => 'nullable|array',
-                'files.*' => 'file|max:2048|mimes:pdf,jpg,jpeg,png',
-                'contactos' => 'nullable|array',
-                // Validación de contactos
-                'contactos.*.nombre' => 'required|string|min:2|max:100',
-                'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-            ], [
-                'id_poliza.required' => 'La póliza es obligatoria.',
-                'declaracion.min' => 'La declaración debe tener al menos 10 caracteres.',
-                'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
-                'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
-                'exp_cia.min' => 'La compañía debe tener al menos 2 caracteres.',
-                'exp_asist.min' => 'El asistente debe tener al menos 2 caracteres.',
-                'files.array' => 'Los archivos deben ser un arreglo.',
-                'files.*.file' => 'Cada archivo no es válido.',
-                'files.*.mimes' => 'Cada archivo debe ser pdf, jpg, jpeg o png.',
-                'files.*.max' => 'Cada archivo no puede ser mayor de 2MB.',
-                'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
-                'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
-                'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
-                'contactos.*.telefono' => 'Formato de teléfono incorrecto',
-            ]);
-
             $data = $request->except(['contactos', 'files']);
 
             // Determinar si hay archivos adjuntos
@@ -193,50 +193,51 @@ class SiniestroController extends Controller
      */
     public function update(Request $request, Siniestro $siniestro)
     {
+
+        // Normalizar mayúsculas en ciertos campos
+        $request->merge([
+            'declaracion' => ucfirst($request->declaracion),
+            'tramitador'  => ucfirst($request->tramitador),
+        ]);
+
+        // Validación
+        $request->validate([
+            'id_poliza'        => 'required|exists:polizas,id',
+            'declaracion'      => 'required|string|min:10',
+            'tramitador'       => 'nullable|string|min:2|max:255',
+            'expediente'       => 'required|string|min:2|max:50',
+            'exp_cia'          => 'nullable|string|min:2|max:50',
+            'exp_asist'        => 'nullable|string|min:2|max:50',
+            'fecha_ocurrencia' => 'nullable|date',
+            'files'            => 'nullable|array',
+            'files.*'          => 'file|max:2048|mimes:pdf,jpg,jpeg,png',
+            'contactos'        => 'nullable|array',
+            // Validación de contactos
+            'contactos.*.nombre' => 'required|string|min:2|max:100',
+            'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+        ], [
+            'id_poliza.required'     => 'La póliza es obligatoria.',
+            'declaracion.min'        => 'La declaración debe tener al menos 10 caracteres.',
+            'tramitador.min'         => 'El tramitador debe tener al menos 2 caracteres.',
+            'expediente.min'         => 'El expediente debe tener al menos 2 caracteres.',
+            'exp_cia.min'            => 'La compañía debe tener al menos 2 caracteres.',
+            'exp_asist.min'          => 'El asistente debe tener al menos 2 caracteres.',
+            'files.array'            => 'Los archivos deben ser un arreglo.',
+            'files.*.file'           => 'Cada archivo no es válido.',
+            'files.*.mimes'          => 'Cada archivo debe ser pdf, jpg, jpeg o png.',
+            'files.*.max'            => 'Cada archivo no puede ser mayor de 2MB.',
+            'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
+            'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
+            'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
+            'contactos.*.telefono' => 'Formato de teléfono incorrecto',
+        ]);
+
         try {
-            // Normalizar mayúsculas en ciertos campos
-            $request->merge([
-                'declaracion' => ucfirst($request->declaracion),
-                'tramitador'  => ucfirst($request->tramitador),
-            ]);
-
-            // Validación
-            $request->validate([
-                'id_poliza'        => 'required|exists:polizas,id',
-                'declaracion'      => 'required|string|min:10',
-                'tramitador'       => 'nullable|string|min:2|max:255',
-                'expediente'       => 'required|string|min:2|max:50',
-                'exp_cia'          => 'nullable|string|min:2|max:50',
-                'exp_asist'        => 'nullable|string|min:2|max:50',
-                'fecha_ocurrencia' => 'nullable|date',
-                'files'            => 'nullable|array',
-                'files.*'          => 'file|max:2048|mimes:pdf,jpg,jpeg,png',
-                'contactos'        => 'nullable|array',
-                // Validación de contactos
-                'contactos.*.nombre' => 'required|string|min:2|max:100',
-                'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-            ], [
-                'id_poliza.required'     => 'La póliza es obligatoria.',
-                'declaracion.min'        => 'La declaración debe tener al menos 10 caracteres.',
-                'tramitador.min'         => 'El tramitador debe tener al menos 2 caracteres.',
-                'expediente.min'         => 'El expediente debe tener al menos 2 caracteres.',
-                'exp_cia.min'            => 'La compañía debe tener al menos 2 caracteres.',
-                'exp_asist.min'          => 'El asistente debe tener al menos 2 caracteres.',
-                'files.array'            => 'Los archivos deben ser un arreglo.',
-                'files.*.file'           => 'Cada archivo no es válido.',
-                'files.*.mimes'          => 'Cada archivo debe ser pdf, jpg, jpeg o png.',
-                'files.*.max'            => 'Cada archivo no puede ser mayor de 2MB.',
-                'contactos.*.nombre.required' => 'El nombre del contacto es obligatorio.',
-                'contactos.*.nombre.min' => 'El nombre del contacto debe tener al menos 2 caracteres.',
-                'contactos.*.telefono.required' => 'El teléfono del contacto es obligatorio.',
-                'contactos.*.telefono' => 'Formato de teléfono incorrecto',
-            ]);
-
             // Preparar datos excepto contactos y archivos
             $data = $request->except(['contactos', 'files']);
 
-            // Determinar nuevo valor para el campo adjunto si llegan archivos
-            $data['adjunto'] = count($request->file('files')) > 0;
+            // Determinar si hay archivos adjuntos
+            $data['adjunto'] = $request->hasFile('files') && count($request->file('files')) > 0;
 
             // Actualizar el siniestro en la BD
             $siniestro->update($data);

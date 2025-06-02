@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
+
 class AgenteController extends BaseController
 {
     public function __construct()
@@ -47,22 +48,22 @@ class AgenteController extends BaseController
      */
     public function store(Request $request)
     {
+
+        $request->merge([
+            'nombre' => ucfirst(($request->nombre))
+        ]);
+
+        $request->validate([
+            'nombre' => 'required|string|min:2|max:255',
+            'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+            'email' => 'nullable|string|email|max:255|unique:agentes,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
+        ], [
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'email.unique' => 'El email ya está en uso.',
+            'email.regex' => 'El formato del email es inválido.',
+            'telefono' => 'Formato de teléfono incorrecto',
+        ]);
         try {
-            $request->merge([
-                'nombre' => ucfirst(($request->nombre))
-            ]);
-
-            $request->validate([
-                'nombre' => 'required|string|min:2|max:255',
-                'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-                'email' => 'nullable|string|email|max:255|unique:agentes,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
-            ],[
-                'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
-                'email.unique' => 'El email ya está en uso.',
-                'email.regex' => 'El formato del email es inválido.',
-                'telefono' => 'Formato de teléfono incorrecto',
-            ]);
-
             Agente::create($request->all()); // Crear un nuevo agente
 
             Log::info('✅ Agente creado correctamente.', [
@@ -105,29 +106,29 @@ class AgenteController extends BaseController
      */
     public function update(Request $request, $id)
     {
+
+        $agente = Agente::findOrFail($id); // Buscar el agente por ID
+        $request->merge([
+            'nombre' => ucfirst(($request->nombre))
+        ]);
+
+        $request->validate([
+            'nombre' => 'required|string|min:2|max:255',
+            'telefono' => 'nullable|string|max:15',
+            'email' => [
+                'nullable',
+                'string',
+                'email',
+                'max:255',
+                'unique:agentes,email,' . $agente->id,
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
+            ],
+        ], [
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'email.unique' => 'El email ya está en uso.',
+            'email.regex' => 'El formato del email es inválido.',
+        ]);
         try {
-            $agente = Agente::findOrFail($id); // Buscar el agente por ID
-            $request->merge([
-                'nombre' => ucfirst(($request->nombre))
-            ]);
-
-            $request->validate([
-                'nombre' => 'required|string|min:2|max:255',
-                'telefono' => 'nullable|string|max:15',
-                'email' => [
-                    'nullable',
-                    'string',
-                    'email',
-                    'max:255',
-                    'unique:agentes,email,' . $agente->id,
-                    'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
-                ],
-            ],[
-                'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
-                'email.unique' => 'El email ya está en uso.',
-                'email.regex' => 'El formato del email es inválido.',
-            ]);
-
             $agente->update($request->all()); // Actualizar el agente
 
             Log::info('✅ Agente actualizado correctamente.', [
@@ -158,7 +159,7 @@ class AgenteController extends BaseController
             Log::info('🗑️ Agente eliminado correctamente.', [
                 'agente_id' => $id,
             ]);
-            
+
             return redirect()->route('agentes.index')->with('success', 'Agente eliminado correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al eliminar el agente: ' . $e->getMessage(), [

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 
 use App\Http\Middleware\CheckPermiso;
+
 class ComunidadController extends Controller
 {
     public function __construct()
@@ -29,9 +30,9 @@ class ComunidadController extends Controller
      */
     public function index()
     {
-        try{
+        try {
             $user = Auth::user(); // Obtener el usuario autenticado
-            
+
             // Verificar si el usuario tiene el rol de administrador
             if ($user->rol->nombre == 'Superadministrador') {
                 $comunidades = Comunidad::with('users')->get(); // Obtener todas las comunidades
@@ -39,13 +40,13 @@ class ComunidadController extends Controller
             } else {
                 // Obtener comunidades donde el usuario es propietario O está asignado como usuario
                 $comunidades = Comunidad::where('id_propietario', $user->id)
-                    ->orWhereHas('users', function($query) use ($user) {
+                    ->orWhereHas('users', function ($query) use ($user) {
                         $query->where('users.id', $user->id);
                     })
                     ->with('users')
                     ->get();
                 $empleados = Subusuario::where('id_usuario_creador', $user->id)->get(); // Obtener empleados
-                
+
                 if ($empleados->isEmpty()) {
                     $usuarios = []; // Obtener todos los usuarios si no hay empleados
                 } else {
@@ -58,7 +59,7 @@ class ComunidadController extends Controller
                 'total_comunidades' => $comunidades->count(),
                 'total_usuarios' => count($usuarios),
             ]);
-        
+
             return Inertia::render('comunidades/index', [
                 'comunidades' => $comunidades,
                 'usuarios' => $usuarios,
@@ -85,37 +86,37 @@ class ComunidadController extends Controller
      */
     public function store(Request $request)
     {
-        try{
-            $user = Auth::user(); // Obtener el usuario autenticado
-            $request->merge([
-                'nombre' => ucfirst(($request->nombre)),
-                'cif' => strtoupper($request->cif),
-                'direccion' => ucfirst(($request->direccion)),
-                'ubi_catastral' => ucfirst(($request->ubi_catastral)),
-                'ref_catastral' => strtoupper($request->ref_catastral)
-            ]);
 
-            $request->validate([
-                'nombre' => 'required|string|min:2|max:255',
-                'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif',
-                'direccion' => 'nullable|string|max:255',
-                'ubi_catastral' => 'nullable|string|max:255',
-                'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
-                'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-                'usuarios' => 'array', // Validar que usuarios sea un array
-                'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
-            ],[
-                'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
-                'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
-                'cif.unique' => 'El CIF ya está en uso.',
-                'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
-                'telefono' => 'Formato de teléfono incorrecto',
-            ]);
-        
+        $user = Auth::user(); // Obtener el usuario autenticado
+        $request->merge([
+            'nombre' => ucfirst(($request->nombre)),
+            'cif' => strtoupper($request->cif),
+            'direccion' => ucfirst(($request->direccion)),
+            'ubi_catastral' => ucfirst(($request->ubi_catastral)),
+            'ref_catastral' => strtoupper($request->ref_catastral)
+        ]);
+
+        $request->validate([
+            'nombre' => 'required|string|min:2|max:255',
+            'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif',
+            'direccion' => 'nullable|string|max:255',
+            'ubi_catastral' => 'nullable|string|max:255',
+            'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
+            'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+            'usuarios' => 'array', // Validar que usuarios sea un array
+            'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
+        ], [
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
+            'cif.unique' => 'El CIF ya está en uso.',
+            'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
+            'telefono' => 'Formato de teléfono incorrecto',
+        ]);
+        try {
             $request->merge(['id_propietario' => $user->id]); // Asignar el ID del propietario al request
             // Crear la comunidad sin los usuarios
             $comunidad = Comunidad::create($request->except('usuarios'));
-            
+
             // Sincronizar los usuarios seleccionados con la tabla pivote
             if ($request->has('usuarios')) {
                 $comunidad->users()->sync($request->usuarios);
@@ -160,35 +161,35 @@ class ComunidadController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
-            $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
-            $this->authorize('update', $comunidad);
-            
-            $request->merge([
-                'nombre' => ucfirst(($request->nombre)),
-                'cif' => strtoupper($request->cif),
-                'direccion' => ucfirst(($request->direccion)),
-                'ubi_catastral' => ucfirst(($request->ubi_catastral)),
-                'ref_catastral' => strtoupper($request->ref_catastral)
-            ]);
-            
-            $request->validate([
-                'nombre' => 'required|string|min:2|max:255',
-                'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
-                'direccion' => 'nullable|string|max:255',
-                'ubi_catastral' => 'nullable|string|max:255',
-                'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
-                'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-                'usuarios' => 'array', // Validar que usuarios sea un array
-                'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
-            ],[
-                'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
-                'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
-                'cif.unique' => 'El CIF ya está en uso.',
-                'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
-                'telefono' => 'Formato de teléfono incorrecto',
-            ]);
 
+        $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+        $this->authorize('update', $comunidad);
+
+        $request->merge([
+            'nombre' => ucfirst(($request->nombre)),
+            'cif' => strtoupper($request->cif),
+            'direccion' => ucfirst(($request->direccion)),
+            'ubi_catastral' => ucfirst(($request->ubi_catastral)),
+            'ref_catastral' => strtoupper($request->ref_catastral)
+        ]);
+
+        $request->validate([
+            'nombre' => 'required|string|min:2|max:255',
+            'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
+            'direccion' => 'nullable|string|max:255',
+            'ubi_catastral' => 'nullable|string|max:255',
+            'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
+            'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
+            'usuarios' => 'array', // Validar que usuarios sea un array
+            'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
+        ], [
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
+            'cif.unique' => 'El CIF ya está en uso.',
+            'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
+            'telefono' => 'Formato de teléfono incorrecto',
+        ]);
+        try {
             // Actualizar los datos de la comunidad excepto los usuarios
             $comunidad->update($request->except('usuarios'));
 
@@ -226,7 +227,7 @@ class ComunidadController extends Controller
                 'comunidad_id' => $id,
                 'user_id' => Auth::id(),
             ]);
-            
+
             return redirect()->route('comunidades.index')->with('success', 'Comunidad eliminada correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al eliminar comunidad:', ['exception' => $e]);

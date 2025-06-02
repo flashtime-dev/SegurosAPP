@@ -12,6 +12,7 @@ use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
 use Throwable;
 use Illuminate\Support\Facades\Log;
+
 class RolController extends BaseController
 {
     public function __construct()
@@ -61,18 +62,18 @@ class RolController extends BaseController
      */
     public function store(Request $request)
     {
-        try{
-            // Capitalizar solo la primera palabra del nombre antes de la validación
-            $request->merge([
-                'nombre' => ucfirst(($request->nombre))
-            ]);
 
-            $request->validate([
-                'nombre' => 'required|string|min:2|max:50',
-                'permisos' => 'nullable|array',
-                'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
-            ]);
+        // Capitalizar solo la primera palabra del nombre antes de la validación
+        $request->merge([
+            'nombre' => ucfirst(($request->nombre))
+        ]);
 
+        $request->validate([
+            'nombre' => 'required|string|min:2|max:50',
+            'permisos' => 'nullable|array',
+            'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
+        ]);
+        try {
             $rol = Rol::create([
                 'nombre' => $request->nombre,
             ]);
@@ -123,19 +124,19 @@ class RolController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        try{
-            $rol = Rol::findOrFail($id); // Buscar el rol por ID
-            // Capitalizar solo la primera palabra del nombre antes de la validación
-            $request->merge([
-                'nombre' => ucfirst(($request->nombre))
-            ]);
 
-            $request->validate([
-                'nombre' => 'required|string|min:2|max:50',
-                'permisos' => 'nullable|array',
-                'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
-            ]);
+        $rol = Rol::findOrFail($id); // Buscar el rol por ID
+        // Capitalizar solo la primera palabra del nombre antes de la validación
+        $request->merge([
+            'nombre' => ucfirst(($request->nombre))
+        ]);
 
+        $request->validate([
+            'nombre' => 'required|string|min:2|max:50',
+            'permisos' => 'nullable|array',
+            'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
+        ]);
+        try {
             $rol->update([
                 'nombre' => $request->nombre,
             ]);
@@ -157,7 +158,7 @@ class RolController extends BaseController
      */
     public function destroy($id)
     {
-        try{
+        try {
             $rol = Rol::findOrFail($id); // Buscar el rol por ID
             // Verificar si el rol tiene permisos asignados
             if ($rol->permisos()->count() > 0) {

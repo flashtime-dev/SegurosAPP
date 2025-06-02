@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Poliza, Siniestro } from "@/types";
+import PhoneInputField from "@/components/PhoneInputField";
 
 type Props = {
     isOpen: boolean;
@@ -346,15 +347,10 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                 <Label htmlFor="telefono">Teléfono</Label>
                                                 <PhoneInputField
                                                     value={contacto.telefono}
-                                                    onChange={(e) =>
-                                                        actualizarContacto(
-                                                            index,
-                                                            "telefono",
-                                                            e.target.value
-                                                        )
+                                                    onChange={(value) =>
+                                                        actualizarContacto(index, "telefono", value)
                                                     }
-                                                    required
-                                                    placeholder="+34 123 456 789"
+                                                    error={(errors as Record<string, string>)[`contactos.${index}.telefono`]}
                                                 />
                                             </div>
                                         </div>

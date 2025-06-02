@@ -28,12 +28,11 @@ export default function PhoneInputField({ value, onChange, error, name = "phone"
                 onlyCountries={["es", "us", "fr", "gb", "de", "it", "pt", "mx", "ar", "br"]}
 
                 // Puedes usar preferredCountries para poner algunos arriba en la lista
-                preferredCountries={["es", "us", "fr", "gb", "de", "it", "pt", "mx", "ar", "br"]}
+                preferredCountries={["es", "us"]}
                 enableAreaCodes={false} // Permite mostrar y editar códigos de área para países que los tienen
                 disableCountryCode={false} // Permite mostrar y editar el código de país
                 disableDropdown={false}
                 countryCodeEditable={true}
-                placeholder="+34 123 456 789"
                 inputStyle={{ width: "100%" }}
             />
             <InputError message={error} className="mt-2" />
