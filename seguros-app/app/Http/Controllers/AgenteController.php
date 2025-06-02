@@ -29,8 +29,8 @@ class AgenteController extends BaseController
         $agentes = Agente::all(); // Obtener todos los agentes
         return Inertia::render('agentes/index', [
             'agentes' => $agentes, // Pasar los agentes a la vista
-            //'success' => session('success'), // Pasar el mensaje de éxito a la vista
-            //'error' => session('error'), // Pasar el mensaje de error a la vista
+            'success' => session('success'), // Pasar el mensaje de éxito a la vista
+            'error' => session('error'), // Pasar el mensaje de error a la vista
         ]); // Retornar la vista con los datos
     }
 
@@ -64,6 +64,12 @@ class AgenteController extends BaseController
             ]);
 
             Agente::create($request->all()); // Crear un nuevo agente
+
+            Log::info('✅ Agente creado correctamente.', [
+                'agente_id' => $request->id,
+                'nombre' => $request->nombre,
+            ]);
+
             return redirect()->route('agentes.index')->with('success', 'Agente creado correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al crear el agente: ' . $e->getMessage(), [
@@ -123,6 +129,11 @@ class AgenteController extends BaseController
             ]);
 
             $agente->update($request->all()); // Actualizar el agente
+
+            Log::info('✅ Agente actualizado correctamente.', [
+                'agente_id' => $agente->id,
+            ]);
+
             return redirect()->route('agentes.index')->with('success', 'Agente actualizado correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al actualizar el agente: ' . $e->getMessage(), [
@@ -143,6 +154,11 @@ class AgenteController extends BaseController
         try {
             $agente = Agente::findOrFail($id); // Buscar el agente por ID
             $agente->delete(); // Eliminar el agente
+
+            Log::info('🗑️ Agente eliminado correctamente.', [
+                'agente_id' => $id,
+            ]);
+            
             return redirect()->route('agentes.index')->with('success', 'Agente eliminado correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al eliminar el agente: ' . $e->getMessage(), [

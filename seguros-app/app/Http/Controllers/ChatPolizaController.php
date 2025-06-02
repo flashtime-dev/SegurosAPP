@@ -51,7 +51,7 @@ class ChatPolizaController extends BaseController
             broadcast(new MessageSent($chat))->toOthers();
             Log::info("📡 Broadcast enviado");
 
-            return response()->json(['success' => true, 'chat' => $chat]);
+            return response()->json(['success' => true, 'message' => 'Mensaje enviado correctamente.','chat' => $chat]);
         } catch (Throwable $e) {
             Log::error('❌ Error al guardar el mensaje del chat:', [
                 'exception' => $e,
@@ -62,7 +62,7 @@ class ChatPolizaController extends BaseController
 
             return response()->json([
                 'success' => false,
-                'message' => 'Ocurrió un error al guardar el mensaje. Intenta nuevamente.'
+                'message' => 'Ocurrió un error al guardar el mensaje.'
             ], 500);
         }
     }

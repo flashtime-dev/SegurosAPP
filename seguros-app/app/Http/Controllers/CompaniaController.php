@@ -16,9 +16,14 @@ class CompaniaController extends Controller
             // Obtener todas las compañías con sus teléfonos
             $companias = Compania::with('telefonos')->get();
 
+            Log::info('✅ Teléfonos de asistencia cargados correctamente.', [
+                'total_companias' => $companias->count()
+            ]);
+
             // Pasar los datos a la vista
             return Inertia::render('telefonos-asistencia', [
                 'companias' => $companias,
+                'success' => 'Teléfonos de asistencia cargados correctamente.',
             ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al cargar los teléfonos de asistencia:', [

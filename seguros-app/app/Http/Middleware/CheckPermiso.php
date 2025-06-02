@@ -22,6 +22,7 @@ class CheckPermiso
         try{
             $user = Auth::user();
             if (!$user) {
+                Log::warning('Intento de acceso sin autenticar.');
                 return redirect()->route('login');
             }
 
@@ -42,10 +43,11 @@ class CheckPermiso
                 }
 
                 if ($permiso && $user->rol && $user->rol->permisos->contains('id', $permiso->id)) {
+                    Log::info("Acceso concedido al usuario ID {$user->id} con permiso '{$nombre}' en ruta {$request->route()->getName()}");
                     return $next($request);
                 }
             }
-
+            Log::warning("Permiso denegado al usuario ID {$user->id} para la ruta {$request->route()->getName()} con permisos requeridos: {$permisoNombres}");
             // Si no tiene ninguno de los permisos, denegar acceso
             return abort(403, 'Permiso denegado para el acceso');
         } catch (Throwable $e) {

@@ -7,7 +7,7 @@ use App\Models\TipoPermiso;
 use App\Models\Permiso;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
 use Throwable;
@@ -30,15 +30,21 @@ class RolController extends BaseController
      */
     public function index()
     {
-        $roles = Rol::with('permisos')->get(); // Obtener todos los roles con sus permisos
-        $tipoPermisos = TipoPermiso::all(); // Obtener todos los tipos de permisos
-        $permisos = Permiso::with('tipoPermiso')->get(); // Obtener todos los permisos
+        try {
+            $roles = Rol::with('permisos')->get(); // Obtener todos los roles con sus permisos
+            $tipoPermisos = TipoPermiso::all(); // Obtener todos los tipos de permisos
+            $permisos = Permiso::with('tipoPermiso')->get(); // Obtener todos los permisos
+            Log::info('Roles listados correctamente', ['count' => $roles->count()]);
 
-        return Inertia::render('roles/index', [
-            'roles' => $roles,
-            'tipoPermisos' => $tipoPermisos,
-            'permisos' => $permisos
-        ]); // Retornar la vista con los datos
+            return Inertia::render('roles/index', [
+                'roles' => $roles,
+                'tipoPermisos' => $tipoPermisos,
+                'permisos' => $permisos
+            ]); // Retornar la vista con los datos
+        } catch (Throwable $t) {
+            Log::error('Error al listar roles: ' . $t->getMessage(), ['exception' => $t]);
+            return redirect()->route('roles.index')->with('error', 'Error al listar los roles.');
+        }
     }
 
     /**
@@ -80,6 +86,7 @@ class RolController extends BaseController
                 $rol->permisos()->detach(); // Eliminar la relación entre el rol y los permisos
             }
 
+            Log::info('Rol creado correctamente', ['rol_id' => $rol->id, 'user_id' => Auth::id()]);
             return redirect()->route('roles.index')->with('success', 'Rol creado correctamente.');
         } catch (Throwable $t) {
             Log::error('Error al crear rol: ' . $t->getMessage(), ['exception' => $t]);
@@ -137,6 +144,7 @@ class RolController extends BaseController
                 $rol->permisos()->sync($request->permisos); // Actualizar permisos del rol
             }
 
+            Log::info('Rol actualizado correctamente', ['rol_id' => $rol->id, 'user_id' => Auth::id()]);
             return redirect()->route('roles.index')->with('success', 'Rol actualizado correctamente.');
         } catch (Throwable $t) {
             Log::error('Error al actualizar rol: ' . $t->getMessage(), ['exception' => $t]);
@@ -160,7 +168,7 @@ class RolController extends BaseController
             // Eliminar el rol y sus relaciones con permisos
             $rol->permisos()->detach(); // Eliminar las relaciones con permisos
             $rol->delete(); // Eliminar el rol
-
+            Log::info('Rol eliminado correctamente', ['rol_id' => $id, 'user_id' => Auth::id()]);
             return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
         } catch (Throwable $t) {
             Log::error('Error al eliminar rol: ' . $t->getMessage(), ['exception' => $t]);

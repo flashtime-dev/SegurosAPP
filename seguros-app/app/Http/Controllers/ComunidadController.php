@@ -52,6 +52,12 @@ class ComunidadController extends Controller
                     $usuarios = User::where('id', $empleados->pluck('id'))->get(); // Obtener usuarios según los empleados
                 }
             }
+
+            Log::info('✅ Comunidades cargadas correctamente.', [
+                'user_id' => $user->id,
+                'total_comunidades' => $comunidades->count(),
+                'total_usuarios' => count($usuarios),
+            ]);
         
             return Inertia::render('comunidades/index', [
                 'comunidades' => $comunidades,
@@ -114,6 +120,11 @@ class ComunidadController extends Controller
             if ($request->has('usuarios')) {
                 $comunidad->users()->sync($request->usuarios);
             }
+
+            Log::info('✅ Comunidad creada correctamente.', [
+                'comunidad_id' => $comunidad->id,
+                'user_id' => $user->id,
+            ]);
 
             return redirect()->route('comunidades.index')->with('success', 'Comunidad creada correctamente.');
         } catch (Throwable $e) {
@@ -186,6 +197,11 @@ class ComunidadController extends Controller
                 $comunidad->users()->sync($request->usuarios);
             }
 
+            Log::info('✅ Comunidad actualizada correctamente.', [
+                'comunidad_id' => $comunidad->id,
+                'user_id' => Auth::id(),
+            ]);
+
             return redirect()->route('comunidades.index')->with('success', 'Comunidad actualizada correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al actualizar comunidad:', ['exception' => $e]);
@@ -205,6 +221,12 @@ class ComunidadController extends Controller
             $comunidad->presupuestos()->delete(); // Eliminar los presupuestos asociados
             $comunidad->polizas()->delete(); // Eliminar las pólizas asociadas
             $comunidad->delete(); // Eliminar la comunidad
+
+            Log::info('✅ Comunidad eliminada correctamente.', [
+                'comunidad_id' => $id,
+                'user_id' => Auth::id(),
+            ]);
+            
             return redirect()->route('comunidades.index')->with('success', 'Comunidad eliminada correctamente.');
         } catch (Throwable $e) {
             Log::error('❌ Error al eliminar comunidad:', ['exception' => $e]);

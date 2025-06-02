@@ -49,6 +49,7 @@ class SiniestroController extends Controller
                     ->get();
                 $polizas = Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->get(); // Obtener pólizas de las comunidades del usuario
             }
+            Log::info("SiniestroController@index - Siniestros cargados correctamente");
 
             return Inertia::render('siniestros/index', [
                 'siniestros' => $siniestros,
@@ -145,7 +146,7 @@ class SiniestroController extends Controller
                     $siniestro->contactos()->create($contacto);
                 }
             }
-
+            Log::info("SiniestroController@store - Siniestro creado correctamente", ['id' => $siniestro->id]);
             return redirect()->route('siniestros.index')
                 ->with('success', 'Siniestro creado correctamente.');
         } catch (Throwable $e) {
@@ -163,6 +164,7 @@ class SiniestroController extends Controller
             $siniestro = Siniestro::with('poliza.compania', 'contactos', 'chats.usuario', 'adjuntos')->findOrFail($id); // Buscar el siniestro por ID
             $this->authorize('view', $siniestro);
             //dd($siniestro); // Debugging: Verificar el siniestro cargado
+            Log::info("SiniestroController@show - Mostrando siniestro ID {$id}");
             return Inertia::render('siniestros/show', [
                 'chats' => $siniestro->chats, // Pasar los chats a la vista
                 'authUser' => Auth::id(), // Pasar el ID del usuario autenticado a la vista
@@ -281,8 +283,7 @@ class SiniestroController extends Controller
                     $siniestro->contactos()->create($contacto);
                 }
             }
-
-            // Redirigir con mensaje de éxito
+            Log::info("SiniestroController@update - Siniestro actualizado correctamente", ['id' => $siniestro->id]);
             return redirect()
                 ->route('siniestros.index')
                 ->with('success', 'Siniestro actualizado correctamente.');
@@ -315,6 +316,8 @@ class SiniestroController extends Controller
 
             // Eliminar el siniestro
             $siniestro->delete();
+
+            Log::info("SiniestroController@destroy - Siniestro eliminado correctamente", ['id' => $id]);
 
             return redirect()
                 ->route('siniestros.index')

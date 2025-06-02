@@ -41,6 +41,13 @@ class DashboardController extends Controller
                 $polizas = $polizas->count(); // Contar el número de pólizas
             }
 
+            Log::info('✅ Dashboard cargado correctamente.', [
+                'user_id' => $user->id,
+                'comunidades' => $comunidades,
+                'polizas' => $polizas,
+                'siniestros' => $siniestros,
+            ]);
+
             return Inertia::render('dashboard', [
                 'comunidades' => $comunidades,
                 'polizas' => $polizas,

@@ -35,40 +35,51 @@ class UserController extends BaseController
 
     public function index()
     {
-        $users = User::with('rol', 'subusuarios.usuario:id,id_rol,name,email,address,phone,state', 'usuarioCreador')->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
-
-        //dd($users); // Debugging: Verificar los datos de los usuarios
-        return Inertia::render('usuarios/index', [
-            'users' => $users,
-            'roles' => Rol::all(),
-        ]);
+        try {
+            $users = User::with('rol', 'subusuarios.usuario:id,id_rol,name,email,address,phone,state', 'usuarioCreador')->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
+            Log::info('Usuarios cargados correctamente.');
+            //dd($users); // Debugging: Verificar los datos de los usuarios
+            return Inertia::render('usuarios/index', [
+                'users' => $users,
+                'roles' => Rol::all(),
+            ]);
+        } catch (Throwable $e) {
+            Log::error('Error al obtener usuarios: '.$e->getMessage(), ['exception' => $e]);
+            return redirect()->back()->withErrors(['error' => 'Error al cargar usuarios.']);
+        }
     }
 
     public function empleados()
     {
-        $user = Auth::user();
-        $users = User::with(
-            'rol',
-            'subusuarios.usuario:id,id_rol,name,email,address,phone,state',
-            'usuarioCreador.usuarioCreador:id,id_rol,name,email,address,phone,state'
-        )
-            ->whereHas('usuarioCreador', function ($query) use ($user) {
-                $query->where('id_usuario_creador', $user->id);
-            })
-            ->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
+        try {
+            $user = Auth::user();
+            $users = User::with(
+                'rol',
+                'subusuarios.usuario:id,id_rol,name,email,address,phone,state',
+                'usuarioCreador.usuarioCreador:id,id_rol,name,email,address,phone,state'
+            )
+                ->whereHas('usuarioCreador', function ($query) use ($user) {
+                    $query->where('id_usuario_creador', $user->id);
+                })
+                ->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
 
-        $userLogged = User::findOrFail($user->id); // Obtener el usuario autenticado
-        $userLogged->load(
-            'rol',
-            'subusuarios.usuario:id,id_rol,name,email,address,phone,state',
-            'usuarioCreador.usuarioCreador:id,id_rol,name,email,address,phone,state'); // Cargar el rol del usuario autenticado
-
-        //dd($userLogged); // Debugging: Verificar los datos del usuario autenticado
-        return Inertia::render('empleados/index', [
-            'user' => $userLogged,
-            'users' => $users,
-            'roles' => Rol::all(),
-        ]);
+            $userLogged = User::findOrFail($user->id); // Obtener el usuario autenticado
+            $userLogged->load(
+                'rol',
+                'subusuarios.usuario:id,id_rol,name,email,address,phone,state',
+                'usuarioCreador.usuarioCreador:id,id_rol,name,email,address,phone,state'); // Cargar el rol del usuario autenticado
+                
+            Log::info('Empleados cargados correctamente para el usuario: '.$user->id);
+            //dd($userLogged); // Debugging: Verificar los datos del usuario autenticado
+            return Inertia::render('empleados/index', [
+                'user' => $userLogged,
+                'users' => $users,
+                'roles' => Rol::all(),
+            ]);
+        } catch (Throwable $e) {
+            Log::error('Error al obtener empleados: '.$e->getMessage(), ['exception' => $e]);
+            return redirect()->back()->withErrors(['error' => 'Error al cargar empleados.']);
+        }
     }
 
     public function store(Request $request)
@@ -116,6 +127,7 @@ class UserController extends BaseController
                     'id_usuario_creador' => $request->id_usuario_creador,
                 ]);
             }
+            Log::info('Usuario creado correctamente: ID '.$user->id);
             //return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
         } catch (Throwable $e) {
             Log::error('Error al crear usuario: '.$e->getMessage(), ['exception' => $e]);
@@ -199,6 +211,7 @@ class UserController extends BaseController
                     ]);
                 }
             }
+            Log::info('Usuario actualizado correctamente: ID '.$user->id);
             //return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
         } catch (Throwable $e) {
             Log::error('Error al actualizar usuario: '.$e->getMessage(), ['exception' => $e]);
@@ -214,6 +227,7 @@ class UserController extends BaseController
         try{
             $user = User::findOrFail($id); // Buscar el usuario por ID
             $user->delete(); // Eliminar el usuario
+            Log::info('Usuario eliminado correctamente: ID '.$id);
             //return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado correctamente.');
         } catch (Throwable $e) {
             Log::error('Error al eliminar usuario: '.$e->getMessage(), ['exception' => $e]);

@@ -58,6 +58,7 @@ class PolizaController extends Controller
             $agentes = Agente::all();
         }
 
+        Log::info('Polizas listadas', ['user_id' => $user->id, 'count' => $polizas->count()]);
         return Inertia::render('polizas/index', [
             'polizas' => $polizas,
             'companias' => $companias,
@@ -135,6 +136,8 @@ class PolizaController extends Controller
 
             // Crear la póliza con los datos del formulario y la URL del PDF
             Poliza::create(array_merge($request->all(), ['pdf_poliza' => $pdfUrl]));
+            Log::info('Póliza creada', ['poliza_id' => $request->id, 'user_id' => Auth::id()]);
+
             return redirect()->route('polizas.index')->with('success', 'Póliza creada correctamente.');
         } catch (Throwable  $e) {
             Log::error('Error al crear póliza: ' . $e->getMessage(), ['exception' => $e]);
@@ -153,6 +156,8 @@ class PolizaController extends Controller
         $siniestros = $poliza->siniestros;
         $chats = $poliza->chats()->with('usuario')->orderBy('created_at')->get();
         $authUser = Auth::id();
+        Log::info('Mostrando póliza', ['poliza_id' => $id, 'user_id' => $authUser]);
+
         return Inertia::render('polizas/show', [
             'poliza' => $poliza,
             'siniestros' => $siniestros,
@@ -238,6 +243,8 @@ class PolizaController extends Controller
 
             // Actualiza el modelo con $data (que incluye o no el campo pdf_poliza)
             $poliza->update($data);
+            Log::info('Póliza actualizada', ['poliza_id' => $poliza->id, 'user_id' => Auth::id()]);
+
             return redirect()
                 ->route('polizas.index')
                 ->with('success', 'Póliza actualizada correctamente.');
@@ -265,6 +272,7 @@ class PolizaController extends Controller
 
             // Eliminamos el registro de la BD
             $poliza->delete();
+            Log::info('Póliza eliminada', ['poliza_id' => $id, 'user_id' => Auth::id()]);
 
             return redirect()
                 ->route('polizas.index')
@@ -290,6 +298,7 @@ class PolizaController extends Controller
 
             // Enviar el correo de solicitud de anulación al email del propietario
             Mail::to($propietario->email)->send(new SolicitudAnulacionPoliza($poliza));
+            Log::info('Solicitud de anulación enviada', ['poliza_id' => $poliza->id, 'email' => $propietario->email]);
 
             return redirect()->route('polizas.index')->with('success', 'Solicitud de anulación enviada correctamente.');
         } catch (Throwable $e) {
@@ -314,6 +323,8 @@ class PolizaController extends Controller
             if (!file_exists($path)) {
                 abort(404, 'Archivo no encontrado.');
             }
+
+            Log::info('Sirviendo archivo PDF', ['poliza_id' => $id, 'file' => $filename]);
 
             // Retorna el archivo como respuesta de descarga
             return Response::file($path, [
