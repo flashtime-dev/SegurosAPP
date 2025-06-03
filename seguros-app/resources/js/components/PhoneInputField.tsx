@@ -9,9 +9,10 @@ type Props = {
     onChange: (value: string) => void;
     error?: string;
     name?: string;
+    require?: boolean;
 };
 
-export default function PhoneInputField({ value, onChange, error, name = "phone" }: Props) {
+export default function PhoneInputField({ value, onChange, error, name = "phone", require=false }: Props) {
     return (
         <div>
             <PhoneInput

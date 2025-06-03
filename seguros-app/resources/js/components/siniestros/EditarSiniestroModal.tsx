@@ -347,9 +347,16 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                 <Label htmlFor="telefono">Teléfono</Label>
                                                 <PhoneInputField
                                                     value={contacto.telefono}
-                                                    onChange={(value) =>
-                                                        actualizarContacto(index, "telefono", value)
-                                                    }
+                                                    onChange={(value) => {
+                                                        if (!value) {
+                                                            actualizarContacto(index, 'telefono', '');
+                                                            return;
+                                                        }
+                                                        const cleaned = value.replace(/\s/g, '');
+                                                        const normalized = cleaned === '' ? '' : (cleaned.startsWith('+') ? cleaned : `+${cleaned}`);
+                                                        actualizarContacto(index, 'telefono', normalized);
+                                                    }}
+                                                    require={true}
                                                     error={(errors as Record<string, string>)[`contactos.${index}.telefono`]}
                                                 />
                                             </div>

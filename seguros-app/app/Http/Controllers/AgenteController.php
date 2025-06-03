@@ -114,7 +114,7 @@ class AgenteController extends BaseController
 
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
-            'telefono' => 'nullable|string|max:15',
+            'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
             'email' => [
                 'nullable',
                 'string',
@@ -127,6 +127,7 @@ class AgenteController extends BaseController
             'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
             'email.unique' => 'El email ya está en uso.',
             'email.regex' => 'El formato del email es inválido.',
+            'telefono' => 'Formato de teléfono incorrecto',
         ]);
         try {
             $agente->update($request->all()); // Actualizar el agente
