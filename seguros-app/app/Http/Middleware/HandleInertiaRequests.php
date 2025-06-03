@@ -39,7 +39,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        try{
+        try {
             [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
             return [
@@ -49,11 +49,13 @@ class HandleInertiaRequests extends Middleware
                 'auth' => [
                     'user' => $request->user(),
                 ],
-                'ziggy' => fn (): array => [
+                'ziggy' => fn(): array => [
                     ...(new Ziggy)->toArray(),
                     'location' => $request->url(),
                 ],
                 'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
             ];
         } catch (Throwable $e) {
             Log::error('Error en HandleInertiaRequests@share: ' . $e->getMessage(), [
@@ -72,6 +74,8 @@ class HandleInertiaRequests extends Middleware
                 ],
                 'ziggy' => [],
                 'sidebarOpen' => true,
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
             ];
         }
     }

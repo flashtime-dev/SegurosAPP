@@ -6,10 +6,14 @@ import AppLayout from "@/layouts/app-layout";
 import { Poliza, Siniestro } from "@/types";
 import { Head, usePage } from "@inertiajs/react";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Toaster } from "@/components/ui/sonner"
+import { toast } from "sonner";
 
 export default function Siniestros() {
-    const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[] }>();
+    const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[], success?: string, error?: string }>();
+    const success = props.success;
+    const error = props.error;
     const siniestros = props.siniestros;
     const polizas = props.polizas;
     const [isCreating, setIsCreating] = useState(false); // Estado para el modal de creación
@@ -21,6 +25,18 @@ export default function Siniestros() {
         setSiniestroSeleccionado(siniestro);
         setIsEditing(true);
     };
+
+    useEffect(() => {
+        console.log(success);
+        if (success) {
+            toast.success("Siniestro modificado correctamente");
+        }
+
+        if (error) {
+            toast.error("Error al modificar el siniestro");
+        }
+        
+    }, [success, error]);
 
     return (
         <AppLayout breadcrumbs={[{ title: 'Siniestros', href: '/siniestros' }]}>
@@ -49,6 +65,17 @@ export default function Siniestros() {
                 onClose={() => { setIsEditing(false) }}
                 polizas={polizas} // Pasar póliza seleccionada
                 siniestro={siniestroSeleccionado} // Pasar póliza seleccionada
+            />
+
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    className: "text-sm font-medium",
+                    classNames: {
+                        success: "bg-green-100 text-green-800 border-green-300",
+                        error: "bg-red-100 text-red-800 border-red-300",
+                    },
+                }}
             />
         </AppLayout>
     );
