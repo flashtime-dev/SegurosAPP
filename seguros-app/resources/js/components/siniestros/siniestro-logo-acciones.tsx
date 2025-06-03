@@ -13,7 +13,7 @@ export function SiniestroLogoAcciones({ logoUrl, telefono }: Props) {
             <img src={logoUrl} alt="Logo Compañía" className="h-16 object-contain" />
             <p className="text-sm text-muted-foreground">{telefono}</p>
             <div className="w-full space-y-2">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full cursor-pointer">
                     Cerrar siniestro
                 </Button>
             </div>

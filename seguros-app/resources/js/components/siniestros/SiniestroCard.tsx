@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns"; // Importa las funciones necesarias
 import { Siniestro } from "@/types";
 import { router } from "@inertiajs/react";
@@ -14,6 +15,17 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
     const menuButtonRef = React.useRef<HTMLButtonElement>(null);
     // Ref para controlar si el menú está abierto
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+    const getEstadoColor = () => {
+        switch (siniestro.estado.toLowerCase()) {
+            case 'abierto':
+                return 'bg-green-600';
+            case 'cerrado':
+                return 'bg-red-500';
+            default:
+                return 'bg-gray-500';
+        }
+    };
 
     const handleEdit = (e: Event) => {
         e.preventDefault();
@@ -62,7 +74,17 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
 
             <Link href={`/siniestros/${siniestro.id}`} className="p-4">
                 <div >
-                    <h2 className="text-lg font-semibold">{siniestro.expediente}</h2>
+                    <div className="flex justify-between items-center mb-2">
+                        <h2 className="text-lg font-semibold">{siniestro.expediente}</h2>
+                        <span
+                            className={cn(
+                                "text-white text-xs font-medium px-3 py-1 rounded-full",
+                                getEstadoColor()
+                            )}
+                        >
+                            {siniestro.estado}
+                        </span>
+                    </div>
                     {/* <p className="text-gray-600">Estado: {siniestro.estado}</p> */} {/*HACE FALTA AÑADIR A BD*/}
                     <p className="text-gray-600">
                         Fecha:{" "}

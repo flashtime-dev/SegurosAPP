@@ -331,28 +331,39 @@ class SiniestroController extends Controller
 
     public function servePDF($id, $filename)
     {
-        $siniestro = Siniestro::findOrFail($id);
-        $this->authorize('view', $siniestro);
+        try {
+            $siniestro = Siniestro::findOrFail($id);
+            $this->authorize('view', $siniestro);
 
-        // Validar que el archivo solicitado pertenece al siniestro
-        $adjunto = $siniestro->adjuntos()
-            ->where('url_adjunto', 'like', "%/s-{$id}/{$filename}")
-            ->first();
+            // Validar que el archivo solicitado pertenece al siniestro
+            $adjunto = $siniestro->adjuntos()
+                ->where('url_adjunto', 'like', "%/s-{$id}/{$filename}")
+                ->first();
 
-        if (!$adjunto) {
-            abort(404, 'El archivo solicitado no está asociado a este siniestro.');
+            if (!$adjunto) {
+                Log::warning("Archivo no encontrado o no autorizado para siniestro {$id}: {$filename}");
+                abort(404, 'El archivo solicitado no está asociado a este siniestro.');
+            }
+
+            // Construir la ruta real del archivo
+            $path = storage_path("app/private/siniestros/s-{$id}/{$filename}");
+
+            if (!file_exists($path)) {
+                Log::warning("Archivo físico no encontrado: {$path}");
+                abort(404, 'Archivo no encontrado en el servidor.');
+            }
+            Log::info("Archivo PDF servido correctamente: siniestro {$id} - {$filename}");
+            return Response::file($path, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            ]);
+        } catch (Throwable $e) {
+            Log::error("Error en SiniestroController@servePDF: " . $e->getMessage(), [
+                'siniestro_id' => $id,
+                'filename' => $filename,
+                'exception' => $e
+            ]);
+            return $this->handleException($e, 'SiniestroController@servePDF', 'siniestros.index', 'Error al servir el archivo PDF.');
         }
-
-        // Construir la ruta real del archivo
-        $path = storage_path("app/private/siniestros/s-{$id}/{$filename}");
-
-        if (!file_exists($path)) {
-            abort(404, 'Archivo no encontrado en el servidor.');
-        }
-
-        return Response::file($path, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $filename . '"',
-        ]);
     }
 }
