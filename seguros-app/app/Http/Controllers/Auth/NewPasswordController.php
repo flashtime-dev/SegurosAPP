@@ -45,11 +45,11 @@ class NewPasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-
+        // de las validaciones he quitado Rules\Password::defaults()
         $request->validate([
             'token' => 'required',
             'email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
-            'password' => ['required', 'confirmed', Rules\Password::defaults(), 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/'],
+            'password' => ['required', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/'],
         ], [
             'email.required' => 'El campo email es obligatorio.',
             'email.regex' => 'El formato del correo electrónico es inválido',
