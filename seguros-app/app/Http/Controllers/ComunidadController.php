@@ -66,7 +66,13 @@ class ComunidadController extends Controller
             ]); // Retornar la vista con los datos
         } catch (Throwable $e) {
             Log::error('❌ Error al cargar comunidades:', ['exception' => $e]);
-            return redirect()->back()->withErrors('Ocurrió un error al cargar comunidades.');
+            return redirect()->back()->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Se produjo un error al cargar las comunidades",
+                    ],
+                ]);
+            // ->withErrors('Ocurrió un error al cargar comunidades.');
         }
     }
 
@@ -127,10 +133,22 @@ class ComunidadController extends Controller
                 'user_id' => $user->id,
             ]);
 
-            return redirect()->route('comunidades.index')->with('success', 'Comunidad creada correctamente.');
+            return redirect()->route('comunidades.index')
+            ->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Comunidad creada correctamente",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al crear comunidad:', ['exception' => $e]);
-            return redirect()->back()->withErrors('Ocurrió un error al crear la comunidad.');
+            return redirect()->back()->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Se produjo un error al crear la comunidad",
+                    ],
+                ]);
+                // ->withErrors('Ocurrió un error al crear la comunidad.');
         }
     }
 
@@ -203,10 +221,22 @@ class ComunidadController extends Controller
                 'user_id' => Auth::id(),
             ]);
 
-            return redirect()->route('comunidades.index')->with('success', 'Comunidad actualizada correctamente.');
+            return redirect()->route('comunidades.index')
+            ->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Comunidad actualizada correctamente",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al actualizar comunidad:', ['exception' => $e]);
-            return redirect()->back()->withErrors('Ocurrió un error al actualizar la comunidad.');
+            return redirect()->back()->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Se produjo un error al actualizar la comunidad",
+                    ],
+                ]);
+            // ->withErrors('Ocurrió un error al actualizar la comunidad.');
         }
     }
 
@@ -228,10 +258,21 @@ class ComunidadController extends Controller
                 'user_id' => Auth::id(),
             ]);
 
-            return redirect()->route('comunidades.index')->with('success', 'Comunidad eliminada correctamente.');
+            return redirect()->route('comunidades.index')->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Comunidad eliminada correctamente",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al eliminar comunidad:', ['exception' => $e]);
-            return redirect()->back()->withErrors('Ocurrió un error al eliminar la comunidad.');
+            return redirect()->back()->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Se produjo un error al eliminar la comunidad",
+                    ],
+                ]);
+            // ->withErrors('Ocurrió un error al eliminar la comunidad.');
         }
     }
 }
