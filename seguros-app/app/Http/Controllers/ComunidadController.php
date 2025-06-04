@@ -69,7 +69,7 @@ class ComunidadController extends Controller
             return redirect()->back()->with([
                     'error' => [
                         'id' => uniqid(),
-                        'mensaje' => "Se produjo un error al cargar las comunidades",
+                        'mensaje' => "Error al cargar las comunidades",
                     ],
                 ]);
             // ->withErrors('Ocurrió un error al cargar comunidades.');
@@ -145,7 +145,7 @@ class ComunidadController extends Controller
             return redirect()->back()->with([
                     'error' => [
                         'id' => uniqid(),
-                        'mensaje' => "Se produjo un error al crear la comunidad",
+                        'mensaje' => "Error al crear la comunidad",
                     ],
                 ]);
                 // ->withErrors('Ocurrió un error al crear la comunidad.');
@@ -233,7 +233,7 @@ class ComunidadController extends Controller
             return redirect()->back()->with([
                     'error' => [
                         'id' => uniqid(),
-                        'mensaje' => "Se produjo un error al actualizar la comunidad",
+                        'mensaje' => "Error al actualizar la comunidad",
                     ],
                 ]);
             // ->withErrors('Ocurrió un error al actualizar la comunidad.');
@@ -269,7 +269,7 @@ class ComunidadController extends Controller
             return redirect()->back()->with([
                     'error' => [
                         'id' => uniqid(),
-                        'mensaje' => "Se produjo un error al eliminar la comunidad",
+                        'mensaje' => "Error al eliminar la comunidad",
                     ],
                 ]);
             // ->withErrors('Ocurrió un error al eliminar la comunidad.');

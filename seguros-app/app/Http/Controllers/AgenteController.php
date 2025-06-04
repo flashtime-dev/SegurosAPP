@@ -71,14 +71,26 @@ class AgenteController extends BaseController
                 'nombre' => $request->nombre,
             ]);
 
-            return redirect()->route('agentes.index')->with('success', 'Agente creado correctamente.');
+            return redirect()->route('agentes.index')
+            ->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Agente creado correctamente",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al crear el agente: ' . $e->getMessage(), [
                 'exception' => $e,
                 'data' => $request->all(),
             ]);
 
-            return back()->withErrors(['error' => 'Ocurrió un error al crear el agente. Intentalo de nuevo.']);
+            return back()->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al crear el agente",
+                    ],
+                ]);
+            // ->withErrors(['error' => 'Ocurrió un error al crear el agente. Intentalo de nuevo.']);
         }
     }
 
@@ -136,7 +148,13 @@ class AgenteController extends BaseController
                 'agente_id' => $agente->id,
             ]);
 
-            return redirect()->route('agentes.index')->with('success', 'Agente actualizado correctamente.');
+            return redirect()->route('agentes.index')
+            ->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Agente actualizado correctamente",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al actualizar el agente: ' . $e->getMessage(), [
                 'exception' => $e,
@@ -144,7 +162,13 @@ class AgenteController extends BaseController
                 'data' => $request->all(),
             ]);
 
-            return back()->withErrors(['error' => 'Ocurrió un error al actualizar el agente. Intenta nuevamente.']);
+            return back()->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al actualizar el agente",
+                    ],
+                ]);
+            // ->withErrors(['error' => 'Ocurrió un error al actualizar el agente. Intenta nuevamente.']);
         }
     }
 
@@ -161,14 +185,26 @@ class AgenteController extends BaseController
                 'agente_id' => $id,
             ]);
 
-            return redirect()->route('agentes.index')->with('success', 'Agente eliminado correctamente.');
+            return redirect()->route('agentes.index')
+            ->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Agente eliminado correctamente",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al eliminar el agente: ' . $e->getMessage(), [
                 'exception' => $e,
                 'agente_id' => $id,
             ]);
 
-            return back()->withErrors(['error' => 'Ocurrió un error al eliminar el agente. Intenta nuevamente.']);
+            return back()->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al eliminar el agente",
+                    ],
+                ]);
+            // ->withErrors(['error' => 'Ocurrió un error al eliminar el agente. Intenta nuevamente.']);
         }
     }
 }
