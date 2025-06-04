@@ -23,7 +23,10 @@ class CompaniaController extends Controller
             // Pasar los datos a la vista
             return Inertia::render('telefonos-asistencia', [
                 'companias' => $companias,
-                'success' => 'Teléfonos de asistencia cargados correctamente.',
+                // 'success' => [
+                //     'id' => uniqid(),
+                //     'mensaje' => "Teléfonos de asistencia cargados correctamente"
+                // ],
             ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al cargar los teléfonos de asistencia:', [
@@ -31,8 +34,11 @@ class CompaniaController extends Controller
             ]);
 
             // Puedes redirigir a una página de error o mostrar un mensaje amigable
-            return redirect()->back()->withErrors([
-                'general' => 'Ocurrió un error al cargar los teléfonos de asistencia. Intenta más tarde.',
+            return redirect()->back()->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al cargar los teléfonos",
+                ],
             ]);
         }
     }

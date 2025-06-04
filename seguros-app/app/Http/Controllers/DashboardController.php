@@ -60,7 +60,12 @@ class DashboardController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return redirect()->back()->withErrors('Ocurrió un error al cargar el dashboard.');
+            return redirect()->back()->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al cargar el dashboard",
+                ],
+            ]);
         }
     }
 }

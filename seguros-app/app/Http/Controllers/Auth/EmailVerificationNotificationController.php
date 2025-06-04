@@ -26,7 +26,12 @@ class EmailVerificationNotificationController extends Controller
                 'email' => $request->user()->email,
             ]);
 
-            return back()->with('success', 'Se ha enviado un nuevo enlace de verificación a tu correo electrónico.');
+            return back()->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Se ha enviado un nuevo enlace de verificación a tu correo electrónico",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al enviar notificación de verificación de email: ' . $e->getMessage(), [
                 'exception' => $e,

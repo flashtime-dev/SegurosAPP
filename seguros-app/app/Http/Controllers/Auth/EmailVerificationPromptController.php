@@ -20,8 +20,12 @@ class EmailVerificationPromptController extends Controller
         try {
             if ($request->user()->hasVerifiedEmail()) {
                 Log::info('✔ Usuario ya tiene email verificado', ['user_id' => $request->user()->id]);
-                return redirect()->intended(route('dashboard', absolute: false))
-                    ->with('success', 'Tu correo ya está verificado.');
+                return redirect()->intended(route('dashboard', absolute: false))->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Tu correo ya está verificado",
+                    ],
+                ]);
             } else {
                 return Inertia::render('auth/verify-email', [
                     'status' => $request->session()->get('status'),
