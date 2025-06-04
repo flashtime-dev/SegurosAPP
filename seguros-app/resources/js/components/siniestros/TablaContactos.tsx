@@ -21,6 +21,9 @@ function formatPhoneNumber(phone?: string): string {
 }
 
 export default function TablaSiniestros({ contactos }: Props) {
+    if (contactos.length === 0) {
+        return <p className="text-center text-gray-500">No hay contactos para mostrar</p>;
+    }
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
         {contactos.map((contacto) => (

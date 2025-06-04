@@ -334,7 +334,8 @@ class PolizaController extends Controller
             return redirect()->route('polizas.index')->with([
                 'success' => [
                     'id' => uniqid(),
-                    'mensaje' => "Solicitud de anulación enviada correctamente",
+                    'mensaje' => "Solicitud de anulación enviada correctamente para la póliza con la comunidad "
+                    .$poliza->comunidad->nombre. ($poliza->numero ? " y número " . $poliza->numero : ", sin número"),
                 ],
             ]);
         } catch (Throwable $e) {
@@ -342,7 +343,8 @@ class PolizaController extends Controller
             return redirect()->route('polizas.index')->with([
                 'error' => [
                     'id' => uniqid(),
-                    'mensaje' => "Error al enviar la solicitud de anulación",
+                    'mensaje' => "Error al enviar la solicitud de anulación para la póliza con la comunidad "
+                    .$poliza->comunidad->nombre. ($poliza->numero ? " y número " . $poliza->numero : ", sin número"),
                 ],
             ]);
         }
