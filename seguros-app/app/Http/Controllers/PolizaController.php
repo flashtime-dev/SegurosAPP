@@ -138,10 +138,20 @@ class PolizaController extends Controller
             Poliza::create(array_merge($request->all(), ['pdf_poliza' => $pdfUrl]));
             Log::info('Póliza creada', ['poliza_id' => $request->id, 'user_id' => Auth::id()]);
 
-            return redirect()->route('polizas.index')->with('success', 'Póliza creada correctamente.');
+            return redirect()->route('polizas.index')->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Póliza creada correctamente",
+                    ],
+                ]);
         } catch (Throwable  $e) {
             Log::error('Error al crear póliza: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->route('polizas.index')->with('error', 'Error al crear la póliza: ' . $e->getMessage());
+            return redirect()->route('polizas.index')->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al crear la póliza",
+                    ],
+                ]);
         }
     }
 
@@ -245,12 +255,20 @@ class PolizaController extends Controller
             $poliza->update($data);
             Log::info('Póliza actualizada', ['poliza_id' => $poliza->id, 'user_id' => Auth::id()]);
 
-            return redirect()
-                ->route('polizas.index')
-                ->with('success', 'Póliza actualizada correctamente.');
+            return redirect()->route('polizas.index')->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Póliza actualizada correctamente",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('Error al actualizar póliza: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->route('polizas.index')->with('error', 'Error al actualizar la póliza: ' . $e->getMessage());
+            return redirect()->route('polizas.index')->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al actualizar la póliza",
+                    ],
+                ]);
         }
     }
 
@@ -274,12 +292,20 @@ class PolizaController extends Controller
             $poliza->delete();
             Log::info('Póliza eliminada', ['poliza_id' => $id, 'user_id' => Auth::id()]);
 
-            return redirect()
-                ->route('polizas.index')
-                ->with('success', 'Póliza eliminada correctamente.');
+            return redirect()->route('polizas.index')->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Póliza eliminada correctamente",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('Error al eliminar póliza: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->route('polizas.index')->with('error', 'Error al eliminar la póliza: ' . $e->getMessage());
+            return redirect()->route('polizas.index')->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al eliminar la póliza",
+                    ],
+                ]);
         }
     }
 
@@ -300,10 +326,20 @@ class PolizaController extends Controller
             Mail::to($propietario->email)->send(new SolicitudAnulacionPoliza($poliza));
             Log::info('Solicitud de anulación enviada', ['poliza_id' => $poliza->id, 'email' => $propietario->email]);
 
-            return redirect()->route('polizas.index')->with('success', 'Solicitud de anulación enviada correctamente.');
+            return redirect()->route('polizas.index')->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Solicitud de anulación enviada correctamente",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('Error al enviar solicitud de anulación: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->route('polizas.index')->with('error', 'Error al enviar la solicitud de anulación: ' . $e->getMessage());
+            return redirect()->route('polizas.index')->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al enviar la solicitud de anulación",
+                    ],
+                ]);
         }
     }
 
@@ -333,7 +369,12 @@ class PolizaController extends Controller
             ]);
         } catch (Throwable $e) {
             Log::error('Error al mostrar el archivo PDF: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->route('polizas.index')->with('error', 'Error al mostrar el archivo PDF: ' . $e->getMessage());
+            return redirect()->route('polizas.index')->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al mostrar el archivo PDF",
+                    ],
+                ]);
         }
     }
 }
