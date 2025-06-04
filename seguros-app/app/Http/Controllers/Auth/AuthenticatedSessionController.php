@@ -50,7 +50,12 @@ class AuthenticatedSessionController extends Controller
             ]);
 
             return redirect()->intended(route('dashboard', absolute: false))
-                ->with('success', 'Has iniciado sesión correctamente.');
+            ->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Has iniciado sesión correctamente",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('❌ Error durante la autenticación: ' . $e->getMessage(), [
                 'exception' => $e,
@@ -79,7 +84,7 @@ class AuthenticatedSessionController extends Controller
                 'user_id' => Auth::id(),
             ]);
 
-            return redirect('/')->with('success', 'Has cerrado sesión correctamente.');
+            return redirect('/');
         } catch (Throwable $e) {
             Log::error('❌ Error al cerrar sesión: ' . $e->getMessage(), [
                 'exception' => $e,
@@ -87,7 +92,7 @@ class AuthenticatedSessionController extends Controller
             ]);
 
             // En caso de error, puedes redirigir con mensaje o abortar
-            return redirect('/')->withErrors(['logout' => 'Error al cerrar sesión. Intenta nuevamente.']);
+            return redirect('/')->withErrors(['logout' => 'Error al cerrar sesión. Intentalo nuevamente.']);
         }
     }
 }

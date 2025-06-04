@@ -52,7 +52,12 @@ class ConfirmablePasswordController extends Controller
             ]);
 
             return redirect()->intended(route('dashboard', absolute: false))
-                ->with('success', 'Contraseña confirmada exitosamente.');
+            ->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Contraseña confirmada exitosamente",
+                    ],
+                ]);
         } catch (ValidationException $ve) {
             // Errores de validación normales, no los logueamos como errores de sistema
             throw $ve;

@@ -7,14 +7,9 @@ import { Poliza, Siniestro } from "@/types";
 import { Head, usePage } from "@inertiajs/react";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import CustomToast from "@/components/ui/CustomToaster";
 
 export default function Siniestros() {
-    const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[], success?: { id: string; mensaje: string }, error?: { id: string; mensaje: string }, info?: { id: string; mensaje: string } }>();
-    const success = props.success;
-    const error = props.error;
-    const info = props.info;
+    const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[]}>();
     const siniestros = props.siniestros;
     const polizas = props.polizas;
     const [isCreating, setIsCreating] = useState(false); // Estado para el modal de creación
@@ -26,20 +21,6 @@ export default function Siniestros() {
         setSiniestroSeleccionado(siniestro);
         setIsEditing(true);
     };
-
-    useEffect(() => {
-        if (success) {
-            toast.custom(() => <CustomToast type="success" message={success.mensaje} />);
-        }
-
-        if (error) {
-            toast.custom(() => <CustomToast type="error" message={error.mensaje} />);
-        }
-
-        if (info) {
-            toast.custom(() => <CustomToast type="info" message={info.mensaje} />);
-        }
-    }, [success, error, info]);
 
     return (
         <AppLayout breadcrumbs={[{ title: 'Siniestros', href: '/siniestros' }]}>

@@ -41,6 +41,11 @@ class PasswordController extends Controller
             'email' => $request->user()->email ?? null,
         ]);
 
-        return back()->with('success', 'Tu contraseña ha sido actualizada correctamente.');
+        return back()->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Tu contraseña ha sido actualizada correctamente",
+                    ],
+                ]);
     }
 }

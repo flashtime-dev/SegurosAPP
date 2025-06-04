@@ -60,7 +60,7 @@ class SiniestroController extends Controller
             return redirect()->route('home')->with([
                 'error' => [
                     'id' => uniqid(),
-                    'mensaje' => "Error al cargar la lista de siniestros.",
+                    'mensaje' => "Error al cargar la lista de siniestros",
                 ],
             ]);
         }
@@ -155,7 +155,7 @@ class SiniestroController extends Controller
             return redirect()->route('siniestros.index')->with([
                 'success' => [
                     'id' => uniqid(),
-                    'mensaje' => "Siniestro creado correctamente.",
+                    'mensaje' => "Siniestro creado correctamente",
                 ],
             ]);
         } catch (Throwable $e) {
@@ -163,7 +163,7 @@ class SiniestroController extends Controller
             return redirect()->back()->withInput()->with([
                 'error' => [
                     'id' => uniqid(),
-                    'mensaje' => "Error al crear el siniestro.",
+                    'mensaje' => "Error al crear el siniestro",
                 ],
             ]);
         }
@@ -191,7 +191,7 @@ class SiniestroController extends Controller
             return redirect()->route('siniestros.index')->with([
                 'error' => [
                     'id' => uniqid(),
-                    'mensaje' => "Error al cargar el siniestro.",
+                    'mensaje' => "Error al cargar el siniestro",
                 ],
             ]);
         }
@@ -310,7 +310,7 @@ class SiniestroController extends Controller
                 ->with([
                     'success' => [
                         'id' => uniqid(),
-                        'mensaje' => "Siniestro actualizado correctamente.",
+                        'mensaje' => "Siniestro actualizado correctamente",
                     ],
                 ]);
         } catch (Throwable $e) {
@@ -318,7 +318,7 @@ class SiniestroController extends Controller
             return redirect()->back()->withInput()->with([
                 'error' => [
                     'id' => uniqid(),
-                    'mensaje' => "Error al actualizar el siniestro.",
+                    'mensaje' => "Error al actualizar el siniestro",
                 ],
             ]);
         }
@@ -354,7 +354,7 @@ class SiniestroController extends Controller
                 ->route('siniestros.index')->with([
                     'success' => [
                         'id' => uniqid(),
-                        'mensaje' => "Siniestro y archivos eliminados correctamente.",
+                        'mensaje' => "Siniestro y archivos eliminados correctamente",
                     ],
                 ]);
         } catch (Throwable $e) {
@@ -362,7 +362,7 @@ class SiniestroController extends Controller
             return redirect()->route('siniestros.index')->with([
                 'error' => [
                     'id' => uniqid(),
-                    'mensaje' => "Error al eliminar el siniestro.",
+                    'mensaje' => "Error al eliminar el siniestro",
                 ],
             ]);
         }
