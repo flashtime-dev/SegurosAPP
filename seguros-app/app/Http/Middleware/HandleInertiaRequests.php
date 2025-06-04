@@ -56,6 +56,7 @@ class HandleInertiaRequests extends Middleware
                 'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
                 'success' => fn() => $request->session()->get('success'),
                 'error' => fn() => $request->session()->get('error'),
+                'info' => fn () => $request->session()->get('info'),
             ];
         } catch (Throwable $e) {
             Log::error('Error en HandleInertiaRequests@share: ' . $e->getMessage(), [
@@ -76,6 +77,7 @@ class HandleInertiaRequests extends Middleware
                 'sidebarOpen' => true,
                 'success' => fn() => $request->session()->get('success'),
                 'error' => fn() => $request->session()->get('error'),
+                'info' => fn () => $request->session()->get('info'),
             ];
         }
     }

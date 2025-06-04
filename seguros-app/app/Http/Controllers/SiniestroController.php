@@ -410,12 +410,12 @@ class SiniestroController extends Controller
     {
         try {
             $siniestro = Siniestro::findOrFail($id);
-            $this->authorize('update', $siniestro); // o una policy específica como 'cerrar'
+            $this->authorize('update', $siniestro);
             if ($siniestro->estado === 'Cerrado') {
-                return redirect()->route('siniestros.index')->with([
-                    'info'=> [
+                return back()->with([
+                    'info' => [
                         'id' => uniqid(),
-                        'mensaje' => 'El siniestro ya está cerrado.'
+                        'mensaje' => 'El siniestro ya está cerrado'
                     ],
                 ]);
             }
@@ -428,7 +428,7 @@ class SiniestroController extends Controller
             return redirect()->route('siniestros.index')->with([
                 'success' => [
                     'id' => uniqid(),
-                    'mensaje' => "Siniestro cerrado correctamente.",
+                    'mensaje' => "Siniestro cerrado correctamente",
                 ],
             ]);
         } catch (Throwable $e) {
@@ -436,7 +436,7 @@ class SiniestroController extends Controller
             return redirect()->route('siniestros.index')->with([
                 'error' => [
                     'id' => uniqid(),
-                    'mensaje' => "Error al cerrar el siniestro.",
+                    'mensaje' => "Error al cerrar el siniestro",
                 ],
             ]);
         }

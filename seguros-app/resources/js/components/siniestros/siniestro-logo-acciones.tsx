@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { router } from "@inertiajs/react";
+import { useState, useEffect } from "react";
+import { router, usePage } from "@inertiajs/react";
+import { toast } from "sonner";
+import CustomToast from "@/components/ui/CustomToaster";
 
 interface Props {
     id: number;
@@ -10,6 +12,15 @@ interface Props {
 
 export function SiniestroLogoAcciones({ id, logoUrl, telefono }: Props) {
     const [loading, setLoading] = useState(false);
+
+    const { props } = usePage<{ info?: { id: string; mensaje: string } }>();
+    const info = props.info;
+
+    useEffect(() => {
+        if (info) {
+            toast.custom(() => <CustomToast type="info" message={info.mensaje} />);
+        }
+    }, [info]);
 
     function handleCerrar() {
         setLoading(true);

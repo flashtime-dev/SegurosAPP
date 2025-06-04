@@ -7,8 +7,8 @@ import { Poliza, Siniestro } from "@/types";
 import { Head, usePage } from "@inertiajs/react";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner";
+import CustomToast from "@/components/ui/CustomToaster";
 
 export default function Siniestros() {
     const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[], success?: { id: string; mensaje: string }, error?: { id: string; mensaje: string }, info?: { id: string; mensaje: string } }>();
@@ -26,18 +26,18 @@ export default function Siniestros() {
         setSiniestroSeleccionado(siniestro);
         setIsEditing(true);
     };
-    
+
     useEffect(() => {
         if (success) {
-            toast.success(success.mensaje);
+            toast.custom(() => <CustomToast type="success" message={success.mensaje} />);
         }
 
         if (error) {
-            toast.error(error.mensaje);
+            toast.custom(() => <CustomToast type="error" message={error.mensaje} />);
         }
 
         if (info) {
-            toast.info(info.mensaje);
+            toast.custom(() => <CustomToast type="info" message={info.mensaje} />);
         }
     }, [success, error, info]);
 
@@ -68,18 +68,6 @@ export default function Siniestros() {
                 onClose={() => { setIsEditing(false) }}
                 polizas={polizas} // Pasar póliza seleccionada
                 siniestro={siniestroSeleccionado} // Pasar póliza seleccionada
-            />
-
-            <Toaster
-                position="top-right"
-                toastOptions={{
-                    className: "text-sm font-medium",
-                    classNames: {
-                        success: "bg-green-100 text-green-800 border-green-300",
-                        error: "bg-red-100 text-red-800 border-red-300",
-                        info: "bg-red-100 text-red-800 border-red-300",
-                    },
-                }}
             />
         </AppLayout>
     );
