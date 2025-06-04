@@ -148,7 +148,7 @@ class SiniestroController extends Controller
             }
             Log::info("SiniestroController@store - Siniestro creado correctamente", ['id' => $siniestro->id]);
             return redirect()->route('siniestros.index')
-                ->with('success', 'Siniestro creado correctamente.');
+                ->with('success', "Siniestro creado correctamente.");
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@store: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->withInput()->with('error', 'Error al crear el siniestro.');
@@ -284,10 +284,16 @@ class SiniestroController extends Controller
                     $siniestro->contactos()->create($contacto);
                 }
             }
+
             Log::info("SiniestroController@update - Siniestro actualizado correctamente", ['id' => $siniestro->id]);
             return redirect()
                 ->route('siniestros.index')
-                ->with('success', 'Siniestro actualizado correctamente.');
+                ->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Siniestro actualizado correctamente.",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@update: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->withInput()->with('error', 'Error al actualizar el siniestro.');

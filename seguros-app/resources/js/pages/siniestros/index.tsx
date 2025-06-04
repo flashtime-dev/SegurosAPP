@@ -11,7 +11,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner";
 
 export default function Siniestros() {
-    const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[], success?: string, error?: string }>();
+    const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[], success?: { id: string; mensaje: string }, error?: string }>();
     const success = props.success;
     const error = props.error;
     const siniestros = props.siniestros;
@@ -27,15 +27,14 @@ export default function Siniestros() {
     };
 
     useEffect(() => {
-        console.log(success);
         if (success) {
-            toast.success("Siniestro modificado correctamente");
+            toast.success(success.mensaje);
         }
 
         if (error) {
-            toast.error("Error al modificar el siniestro");
+            toast.error(error);
         }
-        
+
     }, [success, error]);
 
     return (
