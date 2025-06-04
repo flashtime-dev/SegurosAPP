@@ -9,6 +9,7 @@ import CrearSiniestroModal from "../siniestros/CrearSiniestroModal";
 
 export function PolizaMenu({ poliza, siniestros, chats, authUser }: { poliza: Poliza, siniestros: Siniestro[], chats: ChatPoliza[], authUser: number }) {
     const [isCreatingSiniestro, setIsCreatingSiniestro] = useState(false);
+    const isClosed = ['anulada', 'vencida'].includes(poliza.estado.toLowerCase());
 
     return (
         <>
@@ -30,7 +31,7 @@ export function PolizaMenu({ poliza, siniestros, chats, authUser }: { poliza: Po
                             />
                         </div>
                     </div>
-                    <PolizaChat chats={chats} authUser={authUser} polizaId={poliza.id} />
+                    <PolizaChat chats={chats} authUser={authUser} polizaId={poliza.id} isClosed={isClosed} />
                 </TabsContent>
 
                 <TabsContent value="siniestros">

@@ -3,7 +3,7 @@ import { Chat } from "../chat";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-export function PolizaChat({ chats: initialChats, authUser, polizaId }: { chats: ChatPoliza[], authUser: number, polizaId: number }) {
+export function PolizaChat({ chats: initialChats, authUser, polizaId, isClosed }: { chats: ChatPoliza[], authUser: number, polizaId: number, isClosed: boolean }) {
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const [chats, setChats] = useState<ChatPoliza[]>(initialChats);
     const [mensaje, setMensaje] = useState("");
@@ -82,8 +82,11 @@ export function PolizaChat({ chats: initialChats, authUser, polizaId }: { chats:
                         value={mensaje}
                         onChange={(e) => setMensaje(e.target.value)}
                         className="border rounded-md p-2 flex-grow"
+                        disabled={isClosed}
                     />
-                    <button type="submit" className="bg-blue-500 text-white rounded-md p-2">
+                    <button type="submit" className={`text-white rounded-md p-2 ${
+                            isClosed ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+                        }`} disabled={isClosed}>
                         Enviar
                     </button>
                 </form>

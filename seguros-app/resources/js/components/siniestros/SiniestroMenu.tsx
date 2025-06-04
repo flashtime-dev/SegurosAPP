@@ -10,6 +10,7 @@ import TablaContactos from "./TablaContactos";
 
 export function SiniestroMenu({ poliza, siniestro, contactos, chats, authUser }: { poliza: Poliza, siniestro: Siniestro, contactos: Contacto[],chats: ChatSiniestro[], authUser: number }) {
     console.log("SiniestroMenu", { poliza, siniestro, contactos, chats, authUser });
+    const isClosed = siniestro.estado.toLowerCase() === 'cerrado';
     return (
         <div>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
@@ -31,7 +32,7 @@ export function SiniestroMenu({ poliza, siniestro, contactos, chats, authUser }:
                             <SiniestroLogoAcciones id={siniestro.id} logoUrl={poliza.compania.url_logo} />
                         </div>
                     </div>
-                    <SiniestroChat chats={chats} authUser={authUser} siniestroId={siniestro.id} />
+                    <SiniestroChat chats={chats} authUser={authUser} siniestroId={siniestro.id} isClosed={isClosed} />
                 </TabsContent>
 
                 <TabsContent value="contactos">
