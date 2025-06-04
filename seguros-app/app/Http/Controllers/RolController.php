@@ -44,7 +44,13 @@ class RolController extends BaseController
             ]); // Retornar la vista con los datos
         } catch (Throwable $t) {
             Log::error('Error al listar roles: ' . $t->getMessage(), ['exception' => $t]);
-            return redirect()->route('roles.index')->with('error', 'Error al listar los roles.');
+            return redirect()->route('roles.index')->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al listar los roles",
+                    ],
+                ]);
+            // ->with('error', 'Error al listar los roles.');
         }
     }
 
@@ -88,10 +94,20 @@ class RolController extends BaseController
             }
 
             Log::info('Rol creado correctamente', ['rol_id' => $rol->id, 'user_id' => Auth::id()]);
-            return redirect()->route('roles.index')->with('success', 'Rol creado correctamente.');
+            return redirect()->route('roles.index')->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Rol creado correctamente",
+                    ],
+                ]);
         } catch (Throwable $t) {
             Log::error('Error al crear rol: ' . $t->getMessage(), ['exception' => $t]);
-            return redirect()->route('roles.index')->with('error', 'Error al crear el rol.');
+            return redirect()->route('roles.index')->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al crear el rol",
+                    ],
+                ]);
         }
     }
 
@@ -146,10 +162,21 @@ class RolController extends BaseController
             }
 
             Log::info('Rol actualizado correctamente', ['rol_id' => $rol->id, 'user_id' => Auth::id()]);
-            return redirect()->route('roles.index')->with('success', 'Rol actualizado correctamente.');
+            return redirect()->route('roles.index')->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Rol actualizado correctamente",
+                    ],
+                ]);
         } catch (Throwable $t) {
             Log::error('Error al actualizar rol: ' . $t->getMessage(), ['exception' => $t]);
-            return redirect()->route('roles.index')->with('error', 'Error al actualizar el rol.');
+            return redirect()->route('roles.index')
+            ->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al actualizar el rol",
+                    ],
+                ]);
         }
     }
 
@@ -170,10 +197,22 @@ class RolController extends BaseController
             $rol->permisos()->detach(); // Eliminar las relaciones con permisos
             $rol->delete(); // Eliminar el rol
             Log::info('Rol eliminado correctamente', ['rol_id' => $id, 'user_id' => Auth::id()]);
-            return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
+            return redirect()->route('roles.index')
+            ->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Rol eliminado correctamente",
+                    ],
+                ]);
         } catch (Throwable $t) {
             Log::error('Error al eliminar rol: ' . $t->getMessage(), ['exception' => $t]);
-            return redirect()->route('roles.index')->with('error', 'Error al eliminar el rol.');
+            return redirect()->route('roles.index')
+            ->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al eliminar el rol",
+                    ],
+                ]);
         }
     }
 }
