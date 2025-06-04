@@ -23,9 +23,10 @@ type Props = {
     isOpen: boolean;
     onClose: () => void;
     roles: Rol[];
+    rolUsuarioActual: number;
 };
 
-export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: Props) {
+export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles, rolUsuarioActual }: Props) {
     let usuarioCreador;
     if (usuarios[0].usuario_creador) {
         usuarioCreador = usuarios[0].usuario_creador.id_usuario_creador;
@@ -44,6 +45,15 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
         state: "1",
         id_rol: "3",
         id_usuario_creador: String(usuarioCreador),
+    });
+
+    // Filtrar roles permitidos según el rol del usuario actual
+    const rolesPermitidos = roles.filter((rol) => {
+        if (rolUsuarioActual !== 1) { // Si no es superadministrador (id 1)
+            // No permitir super admin (id 1)
+            return rol.id !== 1;
+        }
+        return true; // Otros roles pueden ver todos
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -191,7 +201,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                         <SelectValue placeholder="Selecciona un rol" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {roles.map((rol) => (
+                                        {rolesPermitidos.map((rol) => (
                                             <SelectItem key={rol.id} value={String(rol.id)}>
                                                 {rol.nombre}
                                             </SelectItem>

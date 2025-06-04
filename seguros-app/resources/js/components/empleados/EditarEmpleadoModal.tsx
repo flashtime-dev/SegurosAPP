@@ -24,9 +24,10 @@ type Props = {
     onClose: () => void;
     roles: Rol[];
     user: User;
+    rolUsuarioActual: number;
 };
 
-export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, user }: Props) {
+export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, user, rolUsuarioActual }: Props) {
     const { data, setData, put, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -55,6 +56,15 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
             reset();
         }
     }, [user]);
+
+    // Filtrar roles permitidos según el rol del usuario actual
+    const rolesPermitidos = roles.filter((rol) => {
+        if (rolUsuarioActual !== 1) { // Si no es superadministrador (id 1)
+            // No permitir super admin (id 1)
+            return rol.id !== 1;
+        }
+        return true; // Otros roles pueden ver todos
+    });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -201,7 +211,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
                                         <SelectValue placeholder="Selecciona un rol" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {roles.map((rol) => (
+                                        {rolesPermitidos.map((rol) => (
                                             <SelectItem key={rol.id} value={String(rol.id)}>
                                                 {rol.nombre}
                                             </SelectItem>

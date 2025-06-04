@@ -88,7 +88,8 @@ class PolizaController extends Controller
 
         // Capitalizar solo la primera palabra del alias antes de la validación
         $request->merge([
-            'alias' => ucfirst(($request->alias))
+            'alias' => ucfirst(($request->alias)),
+            'id_agente' => $request->id_agente === 'null' ? null : $request->id_agente,
         ]);
 
         // Validar los campos del formulario
@@ -200,7 +201,8 @@ class PolizaController extends Controller
 
         // Capitalizar solo la primera palabra del alias antes de la validación
         $request->merge([
-            'alias' => ucfirst(($request->alias))
+            'alias' => ucfirst(($request->alias)),
+            'id_agente' => $request->id_agente === 'null' ? null : $request->id_agente,
         ]);
 
         $request->validate([

@@ -45,6 +45,7 @@ export default function Index() {
                 isOpen={isCreating}
                 onClose={() => setIsCreating(false)}
                 roles={roles}
+                rolUsuarioActual={user.rol.id}
             />
 
             {usuarioSeleccionado && (
@@ -57,6 +58,7 @@ export default function Index() {
                     }}
                     roles={roles}
                     user={usuarioSeleccionado}
+                    rolUsuarioActual={user.rol.id}
                 />
             )}
         </AppLayout>
