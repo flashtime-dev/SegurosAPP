@@ -57,7 +57,12 @@ class SiniestroController extends Controller
             ]); // Retornar la vista con la lista de siniestros
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@index: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->route('home')->with('error', 'Error al cargar la lista de siniestros.');
+            return redirect()->route('home')->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al cargar la lista de siniestros.",
+                ],
+            ]);
         }
     }
 
@@ -147,11 +152,20 @@ class SiniestroController extends Controller
                 }
             }
             Log::info("SiniestroController@store - Siniestro creado correctamente", ['id' => $siniestro->id]);
-            return redirect()->route('siniestros.index')
-                ->with('success', "Siniestro creado correctamente.");
+            return redirect()->route('siniestros.index')->with([
+                'success' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Siniestro creado correctamente.",
+                ],
+            ]);
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@store: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->back()->withInput()->with('error', 'Error al crear el siniestro.');
+            return redirect()->back()->withInput()->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al crear el siniestro.",
+                ],
+            ]);
         }
     }
 
@@ -174,7 +188,12 @@ class SiniestroController extends Controller
             ]); // Retornar la vista con los detalles del siniestro
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@show: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->route('siniestros.index')->with('error', 'Error al cargar el siniestro.');
+            return redirect()->route('siniestros.index')->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al cargar el siniestro.",
+                ],
+            ]);
         }
     }
 
@@ -296,7 +315,12 @@ class SiniestroController extends Controller
                 ]);
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@update: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->back()->withInput()->with('error', 'Error al actualizar el siniestro.');
+            return redirect()->back()->withInput()->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al actualizar el siniestro.",
+                ],
+            ]);
         }
     }
 
@@ -327,11 +351,20 @@ class SiniestroController extends Controller
             Log::info("SiniestroController@destroy - Siniestro eliminado correctamente", ['id' => $id]);
 
             return redirect()
-                ->route('siniestros.index')
-                ->with('success', 'Siniestro y archivos eliminados correctamente.');
+                ->route('siniestros.index')->with([
+                    'success' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Siniestro y archivos eliminados correctamente.",
+                    ],
+                ]);
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@destroy: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->route('siniestros.index')->with('error', 'Error al eliminar el siniestro.');
+            return redirect()->route('siniestros.index')->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al eliminar el siniestro.",
+                ],
+            ]);
         }
     }
 
@@ -370,6 +403,42 @@ class SiniestroController extends Controller
                 'exception' => $e
             ]);
             return $this->handleException($e, 'SiniestroController@servePDF', 'siniestros.index', 'Error al servir el archivo PDF.');
+        }
+    }
+
+    public function cerrar($id)
+    {
+        try {
+            $siniestro = Siniestro::findOrFail($id);
+            $this->authorize('update', $siniestro); // o una policy específica como 'cerrar'
+            if ($siniestro->estado === 'Cerrado') {
+                return redirect()->route('siniestros.index')->with([
+                    'info'=> [
+                        'id' => uniqid(),
+                        'mensaje' => 'El siniestro ya está cerrado.'
+                    ],
+                ]);
+            }
+
+            // Cambiar el estado a cerrado
+            $siniestro->estado = 'Cerrado';
+            $siniestro->save();
+
+            Log::info("SiniestroController@cerrar - Siniestro cerrado correctamente", ['id' => $id]);
+            return redirect()->route('siniestros.index')->with([
+                'success' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Siniestro cerrado correctamente.",
+                ],
+            ]);
+        } catch (Throwable $e) {
+            Log::error("Error al cerrar siniestro: {$e->getMessage()}", ['id' => $id]);
+            return redirect()->route('siniestros.index')->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al cerrar el siniestro.",
+                ],
+            ]);
         }
     }
 }

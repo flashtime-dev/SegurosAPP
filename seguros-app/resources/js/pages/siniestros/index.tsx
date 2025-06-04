@@ -11,9 +11,10 @@ import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner";
 
 export default function Siniestros() {
-    const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[], success?: { id: string; mensaje: string }, error?: string }>();
+    const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[], success?: { id: string; mensaje: string }, error?: { id: string; mensaje: string }, info?: { id: string; mensaje: string } }>();
     const success = props.success;
     const error = props.error;
+    const info = props.info;
     const siniestros = props.siniestros;
     const polizas = props.polizas;
     const [isCreating, setIsCreating] = useState(false); // Estado para el modal de creación
@@ -25,17 +26,20 @@ export default function Siniestros() {
         setSiniestroSeleccionado(siniestro);
         setIsEditing(true);
     };
-
+    
     useEffect(() => {
         if (success) {
             toast.success(success.mensaje);
         }
 
         if (error) {
-            toast.error(error);
+            toast.error(error.mensaje);
         }
 
-    }, [success, error]);
+        if (info) {
+            toast.info(info.mensaje);
+        }
+    }, [success, error, info]);
 
     return (
         <AppLayout breadcrumbs={[{ title: 'Siniestros', href: '/siniestros' }]}>
@@ -73,6 +77,7 @@ export default function Siniestros() {
                     classNames: {
                         success: "bg-green-100 text-green-800 border-green-300",
                         error: "bg-red-100 text-red-800 border-red-300",
+                        info: "bg-red-100 text-red-800 border-red-300",
                     },
                 }}
             />
