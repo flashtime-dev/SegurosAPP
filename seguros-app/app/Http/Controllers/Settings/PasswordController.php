@@ -27,14 +27,40 @@ class PasswordController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
+        // Este comentario no se borra, en un futuro se deberí usar esta configuracion 
+        // para validar las contraseñas y otros campos
+
+        // $validated = $request->validate([
+        //     'current_password' => ['required', 'current_password'],
+        //     'password' => ['required', Password::defaults(), 'confirmed'],
+        // ]);
+
+        // $request->user()->update([
+        //     'password' => Hash::make($validated['password']),
+        // ]);
+
+        // Comienza validaciones personalizadas
+        $request->validate([
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/',
+            ],
+        ], [
+            'current_password.required' => 'La contraseña actual es obligatoria.',
+            'current_password.current_password' => 'La contraseña actual es incorrecta.',
+            'password.required' => 'La nueva contraseña es obligatoria.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.regex' => 'La contraseña debe tener al menos 8 carácteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.).',
         ]);
 
         $request->user()->update([
-            'password' => Hash::make($validated['password']),
+            'password' => Hash::make($request->password),
         ]);
+
+        // Finaliza validaciones personalizadas
 
         Log::info('🔒 Contraseña actualizada correctamente.', [
             'user_id' => $request->user()->id ?? null,
@@ -42,10 +68,10 @@ class PasswordController extends Controller
         ]);
 
         return back()->with([
-                    'success' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Tu contraseña ha sido actualizada correctamente",
-                    ],
-                ]);
+            'success' => [
+                'id' => uniqid(),
+                'mensaje' => "Tu contraseña ha sido actualizada correctamente",
+            ],
+        ]);
     }
 }
