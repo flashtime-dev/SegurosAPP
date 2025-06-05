@@ -27,14 +27,14 @@ export default function Index() {
             <div className="container mx-auto px-4 py-6">
                 <UsuariosMenu/>
 
-                <Button className="mb-5" onClick={() => setIsCreating(true)}>
+                <Button className="mb-5 cursor-pointer" onClick={() => setIsCreating(true)}>
                     <Plus className="mr-2"/>Nuevo usuario
                 </Button>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     {users.map((usuario) => (
-                        <UserCard 
-                            key={usuario.id} 
+                        <UserCard
+                            key={usuario.id}
                             usuario={usuario}
                             onEdit={() => handleEdit(usuario)}
                         />

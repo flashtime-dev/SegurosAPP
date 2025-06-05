@@ -15,15 +15,15 @@ export function PolizaMenu({ poliza, siniestros, chats, authUser }: { poliza: Po
         <>
             <Tabs defaultValue="ficha" className="w-full">
                 <TabsList className="mb-6">
-                    <TabsTrigger value="ficha">Ficha</TabsTrigger>
-                    <TabsTrigger value="siniestros">Siniestros</TabsTrigger>
+                    <TabsTrigger value="ficha" className="cursor-pointer">Ficha</TabsTrigger>
+                    <TabsTrigger value="siniestros" className="cursor-pointer">Siniestros</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="ficha">
                     <div className="flex flex-col md:flex-row justify-between gap-6">
                         <PolizaDetalles poliza={poliza} />
                         <div className="md:w-1/3 w-full">
-                            <PolizaLogoAcciones 
+                            <PolizaLogoAcciones
                                 logoUrl={poliza.compania.url_logo}
                                 polizaId={poliza.id}
                                 numeroPoliza={poliza.numero}
@@ -39,7 +39,7 @@ export function PolizaMenu({ poliza, siniestros, chats, authUser }: { poliza: Po
                 </TabsContent>
             </Tabs>
 
-            <CrearSiniestroModal 
+            <CrearSiniestroModal
                 isOpen={isCreatingSiniestro} 
                 onClose={() => setIsCreatingSiniestro(false)} 
                 polizas={[poliza]}

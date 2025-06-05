@@ -173,12 +173,12 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                     onValueChange={(value) => setData('state', value)}
                                     disabled={processing}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="cursor-pointer">
                                         <SelectValue placeholder="Selecciona estado" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="1">Activo</SelectItem>
-                                        <SelectItem value="0">Inactivo</SelectItem>
+                                        <SelectItem className="cursor-pointer hover:bg-gray-100" value="1">Activo</SelectItem>
+                                        <SelectItem className="cursor-pointer hover:bg-gray-100" value="0">Inactivo</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <InputError message={errors.state} className="mt-2" />
@@ -191,12 +191,12 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                     onValueChange={(value) => setData('id_rol', value)}
                                     disabled={processing}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="cursor-pointer">
                                         <SelectValue placeholder="Selecciona un rol" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {roles.map((rol) => (
-                                            <SelectItem key={rol.id} value={String(rol.id)}>
+                                            <SelectItem className="cursor-pointer hover:bg-gray-100" key={rol.id} value={String(rol.id)}>
                                                 {rol.nombre}
                                             </SelectItem>
                                         ))}
@@ -211,12 +211,12 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                     onValueChange={(value) => setData('id_usuario_creador', value)}
                                     disabled={processing}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="cursor-pointer">
                                         <SelectValue placeholder="Selecciona un usuario en caso afirmativo" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {empleados.map((usuario) => (
-                                            <SelectItem key={usuario.id} value={String(usuario.id)}>
+                                            <SelectItem className="cursor-pointer hover:bg-gray-100" key={usuario.id} value={String(usuario.id)}>
                                                 {usuario.name}
                                             </SelectItem>
                                         ))}
@@ -228,11 +228,11 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" onClick={onClose}>
+                                <Button type="button" variant="outline" onClick={onClose} className="cursor-pointer">
                                     Cancelar
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={processing}>
+                            <Button type="submit" disabled={processing} className="cursor-pointer">
                                 {processing ? "Creando..." : "Crear"}
                             </Button>
                         </DialogFooter>

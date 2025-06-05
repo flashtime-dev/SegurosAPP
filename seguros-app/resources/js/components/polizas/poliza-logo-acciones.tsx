@@ -18,12 +18,12 @@ export function PolizaLogoAcciones({ logoUrl, telefono, polizaId, numeroPoliza, 
             <img src={logoUrl} alt="Logo Compañía" className="h-16 object-contain" />
             <p className="text-sm text-muted-foreground">{telefono}</p>
             <div className="w-full space-y-2">
-                <Button variant="outline" className="w-full" onClick={onCrearSiniestro}>
+                <Button variant="outline" className="w-full cursor-pointer" onClick={onCrearSiniestro}>
                     ⚡ Dar parte
                 </Button>
-                <Button 
-                    variant="outline" 
-                    className="w-full" 
+                <Button
+                    variant="outline"
+                    className="w-full cursor-pointer"
                     onClick={() => setIsAnulacionModalOpen(true)}
                 >
                     ✉️ Carta anulación

@@ -27,7 +27,7 @@ export default function Index() {
             <Head title='Comunidades' />
             <div className="py-5 px-4 space-y-6">
                 <h1 className="text-2xl font-bold">Comunidades</h1>
-                <Button className="mb-5" onClick={() => setIsCreating(true)}>
+                <Button className="mb-5 cursor-pointer" onClick={() => setIsCreating(true)}>
                     <Plus className="mr-2"/>Nueva comunidad
                 </Button>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

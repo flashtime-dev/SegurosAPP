@@ -21,8 +21,8 @@ export function SiniestroMenu({ poliza, siniestro, contactos, chats, authUser }:
             </div>
             <Tabs defaultValue="ficha" className="w-full">
                 <TabsList className="mb-6">
-                    <TabsTrigger value="ficha">Siniestro</TabsTrigger>
-                    <TabsTrigger value="contactos">Contactos</TabsTrigger>
+                    <TabsTrigger value="ficha" className="cursor-pointer">Siniestro</TabsTrigger>
+                    <TabsTrigger value="contactos" className="cursor-pointer">Contactos</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="ficha">

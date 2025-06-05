@@ -171,7 +171,7 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios }: Props
                                                     type="button"
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="h-auto p-1"
+                                                    className="h-auto p-1 cursor-pointer"
                                                     onClick={() => eliminarUsuario(userId)}
                                                 >
                                                     ✕
@@ -185,14 +185,14 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios }: Props
                                         onValueChange={(value) => agregarUsuario(value)}
                                         value=""
                                     >
-                                        <SelectTrigger className="w-full">
+                                        <SelectTrigger className="w-full cursor-pointer">
                                             <SelectValue placeholder="Selecciona un usuario para agregar" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {usuarios
                                                 .filter(u => !data.usuarios.includes(u.id))
                                                 .map((usuario) => (
-                                                    <SelectItem key={usuario.id} value={String(usuario.id)}>
+                                                    <SelectItem className="cursor-pointer hover:bg-gray-100" key={usuario.id} value={String(usuario.id)}>
                                                         {usuario.name} ({usuario.email})
                                                     </SelectItem>
                                                 ))}
@@ -204,11 +204,11 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios }: Props
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" onClick={onClose}>
+                                <Button type="button" variant="outline" onClick={onClose} className="cursor-pointer">
                                     Cancelar
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={processing}>
+                            <Button type="submit" disabled={processing} className="cursor-pointer">
                                 {processing ? "Creando..." : "Crear"}
                             </Button>
                         </DialogFooter>

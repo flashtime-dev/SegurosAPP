@@ -2,7 +2,7 @@ import * as React from "react";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { Comunidad } from "@/types";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Edit, EllipsisVertical } from "lucide-react";
+import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
 import { router } from "@inertiajs/react";
 
 export function ComunidadCard({ comunidad, onEdit }: { comunidad: Comunidad; onEdit?: () => void }) {
@@ -51,7 +51,7 @@ export function ComunidadCard({ comunidad, onEdit }: { comunidad: Comunidad; onE
                             }
                         }}
                     >
-                        <span className="text-red-600 w-full text-left">Borrar</span>
+                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500" /><span className="text-red-600 w-full text-left">Borrar</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

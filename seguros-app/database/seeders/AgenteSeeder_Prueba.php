@@ -17,36 +17,36 @@ class AgenteSeeder_Prueba extends Seeder
         Agente::create([
             //Seguros Axarquía,616311488
             'nombre' => 'Seguros Axarquía',
-            'telefono' => '616311488',
+            'telefono' => '+34616311488',
         ]);
 
         Agente::create([
             'nombre' => 'Juan Martínez',
-            'telefono' => '600123456',
+            'telefono' => '+34600123456',
             'email' => 'juan.martinez@example.com',
         ]);
 
         Agente::create([
             'nombre' => 'María López',
-            'telefono' => '600654321',
+            'telefono' => '+34600654321',
             'email' => 'maria.lopez@example.com',
         ]);
 
         Agente::create([
             'nombre' => 'Carlos García',
-            'telefono' => '611234567',
+            'telefono' => '+34611234567',
             'email' => 'carlos.garcia@example.com',
         ]);
 
         Agente::create([
             'nombre' => 'Laura Fernández',
-            'telefono' => '622345678',
+            'telefono' => '+34622345678',
             'email' => 'laura.fernandez@example.com',
         ]);
 
         Agente::create([
             'nombre' => 'Ana Ruiz',
-            'telefono' => '633456789',
+            'telefono' => '+34633456789',
             'email' => 'ana.ruiz@example.com',
         ]);
 

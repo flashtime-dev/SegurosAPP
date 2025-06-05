@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
 
 export function UserCard({ usuario, onEdit }: { usuario: User; onEdit?: () => void }) {
     // Ref para el botón del menú
@@ -42,6 +43,7 @@ export function UserCard({ usuario, onEdit }: { usuario: User; onEdit?: () => vo
                 <DropdownMenuContent align="end" className="z-10">
                     {onEdit && (
                         <DropdownMenuItem onSelect={handleEdit}>
+                            <Edit className="w-4 h-4 mr-1 inline" />
                             Editar
                         </DropdownMenuItem>
                     )}
@@ -52,7 +54,7 @@ export function UserCard({ usuario, onEdit }: { usuario: User; onEdit?: () => vo
                             }
                         }}
                     >
-                        <span className="text-red-600 w-full text-left">Borrar</span>
+                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500" /><span className="text-red-600 w-full text-left">Borrar</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

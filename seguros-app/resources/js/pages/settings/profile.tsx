@@ -105,7 +105,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         )}
 
                         <div className="flex items-center gap-4">
-                            <Button disabled={processing}>Guardar</Button>
+                            <Button disabled={processing} className='cursor-pointer'>Guardar</Button>
 
                             <Transition
                                 show={recentlySuccessful}

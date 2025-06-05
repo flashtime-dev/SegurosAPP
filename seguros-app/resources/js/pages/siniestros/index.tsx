@@ -28,7 +28,7 @@ export default function Siniestros() {
             <div className="container mx-auto px-4 py-6">
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-bold mb-6">Siniestros</h1>
-                    <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2">
+                    <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2 cursor-pointer">
                         <Plus className="w-4 h-4" />
                         <span>Crear siniestro</span>
                     </Button>

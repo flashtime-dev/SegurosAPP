@@ -85,7 +85,7 @@ export function PolizaChat({ chats: initialChats, authUser, polizaId, isClosed }
                         disabled={isClosed}
                     />
                     <button type="submit" className={`text-white rounded-md p-2 ${
-                            isClosed ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+                            isClosed ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
                         }`} disabled={isClosed}>
                         Enviar
                     </button>
