@@ -53,7 +53,7 @@ class AuthenticatedSessionController extends Controller
             ->with([
                     'success' => [
                         'id' => uniqid(),
-                        'mensaje' => "Bienvenido ". Auth::user()->name."!",
+                        'mensaje' => "Bienvenido ". Auth::user()->name,
                     ],
                 ]);
         } catch (Throwable $e) {

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id(); // ID autoincremental
             $table->unsignedBigInteger('id_poliza'); // Relación con pólizas
             $table->unsignedBigInteger('id_usuario'); // Relación con usuarios
-            $table->string('mensaje', 1000); // Mensaje obligatorio
+            $table->text('mensaje', 1000); // Mensaje obligatorio
             $table->boolean('adjunto')->default(false); // Adjunto booleano con valor por defecto
             $table->timestamps(); // Timestamps para crear y actualizar
         });
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->id(); // ID autoincremental
             $table->unsignedBigInteger('id_siniestro'); // Relación con siniestros
             $table->unsignedBigInteger('id_usuario'); // Relación con usuarios
-            $table->string('mensaje', 1000); // Mensaje obligatorio
+            $table->text('mensaje', 1000); // Mensaje obligatorio
             $table->boolean('adjunto')->default(false); // Adjunto booleano con valor por defecto
             $table->timestamps(); // Timestamps para crear y actualizar
         });
