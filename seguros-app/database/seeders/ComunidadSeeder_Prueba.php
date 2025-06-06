@@ -20,7 +20,7 @@ class ComunidadSeeder_Prueba extends Seeder
             'direccion' => 'Av. Los Pinos 45',
             'ubi_catastral' => 'Zona Norte 12B',
             'ref_catastral' => 'RefCatast-001',
-            'telefono' => '+34912345678',
+            'telefono' => '+34912985674',
         ]);
 
         Comunidad::create([

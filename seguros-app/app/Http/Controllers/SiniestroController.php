@@ -142,6 +142,11 @@ class SiniestroController extends Controller
                         'url_adjunto' => $pdfUrl,
                         // 'id_chat' => null // si lo necesitas puedes agregarlo aquí
                     ]);
+
+                    // Cambiar el adjunto a true
+                    $siniestro->adjunto = true;
+                    $siniestro->save();
+
                 }
             }
 
@@ -291,6 +296,10 @@ class SiniestroController extends Controller
                         // 'id_chat'   => null // si necesitas ese campo, agrégalo
                     ]);
                 }
+
+                // Cambiar el adjunto a true
+                $siniestro->adjunto = true;
+                $siniestro->save();
             }
 
             // Gestionar contactos: eliminar los viejos y crear los nuevos (si vienen)

@@ -27,14 +27,14 @@ export default function Index() {
             <div className="container mx-auto px-4 py-6">
                 <UsuariosMenu />
 
-                <Button className="mb-5" onClick={() => setIsCreating(true)}>
+                <Button className="mb-5 cursor-pointer" onClick={() => setIsCreating(true)}>
                     <Plus className="mr-2" />Nuevo rol
                 </Button>
 
-                <MostrarRolesPermisos 
-                    roles={roles} 
-                    tipoPermisos={tipoPermisos} 
-                    onEditRol={handleEdit} 
+                <MostrarRolesPermisos
+                    roles={roles}
+                    tipoPermisos={tipoPermisos}
+                    onEditRol={handleEdit}
                 />
 
                 <CrearRolModal

@@ -18,6 +18,7 @@ class AgenteSeeder_Prueba extends Seeder
             //Seguros Axarquía,616311488
             'nombre' => 'Seguros Axarquía',
             'telefono' => '+34616311488',
+            'email' => 'seguro.axarquia@example.com',
         ]);
 
         Agente::create([

@@ -70,7 +70,7 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
                             {roles.map((rol) => (
                                 <li key={rol.id} className="flex items-center">
                                     <div
-                                        className={`break-all w-full justify-start font-medium rounded-lg transition-colors flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm text-gray-800 transition ${selectedRol?.id === rol.id ? "bg-blue-100" : ""
+                                        className={`cursor-pointer break-all w-full justify-start font-medium rounded-lg transition-colors flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm text-gray-800 transition ${selectedRol?.id === rol.id ? "bg-blue-100" : ""
                                             }`}
                                         role="button"
                                         onClick={() => setSelectedRol(rol)}
@@ -78,10 +78,10 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
                                         {rol.nombre}
                                         <div className="justify-end ml-auto flex items-center">
                                             <DropdownMenu 
-                                                open={isMenuOpen[rol.id]} 
+                                                open={isMenuOpen[rol.id]}
                                                 onOpenChange={(open) => setIsMenuOpen(prev => ({ ...prev, [rol.id]: open }))}
                                             >
-                                                <DropdownMenuTrigger 
+                                                <DropdownMenuTrigger
                                                     ref={setMenuButtonRef(rol.id)}
                                                     className="ml-2 focus:outline-none"
                                                 >

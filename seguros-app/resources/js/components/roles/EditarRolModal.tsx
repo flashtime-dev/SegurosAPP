@@ -91,6 +91,7 @@ export default function EditarRolModal({ isOpen, onClose, rol, permisos, permiso
                                                 <li key={permiso.id} className="flex items-center justify-between">
                                                     <span className="text-sm text-gray-800">{permiso.descripcion}</span>
                                                     <Button
+                                                        className="cursor-pointer"
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => addPermiso(permiso)}
@@ -119,6 +120,7 @@ export default function EditarRolModal({ isOpen, onClose, rol, permisos, permiso
                                                 <li key={permiso.id} className="flex items-center justify-between">
                                                     <span className="text-sm text-gray-800">{permiso.descripcion}</span>
                                                     <Button
+                                                        className="cursor-pointer"
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => removePermiso(permiso)}
@@ -137,10 +139,10 @@ export default function EditarRolModal({ isOpen, onClose, rol, permisos, permiso
                     </div>
 
                     <div className="flex justify-end gap-4">
-                        <Button type="button" variant="secondary" onClick={onClose}>
+                        <Button className="cursor-pointer" type="button" variant="outline" onClick={onClose}>
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={processing}>
+                        <Button className="cursor-pointer" type="submit" disabled={processing}>
                             {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                             Guardar cambios
                         </Button>

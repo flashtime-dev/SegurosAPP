@@ -6,6 +6,7 @@ import { Siniestro } from "@/types";
 import { router } from "@inertiajs/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Link } from "@inertiajs/react";
+import { Edit, Trash2 } from "lucide-react";
 
 /**
  * Componente que muestra la información de una póliza de seguro en formato de tarjeta
@@ -57,6 +58,7 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
                 <DropdownMenuContent align="end" className="z-10">
                     {onEdit && (
                         <DropdownMenuItem onSelect={handleEdit}>
+                            <Edit className="w-4 h-4 mr-1 inline" />
                             Editar
                         </DropdownMenuItem>
                     )}
@@ -67,7 +69,7 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
                             }
                         }}
                     >
-                        <span className="text-red-600 w-full text-left">Borrar</span>
+                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500" /><span className="text-red-600 w-full text-left">Borrar</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

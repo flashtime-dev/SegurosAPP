@@ -73,12 +73,12 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
                                 value={data.id_compania}
                                 required
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="cursor-pointer">
                                     <SelectValue placeholder="Selecciona una compañía" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {companias.map((compania) => (
-                                        <SelectItem key={compania.id} value={String(compania.id)}>
+                                        <SelectItem className="cursor-pointer hover:bg-gray-100" key={compania.id} value={String(compania.id)}>
                                             {compania.nombre}
                                         </SelectItem>
                                     ))}
@@ -95,12 +95,12 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
                                 value={data.id_comunidad}
                                 required
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="cursor-pointer">
                                     <SelectValue placeholder="Selecciona una comunidad" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {comunidades.map((comunidad) => (
-                                        <SelectItem key={comunidad.id} value={String(comunidad.id)}>
+                                        <SelectItem className="cursor-pointer hover:bg-gray-100" key={comunidad.id} value={String(comunidad.id)}>
                                             {comunidad.nombre}
                                         </SelectItem>
                                     ))}
@@ -116,12 +116,12 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
                                 onValueChange={(value) => setData("id_agente", value)}
                                 value={data.id_agente}
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="cursor-pointer">
                                     <SelectValue placeholder="Selecciona un agente" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {agentes.map((agente) => (
-                                        <SelectItem key={agente.id} value={String(agente.id)}>
+                                        <SelectItem className="cursor-pointer hover:bg-gray-100" key={agente.id} value={String(agente.id)}>
                                             {agente.nombre}
                                         </SelectItem>
                                     ))}
@@ -194,12 +194,12 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
                                 value={data.forma_pago}
                                 required
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="cursor-pointer">
                                     <SelectValue placeholder="Selecciona una forma de pago" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {["Bianual", "Anual", "Semestral", "Trimestral", "Mensual"].map((forma) => (
-                                        <SelectItem key={forma} value={forma}>
+                                        <SelectItem className="cursor-pointer hover:bg-gray-100" key={forma} value={forma}>
                                             {forma}
                                         </SelectItem>
                                     ))}
@@ -247,9 +247,25 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
                                 id="pdf_poliza"
                                 type="file"
                                 accept=".pdf" // Solo permite archivos PDF
+                                className="hidden"
                                 onChange={(e) => setData("pdf_poliza", e.target.files?.[0] || null)} // Solo selecciona un archivo
                                 disabled={processing}
                             />
+                            {/* Botón personalizado que abre el selector de archivo */}
+                            <label htmlFor="pdf_poliza">
+                                <div
+                                    className="cursor-pointer  hover:bg-gray-100 border-input file:text-foreground placeholder:text-muted-foreground
+                                            selection:bg-primary selection:text-primary-foreground flex h-9 w-full min-w-0 rounded-md border
+                                            bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none
+                                            file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium
+                                            disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm
+                                            focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
+                                            aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive
+                                            flex-col space-y-1 h-auto whitespace-normal"
+                                >
+                                    {data.pdf_poliza?.name || "Ningún archivo seleccionado"}
+                                </div>
+                            </label>
                             <InputError message={errors.pdf_poliza} className="mt-2" />
                         </div>
 
@@ -275,12 +291,12 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
                                 value={data.estado}
                                 required
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="cursor-pointer">
                                     <SelectValue placeholder="Selecciona un estado" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {["En Vigor", "Anulada", "Solicitada", "Externa", "Vencida"].map((estado) => (
-                                        <SelectItem key={estado} value={estado}>
+                                        <SelectItem className="cursor-pointer hover:bg-gray-100" key={estado} value={estado}>
                                             {estado}
                                         </SelectItem>
                                     ))}
@@ -291,11 +307,11 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" onClick={onClose}>
+                                <Button className="cursor-pointer" type="button" variant="outline" onClick={onClose}>
                                     Cancelar
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={processing}>
+                            <Button type="submit" className="cursor-pointer" disabled={processing}>
                                 {processing ? "Creando..." : "Crear"}
                             </Button>
                         </DialogFooter>

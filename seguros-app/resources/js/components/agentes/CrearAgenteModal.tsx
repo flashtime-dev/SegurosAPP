@@ -73,11 +73,11 @@ export default function CrearAgenteModal({ isOpen, onClose }: { isOpen: boolean,
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button type="button" variant="outline">
+                            <Button type="button" variant="outline" className="cursor-pointer">
                                 Cancelar
                             </Button>
                         </DialogClose>
-                        <Button type="submit" disabled={processing}>
+                        <Button type="submit" disabled={processing} className="cursor-pointer">
                             {processing ? 'Guardando...' : 'Guardar'}
                         </Button>
                     </DialogFooter>

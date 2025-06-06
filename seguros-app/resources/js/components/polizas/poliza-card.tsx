@@ -5,6 +5,7 @@ import { Poliza } from "@/types";
 import { router } from "@inertiajs/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Link } from "@inertiajs/react";
+import { Edit, Trash2 } from "lucide-react";
 
 /**
  * Componente que muestra la información de una póliza de seguro en formato de tarjeta
@@ -57,8 +58,8 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
         <Card className="relative border rounded-lg shadow-md hover:shadow-lg transition-shadow">
             {/* Dropdown Menu */}
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-                <DropdownMenuTrigger 
-                    ref={menuButtonRef} 
+                <DropdownMenuTrigger
+                    ref={menuButtonRef}
                     className="absolute top-2 right-2 w-6 h-6 text-gray-500 hover:text-gray-700 focus:outline-none"
                 >
                     &#x22EE; {/* Icono de tres puntos */}
@@ -66,6 +67,7 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
                 <DropdownMenuContent align="end" className="z-10">
                     {onEdit && (
                         <DropdownMenuItem onSelect={handleEdit}>
+                            <Edit className="w-4 h-4 mr-1 inline" />
                             Editar
                         </DropdownMenuItem>
                     )}
@@ -76,7 +78,7 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
                             }
                         }}
                     >
-                        <span className="text-red-600 w-full text-left">Borrar</span>
+                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500" /><span className="text-red-600 w-full text-left">Borrar</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

@@ -18,7 +18,7 @@ class ContactosSeeder_Prueba extends Seeder
                 'nombre' => 'Ana Martínez',
                 'cargo' => 'Coordinadora de siniestros',
                 'piso' => '3',
-                'telefono' => '+34123456789',
+                'telefono' => '+34622156789',
             ],
             [
                 'id_siniestro' => 1,
