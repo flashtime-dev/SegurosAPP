@@ -10,11 +10,11 @@ export function UsuariosMenu() {
             <Tabs defaultValue={activeTab} value={activeTab} className="w-full">
                 <TabsList className="mb-6">
                     {/* Redirige a usuarios.index */}
-                    <TabsTrigger value="usuarios" onClick={() => (window.location.href = route('usuarios.index'))} className="cursor-pointer">
+                    <TabsTrigger value="usuarios" onClick={() => (window.location.href = route('usuarios.index'))}>
                         Usuarios
                     </TabsTrigger>
                     {/* Redirige a roles.index */}
-                    <TabsTrigger value="roles" onClick={() => (window.location.href = route('roles.index'))} className="cursor-pointer">
+                    <TabsTrigger value="roles" onClick={() => (window.location.href = route('roles.index'))}>
                         Roles
                     </TabsTrigger>
                 </TabsList>

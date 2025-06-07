@@ -35,6 +35,8 @@ export default function PhoneInputField({ value, onChange, error, name = "phone"
                 disableDropdown={false}
                 countryCodeEditable={true}
                 inputStyle={{ width: "100%" }}
+                inputClass="!w-full !bg-background !border-gray-300 dark:!bg-background dark:!border-white/10"
+                buttonClass="!bg-background dark:!bg-background dark:!border-white/10 dark:text-gray-900"
             />
             <InputError message={error} className="mt-2" />
         </div>

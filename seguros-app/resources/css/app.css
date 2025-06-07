@@ -157,3 +157,19 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* Estilos Flag PhoneImput */
+.react-tel-input .selected-flag:hover {
+  background-color: #ebedf0 !important; /* Tailwind gray-200 */
+}
+
+/* Hover y focus en modo oscuro */
+  .dark .react-tel-input .selected-flag:hover,
+  .dark .react-tel-input .selected-flag:focus,
+  .dark .react-tel-input .selected-flag:focus-visible
+  .dark .react-tel-input .flag-dropdow.open .selected-flag:focus{
+    background-color: #181a1d !important; /* gray-900 */
+  }
+
+
+

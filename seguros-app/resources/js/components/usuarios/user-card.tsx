@@ -31,19 +31,19 @@ export function UserCard({ usuario, onEdit }: { usuario: User; onEdit?: () => vo
     };
 
     return (
-        <Card className="relative border rounded-lg shadow-md hover:shadow-lg transition-shadow">
+        <Card className="relative border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-gray-800 dark:shadow-lg dark:shadow-gray-600/15 dark:hover:shadow-gray-400/17">
             {/* Dropdown Menu */}
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-                <DropdownMenuTrigger 
+                <DropdownMenuTrigger
                     ref={menuButtonRef}
-                    className="absolute top-2 right-2 w-6 h-6 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
+                    className="absolute top-2 right-2 w-6 h-6 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 focus:outline-none cursor-pointer"
                 >
                     &#x22EE; {/* Icono de tres puntos */}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="z-10">
                     {onEdit && (
                         <DropdownMenuItem onSelect={handleEdit}>
-                            <Edit className="w-4 h-4 mr-1 inline" />
+                            <Edit className="w-4 h-4 mr-1 inline dark:text-gray-300" />
                             Editar
                         </DropdownMenuItem>
                     )}
@@ -54,7 +54,7 @@ export function UserCard({ usuario, onEdit }: { usuario: User; onEdit?: () => vo
                             }
                         }}
                     >
-                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500" /><span className="text-red-600 w-full text-left">Borrar</span>
+                        <Trash2 className="w-4 h-4 mr-1 inline text-red-600 dark:text-red-400" /><span className="text-red-600 dark:text-red-400 w-full text-left">Borrar</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -71,7 +71,7 @@ export function UserCard({ usuario, onEdit }: { usuario: User; onEdit?: () => vo
                     {/* Información del usuario */}
                     <div className="flex-1">
                         <div className="flex justify-between items-center mb-2">
-                            <h2 className="text-lg font-bold text-gray-800">{usuario.name}</h2>
+                            <h2 className="text-lg font-bold text-gray-800 dark:text-white">{usuario.name}</h2>
                             <Badge
                                 variant={usuario.state === 1 ? "activo" : "inactivo"}
                                 className="inline-block px-2 py-1 text-xs font-semibold rounded-full"
@@ -79,7 +79,7 @@ export function UserCard({ usuario, onEdit }: { usuario: User; onEdit?: () => vo
                                 {usuario.state === 1 ? "Activo" : "Inactivo"}
                             </Badge>
                         </div>
-                        <p className="text-gray-600 break-all">{usuario.email}</p>
+                        <p className="text-gray-600 dark:text-gray-400 break-all">{usuario.email}</p>
                         <Badge
                             variant="default"
                             className="inline-block px-2 py-1 text-xs font-semibold rounded-full mt-2"

@@ -25,12 +25,13 @@ export default function Index() {
         <AppLayout breadcrumbs={[{ title: 'Roles', href: '/roles' }]}>
             <Head title="Roles" />
             <div className="container mx-auto px-4 py-6">
-                <UsuariosMenu />
-
-                <Button className="mb-5 cursor-pointer" onClick={() => setIsCreating(true)}>
-                    <Plus className="mr-2" />Nuevo rol
-                </Button>
-
+                <h1 className="text-2xl font-bold mb-6">Roles</h1>
+                <div className="flex justify-between items-center">
+                    <UsuariosMenu />
+                    <Button className="mb-5 cursor-pointer" onClick={() => setIsCreating(true)}>
+                        <Plus className="mr-2" />Nuevo rol
+                    </Button>
+                </div>
                 <MostrarRolesPermisos
                     roles={roles}
                     tipoPermisos={tipoPermisos}

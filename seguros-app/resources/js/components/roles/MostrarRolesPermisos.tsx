@@ -77,7 +77,7 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
                                     >
                                         {rol.nombre}
                                         <div className="justify-end ml-auto flex items-center">
-                                            <DropdownMenu 
+                                            <DropdownMenu
                                                 open={isMenuOpen[rol.id]}
                                                 onOpenChange={(open) => setIsMenuOpen(prev => ({ ...prev, [rol.id]: open }))}
                                             >
@@ -89,7 +89,7 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="z-10">
                                                     <DropdownMenuItem onSelect={(e) => handleEditRol(e, rol)}>
-                                                        <Edit className="w-4 h-4 mr-1 inline" />
+                                                        <Edit className="w-4 h-4 mr-1 inline dark:text-gray-300" />
                                                         Editar
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem onClick={() => handleDeleteRol(rol.id)}>
@@ -138,7 +138,7 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
                                             {permisos.map(permiso => (
                                                 <div
                                                     key={permiso.id}
-                                                    className="p-2 bg-gray-50 rounded-lg text-sm"
+                                                    className="p-2 bg-gray-50 rounded-lg text-sm dark:text-gray-900"
                                                 >
                                                     {permiso.descripcion}
                                                 </div>

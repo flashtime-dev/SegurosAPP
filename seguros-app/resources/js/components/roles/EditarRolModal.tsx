@@ -89,7 +89,7 @@ export default function EditarRolModal({ isOpen, onClose, rol, permisos, permiso
                                             .filter((permiso) => !selectedPermisos.find((p) => p.id === permiso.id))
                                             .map((permiso) => (
                                                 <li key={permiso.id} className="flex items-center justify-between">
-                                                    <span className="text-sm text-gray-800">{permiso.descripcion}</span>
+                                                    <span className="text-sm text-gray-800 dark:text-gray-100">{permiso.descripcion}</span>
                                                     <Button
                                                         className="cursor-pointer"
                                                         variant="outline"
@@ -118,9 +118,8 @@ export default function EditarRolModal({ isOpen, onClose, rol, permisos, permiso
                                         <ul className="space-y-2">
                                             {selectedPermisos.map((permiso) => (
                                                 <li key={permiso.id} className="flex items-center justify-between">
-                                                    <span className="text-sm text-gray-800">{permiso.descripcion}</span>
+                                                    <span className="text-sm text-gray-800 dark:text-gray-100">{permiso.descripcion}</span>
                                                     <Button
-                                                        className="cursor-pointer"
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => removePermiso(permiso)}
@@ -131,7 +130,7 @@ export default function EditarRolModal({ isOpen, onClose, rol, permisos, permiso
                                             ))}
                                         </ul>
                                     ) : (
-                                        <p className="text-gray-600 italic">No hay permisos seleccionados.</p>
+                                        <p className="text-gray-600 dark:text-gray-400 italic">No hay permisos seleccionados.</p>
                                     )}
                                 </ScrollArea>
                             </CardContent>
@@ -139,10 +138,10 @@ export default function EditarRolModal({ isOpen, onClose, rol, permisos, permiso
                     </div>
 
                     <div className="flex justify-end gap-4">
-                        <Button className="cursor-pointer" type="button" variant="outline" onClick={onClose}>
+                        <Button type="button" variant="outline" onClick={onClose}>
                             Cancelar
                         </Button>
-                        <Button className="cursor-pointer" type="submit" disabled={processing}>
+                        <Button type="submit" disabled={processing}>
                             {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                             Guardar cambios
                         </Button>

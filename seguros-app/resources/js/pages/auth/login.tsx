@@ -74,7 +74,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             autoComplete="current-password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            placeholder="Password"
+                            placeholder="Contraseña"
                         />
                         <InputError message={errors.password} />
                     </div>
@@ -83,11 +83,12 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         <Checkbox
                             id="remember"
                             name="remember"
+                            className='cursor-pointer'
                             checked={data.remember}
                             onClick={() => setData('remember', !data.remember)}
                             tabIndex={3}
                         />
-                        <Label htmlFor="remember">Recuerdame</Label>
+                        <Label htmlFor="remember" className='cursor-pointer'>Recuerdame</Label>
                     </div>
 
                     <Button type="submit" className="mt-4 w-full cursor-pointer" tabIndex={4} disabled={processing}>

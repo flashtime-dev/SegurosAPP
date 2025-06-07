@@ -173,12 +173,12 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                     onValueChange={(value) => setData('state', value)}
                                     disabled={processing}
                                 >
-                                    <SelectTrigger className="cursor-pointer">
+                                    <SelectTrigger>
                                         <SelectValue placeholder="Selecciona estado" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem className="cursor-pointer hover:bg-gray-100" value="1">Activo</SelectItem>
-                                        <SelectItem className="cursor-pointer hover:bg-gray-100" value="0">Inactivo</SelectItem>
+                                        <SelectItem value="1">Activo</SelectItem>
+                                        <SelectItem value="0">Inactivo</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <InputError message={errors.state} className="mt-2" />
@@ -191,7 +191,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                     onValueChange={(value) => setData('id_rol', value)}
                                     disabled={processing}
                                 >
-                                    <SelectTrigger className="cursor-pointer">
+                                    <SelectTrigger>
                                         <SelectValue placeholder="Selecciona un rol" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -228,11 +228,11 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" onClick={onClose} className="cursor-pointer">
+                                <Button type="button" variant="outline" onClick={onClose}>
                                     Cancelar
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={processing} className="cursor-pointer">
+                            <Button type="submit" disabled={processing}>
                                 {processing ? "Creando..." : "Crear"}
                             </Button>
                         </DialogFooter>

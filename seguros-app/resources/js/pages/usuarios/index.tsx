@@ -25,11 +25,13 @@ export default function Index() {
         <AppLayout breadcrumbs={[{ title: 'Usuarios', href: '/usuarios' }]}>
             <Head title="Usuarios" />
             <div className="container mx-auto px-4 py-6">
-                <UsuariosMenu/>
-
-                <Button className="mb-5 cursor-pointer" onClick={() => setIsCreating(true)}>
-                    <Plus className="mr-2"/>Nuevo usuario
-                </Button>
+                <h1 className="text-2xl font-bold mb-6">Usuarios</h1>
+                <div className="flex justify-between items-center">
+                    <UsuariosMenu/>
+                    <Button className="mb-5" onClick={() => setIsCreating(true)}>
+                        <Plus className="mr-2"/>Nuevo usuario
+                    </Button>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     {users.map((usuario) => (
