@@ -147,12 +147,12 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-center text-gray-500">Este rol no tiene permisos asignados</p>
+                                <p className="text-center text-gray-500 dark:text-gray-400">Este rol no tiene permisos asignados</p>
                             )}
                         </ScrollArea>
                     ) : (
                         <div className="h-72 flex items-center justify-center">
-                            <p className="text-gray-500">Selecciona un rol para ver sus permisos asignados</p>
+                            <p className="text-gray-500 dark:text-gray-400">Selecciona un rol para ver sus permisos asignados</p>
                         </div>
                     )}
                 </CardContent>
