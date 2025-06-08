@@ -34,14 +34,14 @@ export function ComunidadCard({ comunidad, onEdit }: { comunidad: Comunidad; onE
                 <DropdownMenuTrigger
                     ref={menuButtonRef}
                     // className="absolute top-2 right-2"
-                    className="absolute top-2 right-2 w-6 h-6 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
+                    className="absolute top-2 right-2 w-6 h-6 hover:text-gray-700 dark:hover:text-gray-500"
                 >
                     {/* <EllipsisVertical className="text-gray-500 hover:text-gray-700 cursor-pointer" /> */}
                     &#x22EE; {/* Icono de tres puntos */}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="z-10">
                     <DropdownMenuItem onSelect={handleEdit}>
-                        <Edit className="w-4 h-4 mr-1 inline" />
+                        <Edit className="w-4 h-4 mr-1 inline dark:text-gray-300" />
                         Editar
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -51,7 +51,7 @@ export function ComunidadCard({ comunidad, onEdit }: { comunidad: Comunidad; onE
                             }
                         }}
                     >
-                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500" /><span className="text-red-600 w-full text-left">Borrar</span>
+                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500 dark:text-red-400" /><span className="text-red-600 dark:text-red-400 w-full text-left">Borrar</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -65,8 +65,8 @@ export function ComunidadCard({ comunidad, onEdit }: { comunidad: Comunidad; onE
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">
-                    <p className="text-sm text-gray-500">{comunidad.direccion}</p>
-                    <p className="text-sm text-gray-500 mt-2">{comunidad.telefono}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-300">{comunidad.direccion}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">{comunidad.telefono}</p>
                 </CardContent>
             </div>
         </Card>

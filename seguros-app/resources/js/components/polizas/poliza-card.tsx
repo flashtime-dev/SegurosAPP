@@ -19,19 +19,20 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
     const getEstadoColor = () => {
         switch (poliza.estado.toLowerCase()) {
             case 'en vigor':
-                return 'bg-green-600';
+                return 'bg-green-600 dark:bg-green-700';
             case 'vencida':
-                return 'bg-gray-500';
+                return 'bg-gray-500 dark:bg-gray-600';
             case 'anulada':
-                return 'bg-red-500';
+                return 'bg-red-500 dark:bg-red-600';
             case 'solicitada':
-                return 'bg-yellow-500';
+                return 'bg-yellow-500 dark:bg-yellow-600';
             case 'externa':
-                return 'bg-blue-500';
+                return 'bg-blue-500 dark:bg-blue-600';
             default:
-                return 'bg-gray-500';
+                return 'bg-gray-500 dark:bg-gray-600';
         }
     };
+
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString();
@@ -39,15 +40,15 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
 
     const handleEdit = (e: Event) => {
         e.preventDefault();
-        
+
         // Devolver el foco al botón del menú antes de cerrar
         if (menuButtonRef.current) {
             menuButtonRef.current.focus();
         }
-        
+
         // Asegurarnos de que el menú se cierre correctamente
         setIsMenuOpen(false);
-        
+
         // Esperar a que termine la animación de cierre antes de abrir el modal
         setTimeout(() => {
             if (onEdit) onEdit();
@@ -60,14 +61,14 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <DropdownMenuTrigger
                     ref={menuButtonRef}
-                    className="absolute top-2 right-2 w-6 h-6 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    className="cursor-default absolute top-2 right-2 w-6 h-6 hover:text-gray-700 dark:hover:text-gray-500"
                 >
                     &#x22EE; {/* Icono de tres puntos */}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="z-10">
                     {onEdit && (
                         <DropdownMenuItem onSelect={handleEdit}>
-                            <Edit className="w-4 h-4 mr-1 inline" />
+                            <Edit className="w-4 h-4 mr-1 inline dark:text-gray-300" />
                             Editar
                         </DropdownMenuItem>
                     )}
@@ -78,7 +79,7 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
                             }
                         }}
                     >
-                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500" /><span className="text-red-600 w-full text-left">Borrar</span>
+                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500 dark:text-red-400" /><span className="text-red-600 dark:text-red-400 w-full text-left">Borrar</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -91,7 +92,7 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
                 />
 
                 <div className="flex justify-between items-center mb-2">
-                    <h5 className="text-lg font-bold text-gray-800 leading-tight">
+                    <h5 className="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight">
                         {poliza.comunidad.nombre}
                     </h5>
                     <span
@@ -104,11 +105,11 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
                     </span>
                 </div>
 
-                <p className="text-gray-500 text-sm mb-2">
+                <p className="text-gray-500 dark:text-gray-300 text-sm mb-2">
                     {poliza.comunidad.direccion}
                 </p>
 
-                <p className="text-sm text-gray-600 font-medium">
+                <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">
                     Póliza {poliza.numero}
                     <span className="float-right">{formatDate(poliza.fecha_efecto)}</span>
                 </p>

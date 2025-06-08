@@ -20,11 +20,11 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
     const getEstadoColor = () => {
         switch (siniestro.estado.toLowerCase()) {
             case 'abierto':
-                return 'bg-green-600';
+                return 'bg-green-600 dark:bg-green-700';
             case 'cerrado':
-                return 'bg-red-500';
+                return 'bg-red-500 dark:bg-red-600';
             default:
-                return 'bg-gray-500';
+                return 'bg-gray-500 dark:bg-gray-600';
         }
     };
 
@@ -51,14 +51,14 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <DropdownMenuTrigger
                     ref={menuButtonRef}
-                    className="absolute top-2 right-2 w-6 h-6 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    className="cursor-default absolute top-2 right-2 w-6 h-6 hover:text-gray-700 dark:hover:text-gray-500"
                 >
                     &#x22EE; {/* Icono de tres puntos */}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="z-10">
                     {onEdit && (
                         <DropdownMenuItem onSelect={handleEdit}>
-                            <Edit className="w-4 h-4 mr-1 inline" />
+                            <Edit className="w-4 h-4 mr-1 inline dark:text-gray-300" />
                             Editar
                         </DropdownMenuItem>
                     )}
@@ -69,7 +69,7 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
                             }
                         }}
                     >
-                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500" /><span className="text-red-600 w-full text-left">Borrar</span>
+                        <Trash2 className="w-4 h-4 mr-1 inline text-red-500 dark:text-red-400" /><span className="text-red-600 dark:text-red-400 w-full text-left">Borrar</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -77,7 +77,7 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
             <Link href={`/siniestros/${siniestro.id}`} className="p-4">
                 <div >
                     <div className="flex justify-between items-center mb-2">
-                        <h2 className="text-lg font-semibold">{siniestro.expediente}</h2>
+                        <h2 className="text-lg font-semibold dark:text-gray-100">{siniestro.expediente}</h2>
                         <span
                             className={cn(
                                 "text-white text-xs font-medium px-3 py-1 rounded-full",
@@ -88,14 +88,14 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
                         </span>
                     </div>
                     {/* <p className="text-gray-600">Estado: {siniestro.estado}</p> */} {/*HACE FALTA AÑADIR A BD*/}
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-300">
                         Fecha:{" "}
                         {siniestro.fecha_ocurrencia
                             ? format(parseISO(siniestro.fecha_ocurrencia), "dd/MM/yyyy")
                             : "Fecha no disponible"}
                     </p>
-                    <p className="text-gray-600">Poliza: {siniestro.poliza.numero}</p>
-                    <p className="text-gray-600">Descripcion: {siniestro.declaracion}</p>
+                    <p className="text-gray-600 dark:text-gray-300">Poliza: {siniestro.poliza.numero}</p>
+                    <p className="text-gray-600 dark:text-gray-300">Descripcion: {siniestro.declaracion}</p>
                 </div>
             </Link>
         </Card>

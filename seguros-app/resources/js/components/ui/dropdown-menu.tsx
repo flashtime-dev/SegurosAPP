@@ -19,11 +19,16 @@ function DropdownMenuPortal({
 }
 
 function DropdownMenuTrigger({
+  className,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
   return (
     <DropdownMenuPrimitive.Trigger
       data-slot="dropdown-menu-trigger"
+      className={cn(
+          "text-gray-500 dark:text-gray-100 focus:outline-none cursor-pointer",
+          className
+        )}
       {...props}
     />
   )

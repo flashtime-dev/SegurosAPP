@@ -165,13 +165,13 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios }: Props
                                         const usuario = usuarios.find(u => u.id === userId);
                                         if (!usuario) return null;
                                         return (
-                                            <div key={userId} className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2">
+                                            <div key={userId} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2">
                                                 <span>{usuario.name}</span>
                                                 <Button
                                                     type="button"
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="h-auto p-1 cursor-pointer"
+                                                    className="h-auto p-1"
                                                     onClick={() => eliminarUsuario(userId)}
                                                 >
                                                     ✕
@@ -185,14 +185,14 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios }: Props
                                         onValueChange={(value) => agregarUsuario(value)}
                                         value=""
                                     >
-                                        <SelectTrigger className="w-full cursor-pointer">
+                                        <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Selecciona un usuario para agregar" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {usuarios
                                                 .filter(u => !data.usuarios.includes(u.id))
                                                 .map((usuario) => (
-                                                    <SelectItem className="cursor-pointer hover:bg-gray-100" key={usuario.id} value={String(usuario.id)}>
+                                                    <SelectItem className="hover:bg-gray-100" key={usuario.id} value={String(usuario.id)}>
                                                         {usuario.name} ({usuario.email})
                                                     </SelectItem>
                                                 ))}
@@ -204,11 +204,11 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios }: Props
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" onClick={onClose} className="cursor-pointer">
+                                <Button type="button" variant="outline" onClick={onClose}>
                                     Cancelar
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={processing} className="cursor-pointer">
+                            <Button type="submit" disabled={processing}>
                                 {processing ? "Creando..." : "Crear"}
                             </Button>
                         </DialogFooter>

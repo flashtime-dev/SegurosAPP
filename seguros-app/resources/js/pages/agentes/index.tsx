@@ -31,7 +31,7 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
 
             <div className="mx-auto max-w-6xl space-y-6 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold text-gray-800">Lista de Agentes</h1>
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Lista de Agentes</h1>
                     <Button onClick={() => setIsCreating(true)} className="flex cursor-pointer items-center space-x-2">
                         <Plus className="h-4 w-4" />
                         <span>Nuevo Agente</span>
@@ -39,9 +39,9 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="min-w-full rounded-lg border border-gray-200 bg-white">
+                    <table className="min-w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                         <thead>
-                            <tr className="bg-gray-100 text-left text-sm font-semibold text-gray-600">
+                            <tr className="bg-gray-100 dark:bg-gray-900 text-left text-sm font-semibold text-gray-600 dark:text-gray-200">
                                 <th className="border-b px-4 py-2">Nombre</th>
                                 <th className="border-b px-4 py-2">Email</th>
                                 <th className="border-b px-4 py-2">Teléfono</th>
@@ -50,7 +50,7 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
                         </thead>
                         <tbody>
                             {agentes.map((agente) => (
-                                <tr key={agente.id} className="text-sm text-gray-700 hover:bg-gray-50">
+                                <tr key={agente.id} className="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <td className="border-b px-4 py-2">{agente.nombre}</td>
                                     <td className="border-b px-4 py-2">{agente.email}</td>
                                     <td className="border-b px-4 py-2">{agente.telefono}</td>
@@ -59,14 +59,14 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
                                             variant="outline"
                                             size="sm"
                                             onClick={() => handleEdit(agente)}
-                                            className="cursor-pointer border-blue-600 text-blue-600"
+                                            className="border-blue-600 text-blue-600 hover:text-blue-600 dark:border-blue-400 dark:text-blue-400 dark:bg-gray-800 dark:hover:bg-gray-900"
                                         >
                                             <Edit className="h-4 w-4" />
                                         </Button>
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="cursor-pointer border-red-600 text-red-600"
+                                            className="border-red-600 text-red-600 hover:text-red-600 dark:border-red-400 dark:text-red-400 dark:bg-gray-800 dark:hover:bg-gray-900"
                                             onClick={() => {
                                                 if (confirm('¿Estás seguro de que deseas eliminar este agente?')) {
                                                     router.delete(route('agentes.destroy', agente.id));

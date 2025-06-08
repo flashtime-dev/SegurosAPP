@@ -105,7 +105,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 value={data.id_compania}
                                 required
                             >
-                                <SelectTrigger className="cursor-pointer">
+                                <SelectTrigger>
                                     <SelectValue placeholder="Selecciona una compañía" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -127,12 +127,12 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 value={data.id_comunidad}
                                 required
                             >
-                                <SelectTrigger className="cursor-pointer">
+                                <SelectTrigger>
                                     <SelectValue placeholder="Selecciona una comunidad" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {comunidades.map((comunidad) => (
-                                        <SelectItem className="cursor-pointer hover:bg-gray-100" key={comunidad.id} value={String(comunidad.id)}>
+                                        <SelectItem key={comunidad.id} value={String(comunidad.id)}>
                                             {comunidad.nombre}
                                         </SelectItem>
                                     ))}
@@ -148,12 +148,12 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 onValueChange={(value) => setData("id_agente", value)}
                                 value={data.id_agente}
                             >
-                                <SelectTrigger className="cursor-pointer">
+                                <SelectTrigger>
                                     <SelectValue placeholder="Selecciona un agente" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {agentes.map((agente) => (
-                                        <SelectItem className="cursor-pointer hover:bg-gray-100" key={agente.id} value={String(agente.id)}>
+                                        <SelectItem key={agente.id} value={String(agente.id)}>
                                             {agente.nombre}
                                         </SelectItem>
                                     ))}
@@ -197,6 +197,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <Input
                                 id="fecha_efecto"
                                 type="date"
+                                className="cursor-pointer"
                                 value={data.fecha_efecto}
                                 onChange={(e) => setData("fecha_efecto", e.target.value)}
                                 disabled={processing}
@@ -226,12 +227,12 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 value={data.forma_pago}
                                 required
                             >
-                                <SelectTrigger className="cursor-pointer">
+                                <SelectTrigger>
                                     <SelectValue placeholder="Selecciona una forma de pago" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {["Bianual", "Anual", "Semestral", "Trimestral", "Mensual"].map((forma) => (
-                                        <SelectItem className="cursor-pointer hover:bg-gray-100" key={forma} value={forma}>
+                                        <SelectItem key={forma} value={forma}>
                                             {forma}
                                         </SelectItem>
                                     ))}
@@ -286,14 +287,12 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             {/* Botón personalizado que abre el selector de archivo */}
                             <label htmlFor="pdf_poliza">
                                 <div
-                                    className="cursor-pointer  hover:bg-gray-100 border-input file:text-foreground placeholder:text-muted-foreground
-                                            selection:bg-primary selection:text-primary-foreground flex h-9 w-full min-w-0 rounded-md border
-                                            bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none
-                                            file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium
-                                            disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm
-                                            focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
-                                            aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive
-                                            flex-col space-y-1 h-auto whitespace-normal"
+                                    className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 border-input file:text-foreground placeholder:text-muted-foreground
+                                            selection:bg-primary selection:text-primary-foreground flex h-auto w-full min-w-0 flex-col space-y-1 whitespace-normal rounded-md
+                                            border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0
+                                            file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm
+                                            focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40
+                                            aria-invalid:border-destructive"
                                 >
                                     {data.pdf_poliza?.name || "Ningún archivo seleccionado"}
 
@@ -326,12 +325,12 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 value={data.estado}
                                 required
                             >
-                                <SelectTrigger className="cursor-pointer">
+                                <SelectTrigger>
                                     <SelectValue placeholder="Selecciona un estado" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {["En Vigor", "Anulada", "Solicitada", "Externa", "Vencida"].map((estado) => (
-                                        <SelectItem className="cursor-pointer hover:bg-gray-100" key={estado} value={estado}>
+                                        <SelectItem key={estado} value={estado}>
                                             {estado}
                                         </SelectItem>
                                     ))}
@@ -342,11 +341,11 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" className="cursor-pointer" variant="outline" onClick={onClose}>
+                                <Button type="button" variant="outline" onClick={onClose}>
                                     Cancelar
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" className="cursor-pointer" disabled={processing}>
+                            <Button type="submit" disabled={processing}>
                                 {processing ? "Guardando..." : "Guardar Cambios"}
                             </Button>
                         </DialogFooter>

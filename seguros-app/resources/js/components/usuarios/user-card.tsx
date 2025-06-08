@@ -31,7 +31,7 @@ export function UserCard({ usuario, onEdit }: { usuario: User; onEdit?: () => vo
     };
 
     return (
-        <Card className="relative border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-gray-800 dark:shadow-lg dark:shadow-gray-600/15 dark:hover:shadow-gray-400/17">
+        <Card className="relative rounded-lg shadow-md bg-white">
             {/* Dropdown Menu */}
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <DropdownMenuTrigger

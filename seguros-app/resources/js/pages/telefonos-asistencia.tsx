@@ -48,7 +48,7 @@ export default function TelefonosAsistencia() {
                 {filteredCompanias.map((compania) => (
                     <div
                         key={compania.id}
-                        className="cursor-pointer border rounded-lg p-4 shadow hover:shadow-lg transition bg-white"
+                        className="cursor-pointer border rounded-lg p-4 shadow hover:shadow-lg transition bg-white dark:border-gray-700 dark:shadow-lg dark:hover:shadow-gray-700/17"
                         onClick={() => setSelectedCompania(compania)}
                     >
                         <img
@@ -70,7 +70,7 @@ export default function TelefonosAsistencia() {
                                 <img
                                     src={selectedCompania.url_logo}
                                     alt={`${selectedCompania.nombre} logo`}
-                                    className="h-24 w-auto mx-auto object-contain bg-white"
+                                    className="h-24 w-auto mx-auto object-contain"
                                 />
                             </DialogDescription>
                         </DialogHeader>
