@@ -82,7 +82,7 @@ export default function Index() {
                         />
                     ))}
                     {polizasPaginadas.length === 0 && (
-                        <p className="col-span-full text-center text-gray-500">No se encontraron pólizas.</p>
+                        <p className="col-span-full text-center text-gray-500 dark:text-gray-400">No se encontraron pólizas.</p>
                     )}
                 </div>
             </div>
