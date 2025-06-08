@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { router} from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 interface Props {
     id: number;
     logoUrl: string;
@@ -12,9 +12,11 @@ export function SiniestroLogoAcciones({ id, logoUrl, telefono }: Props) {
 
     function handleCerrar() {
         setLoading(true);
-        router.post(`/siniestros/${id}/cerrar`, {}, {
-            onFinish: () => setLoading(false),
-        });
+        if (confirm('¿Estás seguro de que deseas cerrar este siniestro?')) {
+            router.post(`/siniestros/${id}/cerrar`, {}, {
+                onFinish: () => setLoading(false),
+            });
+        }
     }
 
     return (
