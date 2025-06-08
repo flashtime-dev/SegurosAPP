@@ -25,12 +25,11 @@ export default function Siniestros() {
     return (
         <AppLayout breadcrumbs={[{ title: 'Siniestros', href: '/siniestros' }]}>
             <Head title="Siniestros" />
-            <div className="container mx-auto px-4 py-6">
+            <div className="container mx-auto px-4 py-6 space-y-6">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold mb-6">Siniestros</h1>
-                    <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2 cursor-pointer">
-                        <Plus className="w-4 h-4" />
-                        <span>Crear siniestro</span>
+                    <h1 className="text-2xl font-bold">Siniestros</h1>
+                    <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2">
+                        <Plus className="mr-2" />Crear siniestro
                     </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

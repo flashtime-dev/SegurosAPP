@@ -15,14 +15,14 @@ export function SiniestroMenu({ poliza, siniestro, contactos, chats, authUser }:
         <div>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                 <div>
-                    <h4 className="text-lg font-semibold">{siniestro.expediente}</h4>
+                    <h4 className="text-lg font-semibold dark:text-gray-100">{siniestro.expediente}</h4>
                 </div>
                 <Badge variant={siniestro.estado as "Abierto"| "Cerrado" }>{siniestro.estado}</Badge>
             </div>
             <Tabs defaultValue="ficha" className="w-full">
                 <TabsList className="mb-6">
-                    <TabsTrigger value="ficha" className="cursor-pointer">Siniestro</TabsTrigger>
-                    <TabsTrigger value="contactos" className="cursor-pointer">Contactos</TabsTrigger>
+                    <TabsTrigger value="ficha">Siniestro</TabsTrigger>
+                    <TabsTrigger value="contactos">Contactos</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="ficha">

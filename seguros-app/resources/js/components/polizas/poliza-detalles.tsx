@@ -9,7 +9,7 @@ interface Props {
 const DetailItem = ({ label, value }: Props) => (
     <div className="space-y-1">
         <Label>{label}</Label>
-        <p className="text-sm text-muted-foreground">{value ?? '-'}</p>
+        <p className="text-sm text-muted-foreground dark:text-gray-400">{value ?? '-'}</p>
     </div>
 );
 
@@ -27,7 +27,7 @@ export function PolizaDetalles({ poliza }: { poliza: Poliza }) {
             {poliza.pdf_poliza && (
                 <DetailItem
                     label="Poliza PDF"
-                    value={<a href={`/polizas/${poliza.id}/pdf`} target="_blank" className="text-blue-600 underline">
+                    value={<a href={`/polizas/${poliza.id}/pdf`} target="_blank" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 transition-colors underline">
                         Ver la póliza
                     </a>}
                 />

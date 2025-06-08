@@ -2,6 +2,7 @@ import { ChatPoliza } from "@/types";
 import { Chat } from "../chat";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
 
 export function PolizaChat({ chats: initialChats, authUser, polizaId, isClosed }: { chats: ChatPoliza[], authUser: number, polizaId: number, isClosed: boolean }) {
     const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -64,7 +65,7 @@ export function PolizaChat({ chats: initialChats, authUser, polizaId, isClosed }
             </div> */}
             <div
                 ref={chatContainerRef}
-                className="bg-gray-100 border rounded-md p-4 h-[calc(100vh-200px)] sm:h-[400px] overflow-y-scroll overflow-x-hidden w-full"
+                className="bg-gray-100 dark:bg-gray-950 border rounded-md p-4 h-[calc(100vh-200px)] sm:h-[400px] overflow-y-scroll overflow-x-hidden w-full"
             >
                 {chats.length > 0 ? (
                     chats.map((chat) => (
@@ -81,11 +82,11 @@ export function PolizaChat({ chats: initialChats, authUser, polizaId, isClosed }
                         placeholder="Escribe tu mensaje..."
                         value={mensaje}
                         onChange={(e) => setMensaje(e.target.value)}
-                        className="border rounded-md p-2 flex-grow"
+                        className="border rounded-md p-2 flex-grow dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                         disabled={isClosed}
                     />
                     <button type="submit" className={`text-white rounded-md p-2 ${
-                            isClosed ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
+                            isClosed ? 'bg-gray-400 cursor-not-allowed' : 'cursor-pointer bg-blue-500 dark:bg-blue-700 hover:bg-blue-600 dark:hover:bg-blue-800 focus-visible:ring-blue-300 dark:focus-visible:ring-blue-400'
                         }`} disabled={isClosed}>
                         Enviar
                     </button>

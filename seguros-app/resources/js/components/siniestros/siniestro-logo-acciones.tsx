@@ -22,7 +22,7 @@ export function SiniestroLogoAcciones({ id, logoUrl, telefono }: Props) {
             <img src={logoUrl} alt="Logo Compañía" className="h-16 object-contain" />
             <p className="text-sm text-muted-foreground">{telefono}</p>
             <div className="w-full space-y-2">
-                <Button variant="outline" className="w-full cursor-pointer" onClick={handleCerrar} disabled={loading}>
+                <Button variant="outline" className="w-full dark:border-gray-500 dark:hover:bg-gray-700" onClick={handleCerrar} disabled={loading}>
                     {loading ? "Cerrando..." : "Cerrar siniestro"}
                 </Button>
             </div>

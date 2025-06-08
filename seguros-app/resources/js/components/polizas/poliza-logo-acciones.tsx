@@ -18,19 +18,19 @@ export function PolizaLogoAcciones({ logoUrl, telefono, polizaId, numeroPoliza, 
             <img src={logoUrl} alt="Logo Compañía" className="h-16 object-contain" />
             <p className="text-sm text-muted-foreground">{telefono}</p>
             <div className="w-full space-y-2">
-                <Button variant="outline" className="w-full cursor-pointer" onClick={onCrearSiniestro}>
+                <Button variant="outline" className="w-full dark:border-gray-500 dark:hover:bg-gray-700" onClick={onCrearSiniestro}>
                     ⚡ Dar parte
                 </Button>
                 <Button
                     variant="outline"
-                    className="w-full cursor-pointer"
+                    className="w-full dark:border-gray-500 dark:hover:bg-gray-700"
                     onClick={() => setIsAnulacionModalOpen(true)}
                 >
                     ✉️ Carta anulación
                 </Button>
             </div>
 
-            <ConfirmarAnulacionModal 
+            <ConfirmarAnulacionModal
                 isOpen={isAnulacionModalOpen}
                 onClose={() => setIsAnulacionModalOpen(false)}
                 polizaId={polizaId}

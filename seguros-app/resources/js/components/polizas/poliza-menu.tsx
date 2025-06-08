@@ -15,8 +15,8 @@ export function PolizaMenu({ poliza, siniestros, chats, authUser }: { poliza: Po
         <>
             <Tabs defaultValue="ficha" className="w-full">
                 <TabsList className="mb-6">
-                    <TabsTrigger value="ficha" className="cursor-pointer">Ficha</TabsTrigger>
-                    <TabsTrigger value="siniestros" className="cursor-pointer">Siniestros</TabsTrigger>
+                    <TabsTrigger value="ficha">Ficha</TabsTrigger>
+                    <TabsTrigger value="siniestros">Siniestros</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="ficha">

@@ -12,7 +12,7 @@ interface Props {
 const DetailItem = ({ label, value }: Props) => (
     <div className="space-y-1">
         <Label>{label}</Label>
-        <div className="text-sm text-muted-foreground">{value || '-'}</div>
+        <div className="text-sm text-muted-foreground dark:text-gray-400">{value || '-'}</div>
     </div>
 );
 
@@ -27,7 +27,7 @@ export function SiniestroDetalles({ siniestro }: { siniestro: Siniestro }) {
     return (
         <div className="space-y-6">
             {/* Información principal */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-sm dark:text-gray-100">
                 <DetailItem
                     label="Nº Expediente"
                     value={
@@ -59,9 +59,9 @@ export function SiniestroDetalles({ siniestro }: { siniestro: Siniestro }) {
             </div>
 
             {/* Declaración */}
-            <div className="space-y-2">
+            <div className="space-y-2 dark:text-gray-100">
                 <Label>Declaración</Label>
-                <div className="p-4 bg-muted rounded-lg text-sm whitespace-pre-wrap">
+                <div className="p-4 bg-muted rounded-lg text-sm whitespace-pre-wrap dark:bg-gray-600">
                     {siniestro.declaracion}
                 </div>
             </div>
@@ -77,7 +77,7 @@ export function SiniestroDetalles({ siniestro }: { siniestro: Siniestro }) {
                                     href={`/siniestros/${siniestro.id}/archivo/${archivo.nombre}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+                                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 transition-colors"
                                 >
                                     <FileIcon className="h-4 w-4" />
                                     <span>{archivo.nombre || 'Documento adjunto'}</span>
