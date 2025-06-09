@@ -32,7 +32,7 @@ class ComunidadController extends Controller
     {
         try {
             $user = Auth::user(); // Obtener el usuario autenticado
-
+            $id_usuario_creador = Subusuario::where('id', $user->id)->value('id_usuario_creador') ?? 0; // Obtener el id_usuario_creador del usuario autenticado, si existe
             // Verificar si el usuario tiene el rol de administrador
             if ($user->rol->nombre == 'Superadministrador') {
                 $comunidades = Comunidad::with('users')->get(); // Obtener todas las comunidades
@@ -45,7 +45,10 @@ class ComunidadController extends Controller
                     })
                     ->with('users')
                     ->get();
-                $empleados = Subusuario::where('id_usuario_creador', $user->id)->get(); // Obtener empleados
+                $empleados = Subusuario::where('id_usuario_creador', $user->id)
+                    ->orWhere('id_usuario_creador', $id_usuario_creador)
+                    ->where('id', '!=', $user->id) // Excluir al usuario autenticado
+                    ->get(); // Obtener empleados relacionados con el usuario autenticado
     
                 if ($empleados->isEmpty()) {
                     $usuarios = []; // Obtener todos los usuarios si no hay empleados
@@ -95,6 +98,8 @@ class ComunidadController extends Controller
     {
 
         $user = Auth::user(); // Obtener el usuario autenticado
+        $id_usuario_creador = Subusuario::where('id', $user->id)->value('id_usuario_creador') ?? 0; // Obtener el id_usuario_creador del usuario autenticado, si existe
+
         $request->merge([
             'nombre' => ucfirst(($request->nombre)),
             'cif' => strtoupper($request->cif),
@@ -119,10 +124,22 @@ class ComunidadController extends Controller
             'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
             'telefono' => 'Formato de teléfono incorrecto',
         ]);
+
         try {
-            $request->merge(['id_propietario' => $user->id]); // Asignar el ID del propietario al request
+            if ($id_usuario_creador != 0) {
+                $request->merge(['id_propietario' => $id_usuario_creador]); // Asignar el ID del usuario creador al request
+            }else{
+                $request->merge(['id_propietario' => $user->id]); // Asignar el ID del propietario al request
+            }
+            // Si el usuario autenticado es subusuario administrador
+            if ($id_usuario_creador != 0) {
+                // Agregar el usuario autenticado a la lista de usuarios
+                $request->merge(['usuarios' => array_merge($request->usuarios ?? [], [$user->id])]); // Asegurarse de que el usuario autenticado esté en la lista de usuarios
+            }
             // Crear la comunidad sin los usuarios
             $comunidad = Comunidad::create($request->except('usuarios'));
+
+            
 
             // Sincronizar los usuarios seleccionados con la tabla pivote
             if ($request->has('usuarios')) {
