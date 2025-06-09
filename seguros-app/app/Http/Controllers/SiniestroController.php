@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Siniestro;
 use App\Models\Poliza;
-use App\Models\Contacto;
 use App\Models\Comunidad;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -33,6 +32,7 @@ class SiniestroController extends Controller
     {
         try {
             $user = Auth::user(); // Obtener el usuario autenticado
+
             // Verificar si el usuario tiene el rol de administrador
             if ($user->rol->nombre == 'Superadministrador') {
                 $siniestros = Siniestro::with('poliza', 'contactos')->get(); // Obtener todos los siniestros con sus relaciones
@@ -43,11 +43,14 @@ class SiniestroController extends Controller
                     ->orWhereHas('users', function ($query) use ($user) {
                         $query->where('users.id', $user->id);
                     })
+                    ->with('users')
                     ->get();
+
                 $siniestros = Siniestro::whereIn('id_poliza', Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->pluck('id'))
                     ->with(['poliza', 'contactos'])
                     ->get();
                 $polizas = Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->get(); // Obtener pólizas de las comunidades del usuario
+                //dd($polizas); // Debugging: Verificar las pólizas cargadas
             }
             Log::info("SiniestroController@index - Siniestros cargados correctamente");
 
@@ -57,12 +60,12 @@ class SiniestroController extends Controller
             ]); // Retornar la vista con la lista de siniestros
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@index: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->route('home')->with([
-                'error' => [
-                    'id' => uniqid(),
-                    'mensaje' => "Error al cargar la lista de siniestros",
-                ],
-            ]);
+            return redirect()->back()->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Error al cargar la lista de siniestros",
+                    ],
+                ]);
         }
     }
 
