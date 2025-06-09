@@ -66,7 +66,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid gap-4">
                             <div>
-                                <Label htmlFor="name">Nombre</Label>
+                                <Label htmlFor="name">Nombre *</Label>
                                 <Input
                                     id="name"
                                     value={data.name}
@@ -82,7 +82,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                             </div>
 
                             <div>
-                                <Label htmlFor="email">Correo electrónico</Label>
+                                <Label htmlFor="email">Correo electrónico *</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -96,7 +96,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                             </div>
 
                             <div>
-                                <Label htmlFor="password">Contraseña</Label>
+                                <Label htmlFor="password">Contraseña *</Label>
                                 <Input
                                     id="password"
                                     type="password"
@@ -110,7 +110,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                             </div>
 
                             <div>
-                                <Label htmlFor="password_confirmation">Confirmar contraseña</Label>
+                                <Label htmlFor="password_confirmation">Confirmar contraseña *</Label>
                                 <Input
                                     id="password_confirmation"
                                     type="password"

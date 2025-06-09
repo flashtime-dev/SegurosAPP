@@ -142,7 +142,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                         <div className="grid gap-4">
                             {/* Póliza */}
                             <div>
-                                <Label htmlFor="id_poliza">Póliza</Label>
+                                <Label htmlFor="id_poliza">Póliza *</Label>
                                 <Select
                                     onValueChange={(value) => setData("id_poliza", value)}
                                     value={data.id_poliza}
@@ -164,7 +164,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
 
                             {/* Declaración */}
                             <div>
-                                <Label htmlFor="declaracion">Declaración</Label>
+                                <Label htmlFor="declaracion">Declaración *</Label>
                                 <Input
                                     id="declaracion"
                                     value={data.declaracion}
@@ -202,7 +202,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                             {/* Expediente / Exp_CIA */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label htmlFor="expediente">Expediente</Label>
+                                    <Label htmlFor="expediente">Expediente *</Label>
                                     <Input
                                         id="expediente"
                                         value={data.expediente}
@@ -317,7 +317,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <Label htmlFor={`nombre-${index}`}>Nombre</Label>
+                                                <Label htmlFor={`nombre-${index}`}>Nombre *</Label>
                                                 <Input
                                                     id={`nombre-${index}`}
                                                     value={contacto.nombre}
@@ -367,7 +367,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                 />
                                             </div>
                                             <div>
-                                                <Label htmlFor="telefono">Teléfono</Label>
+                                                <Label htmlFor="telefono">Teléfono *</Label>
                                                 <PhoneInputField
                                                     value={contacto.telefono}
                                                     onChange={(value) => {

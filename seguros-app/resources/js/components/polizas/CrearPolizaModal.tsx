@@ -67,7 +67,7 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Compañía */}
                         <div>
-                            <Label htmlFor="id_compania">Compañía</Label>
+                            <Label htmlFor="id_compania">Compañía *</Label>
                             <Select
                                 onValueChange={(value) => setData("id_compania", value)}
                                 value={data.id_compania}
@@ -89,7 +89,7 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
 
                         {/* Comunidad */}
                         <div>
-                            <Label htmlFor="id_comunidad">Comunidad</Label>
+                            <Label htmlFor="id_comunidad">Comunidad *</Label>
                             <Select
                                 onValueChange={(value) => setData("id_comunidad", value)}
                                 value={data.id_comunidad}
@@ -161,7 +161,7 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
 
                         {/* Fecha de efecto */}
                         <div>
-                            <Label htmlFor="fecha_efecto">Fecha de Efecto</Label>
+                            <Label htmlFor="fecha_efecto">Fecha de Efecto *</Label>
                             <Input
                                 id="fecha_efecto"
                                 type="date"
@@ -189,7 +189,7 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
 
                         {/* Forma de pago */}
                         <div>
-                            <Label htmlFor="forma_pago">Forma de Pago</Label>
+                            <Label htmlFor="forma_pago">Forma de Pago *</Label>
                             <Select
                                 onValueChange={(value) => setData("forma_pago", value)}
                                 value={data.forma_pago}
@@ -211,7 +211,7 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
 
                         {/* Prima neta */}
                         <div>
-                            <Label htmlFor="prima_neta">Prima Neta</Label>
+                            <Label htmlFor="prima_neta">Prima Neta *</Label>
                             <Input
                                 id="prima_neta"
                                 type="number"
@@ -227,7 +227,7 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
 
                         {/* Prima total */}
                         <div>
-                            <Label htmlFor="prima_total">Prima Total</Label>
+                            <Label htmlFor="prima_total">Prima Total *</Label>
                             <Input
                                 id="prima_total"
                                 type="number"
@@ -284,7 +284,7 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
 
                         {/* Estado */}
                         <div>
-                            <Label htmlFor="estado">Estado</Label>
+                            <Label htmlFor="estado">Estado *</Label>
                             <Select
                                 onValueChange={(value) => setData("estado", value)}
                                 value={data.estado}

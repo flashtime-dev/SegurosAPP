@@ -88,7 +88,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid gap-4">
                             <div>
-                                <Label htmlFor="name">Nombre</Label>
+                                <Label htmlFor="name">Nombre *</Label>
                                 <Input
                                     id="name"
                                     value={data.name}
@@ -104,7 +104,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
                             </div>
 
                             <div>
-                                <Label htmlFor="email">Correo electrónico</Label>
+                                <Label htmlFor="email">Correo electrónico *</Label>
                                 <Input
                                     id="email"
                                     type="email"
