@@ -176,7 +176,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
                             </div>
 
                             <div>
-                                <Label htmlFor="state">Estado</Label>
+                                <Label htmlFor="state">Estado *</Label>
                                 <Select
                                     value={data.state}
                                     onValueChange={(value) => setData('state', value)}
@@ -194,7 +194,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
                             </div>
 
                             <div>
-                                <Label htmlFor="id_rol">Rol</Label>
+                                <Label htmlFor="id_rol">Rol *</Label>
                                 <Select
                                     value={data.id_rol}
                                     onValueChange={(value) => setData('id_rol', value)}

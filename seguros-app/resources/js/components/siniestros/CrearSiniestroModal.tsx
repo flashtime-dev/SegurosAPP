@@ -304,6 +304,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                                         const normalized = cleaned === "" ? "" : (cleaned.startsWith("+") ? cleaned : `+${cleaned}`);
                                                         actualizarContacto(index, 'telefono', normalized);
                                                     }}
+                                                    require={true}
                                                     error={(errors as Record<string, string>)[`contactos.${index}.telefono`]}
                                                 />
                                             </div>

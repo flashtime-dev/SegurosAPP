@@ -12,6 +12,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -56,16 +57,16 @@ class AuthenticatedSessionController extends Controller
                         'mensaje' => "Bienvenido ". Auth::user()->name,
                     ],
                 ]);
-        } catch (Throwable $e) {
+        } catch (ValidationException $e) {
             Log::error('❌ Error durante la autenticación: ' . $e->getMessage(), [
                 'exception' => $e,
                 'input' => $request->only('email'),
             ]);
 
-            // Puedes redirigir de nuevo con mensaje de error
+            // Mostramos los errores reales de validación (por ejemplo, cuenta inactiva)
             return redirect()->back()
                 ->withInput($request->only('email'))
-                ->withErrors(['email' => 'Error al iniciar sesión. Por favor verifica tus credenciales.']);
+                ->withErrors($e->errors());
         }
     }
 

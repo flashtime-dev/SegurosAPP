@@ -13,9 +13,11 @@ return [
     |
     */
     
-    'failed'   => 'El correo o la contraseña son incorrectos.',
+    'failed'   => 'Error al iniciar sesión. Por favor verifica tus credenciales.',
     'password' => 'La contraseña proporcionada es incorrecta.',
     'throttle' => 'Demasiados intentos de inicio de sesión. Por favor intenta de nuevo en :seconds segundos.',
+    'inactive' => 'Tu cuenta está inactiva. Contacta al administrador.',
+
 
 
 ];

@@ -41,13 +41,25 @@ class LoginRequest extends FormRequest
      */
     public function authenticate(): void
     {
-        try{
+        try {
             $this->ensureIsNotRateLimited();
             if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
                 RateLimiter::hit($this->throttleKey());
 
                 throw ValidationException::withMessages([
                     'email' => __('auth.failed'),
+                ]);
+            }
+
+            // Obtener el usuario autenticado después de Auth::attempt()
+            $user = Auth::user();
+
+            // Verificar si el usuario tiene state = 1 (activo)
+            if ((int) $user->state !== 1) {
+                Auth::logout();
+
+                throw ValidationException::withMessages([
+                    'email' => __('auth.inactive'),
                 ]);
             }
 
@@ -75,7 +87,7 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        try{
+        try {
             if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
                 return;
             }
@@ -108,6 +120,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
     }
 }

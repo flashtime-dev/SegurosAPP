@@ -180,13 +180,14 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
 
                         {/* Número de póliza */}
                         <div>
-                            <Label htmlFor="numero">Número de Póliza</Label>
+                            <Label htmlFor="numero">Número de Póliza *</Label>
                             <Input
                                 id="numero"
                                 value={data.numero}
                                 onChange={(e) => setData("numero", e.target.value)}
                                 disabled={processing}
                                 placeholder="123456789012345678901"
+                                required
                             />
                             <InputError message={errors.numero} className="mt-2" />
                         </div>
