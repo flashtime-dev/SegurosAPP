@@ -84,7 +84,7 @@ export function PolizaCard({ poliza, onEdit }: { poliza: Poliza; onEdit?: () => 
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <Link href={`/polizas/${poliza.id}`} className="p-4 cursor-pointer">
+            <Link href={`/polizas/${poliza.id}`} className="p-4">
                 <img
                     src={poliza.compania.url_logo}
                     alt={`${poliza.compania.nombre} logo`}

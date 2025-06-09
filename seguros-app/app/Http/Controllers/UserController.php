@@ -46,11 +46,11 @@ class UserController extends BaseController
         } catch (Throwable $e) {
             Log::error('Error al obtener usuarios: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->with([
-                    'error' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Error al cargar usuarios",
-                    ],
-                ]);
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al cargar usuarios",
+                ],
+            ]);
             // ->withErrors(['error' => 'Error al cargar usuarios.']);
         }
     }
@@ -59,13 +59,15 @@ class UserController extends BaseController
     {
         try {
             $user = Auth::user();
+            $id_usuario_creador = Subusuario::where('id', $user->id)->value('id_usuario_creador') ?? 0; // Obtener el id_usuario_creador del usuario autenticado, si existe
             $users = User::with(
                 'rol',
                 'subusuarios.usuario:id,id_rol,name,email,address,phone,state',
                 'usuarioCreador.usuarioCreador:id,id_rol,name,email,address,phone,state'
             )
-                ->whereHas('usuarioCreador', function ($query) use ($user) {
-                    $query->where('id_usuario_creador', $user->id);
+                ->whereHas('usuarioCreador', function ($query) use ($user, $id_usuario_creador) {
+                    $query->where('id_usuario_creador', $user->id)
+                        ->orWhere('id_usuario_creador', $id_usuario_creador);
                 })
                 ->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
 
@@ -86,11 +88,11 @@ class UserController extends BaseController
         } catch (Throwable $e) {
             Log::error('Error al obtener empleados: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->with([
-                    'error' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Error al cargar empleados",
-                    ],
-                ]);
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al cargar empleados",
+                ],
+            ]);
             // ->withErrors(['error' => 'Error al cargar empleados.']);
         }
     }
@@ -142,20 +144,20 @@ class UserController extends BaseController
             }
             Log::info('Usuario creado correctamente: ID ' . $user->id);
             return redirect()->back()->with([
-                    'success' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Usuario creado correctamente",
-                    ],
-                ]);
+                'success' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Usuario creado correctamente",
+                ],
+            ]);
             //return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
         } catch (Throwable $e) {
             Log::error('Error al crear usuario: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->withInput()->with([
-                    'error' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Error al crear el usuario",
-                    ],
-                ]);
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al crear el usuario",
+                ],
+            ]);
             // ->withErrors(['error' => 'Error al crear el usuario.']);
         }
     }
@@ -238,20 +240,20 @@ class UserController extends BaseController
             }
             Log::info('Usuario actualizado correctamente: ID ' . $user->id);
             return redirect()->back()->with([
-                    'success' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Usuario actualizado correctamente",
-                    ],
-                ]);
+                'success' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Usuario actualizado correctamente",
+                ],
+            ]);
             //return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
         } catch (Throwable $e) {
             Log::error('Error al actualizar usuario: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->withInput()->with([
-                    'error' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Error al actualizar el usuario",
-                    ],
-                ]);
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al actualizar el usuario",
+                ],
+            ]);
             // ->withErrors(['error' => 'Error al actualizar el usuario.']);
         }
     }
@@ -266,20 +268,20 @@ class UserController extends BaseController
             $user->delete(); // Eliminar el usuario
             Log::info('Usuario eliminado correctamente: ID ' . $id);
             return redirect()->back()->with([
-                    'success' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Usuario eliminado correctamnete",
-                    ],
-                ]);
+                'success' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Usuario eliminado correctamnete",
+                ],
+            ]);
             //return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado correctamente.');
         } catch (Throwable $e) {
             Log::error('Error al eliminar usuario: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->with([
-                    'error' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Error al eliminar el usuario",
-                    ],
-                ]);
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al eliminar el usuario",
+                ],
+            ]);
             // ->withErrors(['error' => 'Error al eliminar el usuario.']);
         }
     }

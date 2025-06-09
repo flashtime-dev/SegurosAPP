@@ -32,7 +32,7 @@ export default function CrearAgenteModal({ isOpen, onClose }: { isOpen: boolean,
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <Label htmlFor="nombre">Nombre</Label>
+                        <Label htmlFor="nombre">Nombre *</Label>
                         <Input
                             id="nombre"
                             value={data.nombre}
@@ -47,7 +47,7 @@ export default function CrearAgenteModal({ isOpen, onClose }: { isOpen: boolean,
                         <InputError message={errors.nombre} className="mt-2" />
                     </div>
                     <div>
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email">Email *</Label>
                         <Input
                             id="email"
                             type="email"

@@ -88,7 +88,6 @@ export default function CrearRolModal({ isOpen, onClose, permisos }: Props) {
                                                 <li key={permiso.id} className="flex items-center justify-between">
                                                     <span className="text-sm text-gray-800 dark:text-gray-100">{permiso.descripcion}</span>
                                                     <Button
-                                                        className="cursor-pointer"
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => addPermiso(permiso)}

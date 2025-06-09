@@ -196,7 +196,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                     </SelectTrigger>
                                     <SelectContent>
                                         {roles.map((rol) => (
-                                            <SelectItem className="cursor-pointer hover:bg-gray-100" key={rol.id} value={String(rol.id)}>
+                                            <SelectItem key={rol.id} value={String(rol.id)}>
                                                 {rol.nombre}
                                             </SelectItem>
                                         ))}
@@ -211,12 +211,12 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                     onValueChange={(value) => setData('id_usuario_creador', value)}
                                     disabled={processing}
                                 >
-                                    <SelectTrigger className="cursor-pointer">
+                                    <SelectTrigger>
                                         <SelectValue placeholder="Selecciona un usuario en caso afirmativo" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {empleados.map((usuario) => (
-                                            <SelectItem className="cursor-pointer hover:bg-gray-100" key={usuario.id} value={String(usuario.id)}>
+                                            <SelectItem key={usuario.id} value={String(usuario.id)}>
                                                 {usuario.name}
                                             </SelectItem>
                                         ))}

@@ -91,7 +91,6 @@ export default function EditarRolModal({ isOpen, onClose, rol, permisos, permiso
                                                 <li key={permiso.id} className="flex items-center justify-between">
                                                     <span className="text-sm text-gray-800 dark:text-gray-100">{permiso.descripcion}</span>
                                                     <Button
-                                                        className="cursor-pointer"
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => addPermiso(permiso)}

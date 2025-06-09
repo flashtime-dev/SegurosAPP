@@ -32,7 +32,7 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
             <div className="mx-auto max-w-6xl space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Lista de Agentes</h1>
-                    <Button onClick={() => setIsCreating(true)} className="flex cursor-pointer items-center space-x-2">
+                    <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2">
                         <Plus className="h-4 w-4" />
                         <span>Nuevo Agente</span>
                     </Button>

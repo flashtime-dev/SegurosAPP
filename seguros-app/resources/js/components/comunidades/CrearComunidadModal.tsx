@@ -70,7 +70,7 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios }: Props
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid gap-4">
                             <div>
-                                <Label htmlFor="nombre">Nombre</Label>
+                                <Label htmlFor="nombre">Nombre *</Label>
                                 <Input
                                     id="nombre"
                                     value={data.nombre}
@@ -86,7 +86,7 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios }: Props
                             </div>
 
                             <div>
-                                <Label htmlFor="cif">CIF</Label>
+                                <Label htmlFor="cif">CIF *</Label>
                                 <Input
                                     id="cif"
                                     value={data.cif}

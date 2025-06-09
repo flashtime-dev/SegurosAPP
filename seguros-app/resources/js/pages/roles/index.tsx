@@ -28,7 +28,7 @@ export default function Index() {
                 <h1 className="text-2xl font-bold mb-6">Roles</h1>
                 <div className="flex justify-between items-center">
                     <UsuariosMenu />
-                    <Button className="mb-5 cursor-pointer" onClick={() => setIsCreating(true)}>
+                    <Button className="mb-5" onClick={() => setIsCreating(true)}>
                         <Plus className="mr-2" />Nuevo rol
                     </Button>
                 </div>

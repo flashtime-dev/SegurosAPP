@@ -50,12 +50,12 @@ export default function EditarAgenteModal({ isOpen, onClose, agente }: {
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <Label htmlFor="nombre">Nombre</Label>
+                        <Label htmlFor="nombre">Nombre *</Label>
                         <Input id="nombre" value={data.nombre} onChange={(e) => setData('nombre', e.target.value)} disabled={processing} required />
                         <InputError message={errors.nombre} className="mt-2" />
                     </div>
                     <div>
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email">Email *</Label>
                         <Input
                             id="email"
                             type="email"

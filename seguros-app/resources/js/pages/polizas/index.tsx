@@ -87,18 +87,20 @@ export default function Index() {
                 </div>
             </div>
 
-            <PaginacionPolizas
-                paginaActual={paginaActual}
-                totalPaginas={totalPaginas}
-                onPageChange={(nueva) => setPaginaActual(nueva)}
-            />
+            {polizasPaginadas.length > 0 && (
+                <PaginacionPolizas
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    onPageChange={(nueva) => setPaginaActual(nueva)}
+                />
+            )}
 
             {/* Modal para crear póliza */}
             <CrearPolizaModal isOpen={isCreating} onClose={() => setIsCreating(false)} companias={companias} comunidades={comunidades} agentes={agentes} />
 
             <EditarPolizaModal
                 isOpen={isEditing}
-                onClose={() => {setIsEditing(false)}}
+                onClose={() => { setIsEditing(false) }}
                 companias={companias}
                 comunidades={comunidades}
                 agentes={agentes}

@@ -110,7 +110,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 </SelectTrigger>
                                 <SelectContent>
                                     {companias.map((compania) => (
-                                        <SelectItem className="cursor-pointer hover:bg-gray-100" key={compania.id} value={String(compania.id)}>
+                                        <SelectItem key={compania.id} value={String(compania.id)}>
                                             {compania.nombre}
                                         </SelectItem>
                                     ))}

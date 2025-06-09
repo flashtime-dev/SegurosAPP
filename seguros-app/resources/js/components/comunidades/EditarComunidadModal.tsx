@@ -78,7 +78,7 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid gap-4">
                             <div>
-                                <Label htmlFor="nombre">Nombre</Label>
+                                <Label htmlFor="nombre">Nombre *</Label>
                                 <Input
                                     id="nombre"
                                     value={data.nombre}
@@ -94,7 +94,7 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                             </div>
 
                             <div>
-                                <Label htmlFor="cif">CIF</Label>
+                                <Label htmlFor="cif">CIF *</Label>
                                 <Input
                                     id="cif"
                                     value={data.cif}
