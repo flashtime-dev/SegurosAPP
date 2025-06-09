@@ -9,7 +9,7 @@ import { SiniestroChat } from "./siniestro-chat";
 import TablaContactos from "./TablaContactos";
 
 export function SiniestroMenu({ poliza, siniestro, contactos, chats, authUser }: { poliza: Poliza, siniestro: Siniestro, contactos: Contacto[],chats: ChatSiniestro[], authUser: number }) {
-    console.log("SiniestroMenu", { poliza, siniestro, contactos, chats, authUser });
+    //console.log("SiniestroMenu", { poliza, siniestro, contactos, chats, authUser });
     const isClosed = siniestro.estado.toLowerCase() === 'cerrado';
     return (
         <div>
