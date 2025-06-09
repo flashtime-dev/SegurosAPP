@@ -46,6 +46,7 @@ export function SiniestroChat({ chats: initialChats, authUser, siniestroId, isCl
         if (!mensaje.trim()) return; // No enviar si el mensaje está vacío
 
         console.log("📤 Enviando mensaje:", mensaje);
+        setMensaje(""); // Limpia el campo de entrada
 
         try {
             const response = await axios.post(`/chat-siniestro/${siniestroId}`, { mensaje });

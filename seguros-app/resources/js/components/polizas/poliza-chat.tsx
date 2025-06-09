@@ -16,7 +16,7 @@ export function PolizaChat({ chats: initialChats, authUser, polizaId, isClosed }
     }, [chats]);
 
     useEffect(() => {
-        console.log(`🔌 Conectando al canal privado: chatPoliza.${polizaId}`);
+        //console.log(`🔌 Conectando al canal privado: chatPoliza.${polizaId}`);
         //const channel = window.Echo.channel(`chatPoliza.${polizaId}`); // channel() en lugar de private()
         const channel = window.Echo.private(`chatPoliza.${polizaId}`); // Asegúrate de que el canal sea privado si es necesario
 
@@ -29,12 +29,12 @@ export function PolizaChat({ chats: initialChats, authUser, polizaId, isClosed }
             });
 
         channel.listen('MessageSent', (e: any) => {
-            console.log("📨 Mensaje recibido por WebSocket:", e);
+            //console.log("📨 Mensaje recibido por WebSocket:", e);
             setChats((prev) => [...prev, e]); // Actualiza el estado con el nuevo mensaje
         });
 
         return () => {
-            console.log(`🔌 Desconectando del canal: chatPoliza.${polizaId}`);
+            //console.log(`🔌 Desconectando del canal: chatPoliza.${polizaId}`);
             window.Echo.leave(`chatPoliza.${polizaId}`);
         };
     }, [polizaId]);
@@ -43,12 +43,12 @@ export function PolizaChat({ chats: initialChats, authUser, polizaId, isClosed }
         e.preventDefault();
         if (!mensaje.trim()) return;
 
-        console.log("📤 Enviando mensaje:", mensaje);
-
+        //console.log("📤 Enviando mensaje:", mensaje);
+        setMensaje("");  // Limpia el input inmediatamente
+        
         try {
             const response = await axios.post(`/chat-poliza/${polizaId}`, { mensaje });
-            console.log("✅ Respuesta del servidor:", response.data);
-
+            //console.log("✅ Respuesta del servidor:", response.data);
             // Temporalmente agregar el mensaje aquí también para debug
             setChats([...chats, response.data.chat]);
             setMensaje("");
