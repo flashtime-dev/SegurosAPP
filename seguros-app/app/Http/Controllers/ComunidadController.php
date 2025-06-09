@@ -46,13 +46,14 @@ class ComunidadController extends Controller
                     ->with('users')
                     ->get();
                 $empleados = Subusuario::where('id_usuario_creador', $user->id)->get(); // Obtener empleados
-
+    
                 if ($empleados->isEmpty()) {
                     $usuarios = []; // Obtener todos los usuarios si no hay empleados
                 } else {
-                    $usuarios = User::where('id', $empleados->pluck('id'))->get(); // Obtener usuarios según los empleados
+                    $usuarios = User::whereIn('id', $empleados->pluck('id'))->get(); // Obtener usuarios según los empleados
                 }
             }
+            
 
             Log::info('✅ Comunidades cargadas correctamente.', [
                 'user_id' => $user->id,
