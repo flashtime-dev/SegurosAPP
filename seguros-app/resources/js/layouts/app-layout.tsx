@@ -6,6 +6,7 @@ import CustomToast from "@/components/ui/CustomToaster"; // Ajusta la ruta a don
 
 import type { ReactNode } from "react";
 import type { BreadcrumbItem } from "@/types";
+import useKonamiCode from "@/hooks/mensaje-oculto";
 
 interface AppLayoutProps {
     children: ReactNode;
@@ -21,6 +22,9 @@ export default function AppLayout({ children, breadcrumbs, ...props }: AppLayout
     }>();
 
     const { success, error, info } = pageProps;
+
+    // Hook para detectar el Konami Code
+    useKonamiCode();
 
     // Efecto para lanzar los toasts cuando cambian las props
     useEffect(() => {

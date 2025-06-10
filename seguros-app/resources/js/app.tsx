@@ -25,3 +25,21 @@ createInertiaApp({
 
 // This will set light / dark mode on load...
 initializeTheme();
+
+
+
+//              #
+//            ###
+//          #####
+//        #######
+//      #########
+//    ######################
+//  ######################
+//             #########
+//             #######
+//             #####
+//             ###
+//             #
+
+// ⚡ Este rayo marca el inicio de algo poderoso... o no.
+// Easter Egg by @Cristy
