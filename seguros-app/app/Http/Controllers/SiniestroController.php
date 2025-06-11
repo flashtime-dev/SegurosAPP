@@ -105,7 +105,7 @@ class SiniestroController extends Controller
             // Validación de contactos
             'contactos.*.nombre' => 'required|string|min:2|max:255',
             'contactos.*.cargo' => 'nullable|string|min:3|max:100',
-            'contactos.*.piso' => 'nullable|string|min:3|max:100',
+            'contactos.*.piso' => 'nullable|string|min:1|max:100',
             'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
         ], [
             'id_poliza.required' => 'La póliza es obligatoria.',
@@ -131,7 +131,7 @@ class SiniestroController extends Controller
             'contactos.*.nombre.max' => 'El nombre no puede exceder los 255 caracteres.',
             'contactos.*.cargo.min' => 'El cargo debe tener al menos 3 caracteres.',
             'contactos.*.cargo.max' => 'El cargo no puede exceder los 100 caracteres.',
-            'contactos.*.piso.min' => 'El piso debe tener al menos 3 caracteres.',
+            'contactos.*.piso.min' => 'El piso debe tener al menos 1 carácter.',
             'contactos.*.piso.max' => 'El piso no puede exceder los 100 caracteres.',
             'contactos.*.telefono.required' => 'El teléfono es obligatorio.',
             'contactos.*.telefono' => 'Formato de teléfono incorrecto',
@@ -266,7 +266,7 @@ class SiniestroController extends Controller
             // Validación de contactos
             'contactos.*.nombre' => 'required|string|min:2|max:255',
             'contactos.*.cargo' => 'nullable|string|min:3|max:100',
-            'contactos.*.piso' => 'nullable|string|min:3|max:100',
+            'contactos.*.piso' => 'nullable|string|min:1|max:100',
             'contactos.*.telefono' => ['required', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
         ], [
             'id_poliza.required' => 'La póliza es obligatoria.',
@@ -292,7 +292,7 @@ class SiniestroController extends Controller
             'contactos.*.nombre.max' => 'El nombre no puede exceder los 255 caracteres.',
             'contactos.*.cargo.min' => 'El cargo debe tener al menos 3 caracteres.',
             'contactos.*.cargo.max' => 'El cargo no puede exceder los 100 caracteres.',
-            'contactos.*.piso.min' => 'El piso debe tener al menos 3 caracteres.',
+            'contactos.*.piso.min' => 'El piso debe tener al menos 1 carácter.',
             'contactos.*.piso.max' => 'El piso no puede exceder los 100 caracteres.',
             'contactos.*.telefono.required' => 'El teléfono es obligatorio.',
             'contactos.*.telefono' => 'Formato de teléfono incorrecto',
