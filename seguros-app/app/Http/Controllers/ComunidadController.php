@@ -219,7 +219,7 @@ class ComunidadController extends Controller
 
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
-            'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif',
+            'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
             'direccion' => 'nullable|string|min:3|max:255',
             'ubi_catastral' => 'nullable|string|min:3|max:255',
             'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
