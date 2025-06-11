@@ -43,7 +43,7 @@ class SiniestrosSeeder_Prueba extends Seeder
                 'exp_cia' => 'CIA-1001',
                 'exp_asist' => 'ASIST-5003',
                 'fecha_ocurrencia' => '2025-03-30',
-                'adjunto' => true,
+                'adjunto' => false,
                 'estado' => 'Cerrado',
             ],
             [

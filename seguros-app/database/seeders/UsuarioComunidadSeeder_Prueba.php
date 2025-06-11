@@ -14,8 +14,8 @@ class UsuarioComunidadSeeder_Prueba extends Seeder
     public function run(): void
     {
         UsuarioComunidad::create([
-            'id_usuario' => 1, // ID del usuario
-            'id_comunidad' => 1 // ID de la comunidad
+            'id_usuario' => 3, // SuperAdmin
+            'id_comunidad' => 1 // Comunidad Los Pinos
         ]);
 
         UsuarioComunidad::create([

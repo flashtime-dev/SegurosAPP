@@ -19,7 +19,6 @@ class SubUsuariosSeeder_Prueba extends Seeder
             ['id' => 5,  'id_usuario_creador' => 3],
             ['id' => 6,  'id_usuario_creador' => 3],
             ['id' => 7,  'id_usuario_creador' => 3],
-            ['id' => 8,  'id_usuario_creador' => 3],
         ];
 
         foreach ($subusuarios as $subusuario) {
