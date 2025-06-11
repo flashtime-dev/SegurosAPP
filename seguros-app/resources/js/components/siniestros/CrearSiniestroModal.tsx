@@ -39,7 +39,7 @@ type FormData = {
 
 export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSeleccionada }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
-        id_poliza: polizaSeleccionada || '125',
+        id_poliza: polizaSeleccionada || '',
         declaracion: '',
         tramitador: '',
         expediente: '',
