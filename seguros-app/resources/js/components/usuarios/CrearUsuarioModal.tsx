@@ -107,6 +107,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                     disabled={processing}
                                     required
                                     placeholder="Contraseña"
+                                    title="La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)"
                                 />
                                 <InputError message={errors.password} className="mt-2" />
                             </div>
@@ -121,6 +122,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                     disabled={processing}
                                     required
                                     placeholder="Confirmar contraseña"
+                                    title="La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)"
                                 />
                                 <InputError message={errors.password_confirmation} className="mt-2" />
                             </div>

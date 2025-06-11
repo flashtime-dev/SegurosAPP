@@ -109,11 +109,11 @@ class UserController extends BaseController
         $request->validate([
             'name' => 'required|string|min:2|max:255',
             'email' => 'required|string|email|max:255|unique:users,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
-            'password' => 'required|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/',
+            'password' => 'required|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-z\d@$!%*?&#_.-]{8,}$/',
             'id_rol' => 'required|exists:roles,id',
-            'address' => 'nullable|string|max:500',
+            'address' => 'nullable|string|min:3|max:255',
             'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-            'state' => 'nullable|boolean',
+            'state' => 'required|boolean',
             'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
         ], [
             'name.min' => 'El nombre debe tener al menos 2 caracteres',
@@ -122,7 +122,7 @@ class UserController extends BaseController
             'email.regex' => 'El formato del correo electrónico es inválido',
             'id_rol.required' => 'Debes seleccionar un rol',
             'password.confirmed' => 'Las contraseñas no coinciden',
-            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
+            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)',
             'phone' => 'Formato de teléfono incorrecto',
         ]);
         try {
@@ -198,17 +198,17 @@ class UserController extends BaseController
                 'unique:users,email,' . $user->id, // Excluir el correo actual del usuario
                 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i', // Validar formato de correo electrónico
             ],
-            'password' => 'nullable|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/', // Contraseña opcional
+            'password' => 'nullable|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-z\d@$!%*?&#_.-]{8,}$/', // Contraseña opcional
             'id_rol' => 'required|exists:roles,id',
-            'address' => 'nullable|string|max:500',
+            'address' => 'nullable|string|min:3|max:255',
             'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-            'state' => 'nullable|boolean',
+            'state' => 'required|boolean',
             'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
         ], [
             'name.min' => 'El nombre debe tener al menos 2 caracteres',
             'email.regex' => 'El formato del correo electrónico es inválido.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.)',
+            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)',
             'phone' => 'Formato de teléfono incorrecto',
         ]);
         try {

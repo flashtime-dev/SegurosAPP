@@ -111,15 +111,15 @@ class ComunidadController extends Controller
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
             'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif',
-            'direccion' => 'nullable|string|max:255',
-            'ubi_catastral' => 'nullable|string|max:255',
+            'direccion' => 'nullable|string|min:3|max:255',
+            'ubi_catastral' => 'nullable|string|min:3|max:255',
             'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
             'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
         ], [
             'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
-            'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
+            'cif.regex' => 'El CIF debe comenzar con una letra válida y seguir con 8 dígitos.',
             'cif.unique' => 'El CIF ya está en uso.',
             'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
             'telefono' => 'Formato de teléfono incorrecto',
@@ -212,17 +212,17 @@ class ComunidadController extends Controller
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
             'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
-            'direccion' => 'nullable|string|max:255',
-            'ubi_catastral' => 'nullable|string|max:255',
+            'direccion' => 'nullable|string|min:3|max:255',
+            'ubi_catastral' => 'nullable|string|min:3|max:255',
             'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
             'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
         ], [
-            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
-            'cif.regex' => 'El CIF debe comenzar con una letra y seguir con 8 dígitos.',
+            'nombre.min' => 'El nombre debe tener al menos 2 carácteres.',
+            'cif.regex' => 'El CIF debe comenzar con una letra válida y seguir con 8 dígitos.',
             'cif.unique' => 'El CIF ya está en uso.',
-            'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
+            'ref_catastral.regex' => 'La referencia catastral debe tener 20 carácteres alfanuméricos.',
             'telefono' => 'Formato de teléfono incorrecto',
         ]);
         try {

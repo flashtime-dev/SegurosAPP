@@ -94,6 +94,8 @@ export default function CrearComunidadModal({ isOpen, onClose, usuarios }: Props
                                     disabled={processing}
                                     required
                                     placeholder="H12345678"
+                                    title="El CIF debe comenzar con una letra (ABCDEFGHJKLMNPQRSUVW) y seguir con 8 dígitos."
+                                
                                 />
                                 <InputError message={errors.cif} className="mt-2" />
                             </div>
