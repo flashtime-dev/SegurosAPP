@@ -40,6 +40,8 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
         id_rol: "3",
         id_usuario_creador: "",
     });
+    
+    const isSuperadmin = data.id_rol === '1';
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,6 +55,14 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
             },
         });
     };
+
+    // useEffect que se ejecuta cada vez que cambia el rol
+    // Si el nuevo rol es superadmin, limpiamos el campo 'id_usuario_creador'
+    React.useEffect(() => {
+        if (isSuperadmin) {
+            setData('id_usuario_creador', '');
+        }
+    }, [data.id_rol]);
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -164,7 +174,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                         }
                                         const cleaned = value.replace(/\s/g, "");
                                         const normalized = cleaned === "" ? "" : (cleaned.startsWith("+") ? cleaned : `+${cleaned}`);
-                                            setData("phone", normalized);
+                                        setData("phone", normalized);
                                     }}
                                     error={errors.phone}
                                 />
@@ -211,9 +221,12 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                             <div>
                                 <Label htmlFor="id_usuario_creador">Es empleado de otro usuario?</Label>
                                 <Select
+                                    // Valor actual del campo
                                     value={data.id_usuario_creador}
+                                    // Al seleccionar un valor, actualizamos el estado
                                     onValueChange={(value) => setData('id_usuario_creador', value)}
-                                    disabled={processing}
+                                    // Deshabilitamos el campo si estamos procesando o si el rol es superadministrador
+                                    disabled={processing || isSuperadmin}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Selecciona un usuario en caso afirmativo" />
