@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 
+// Este controlador maneja las operaciones CRUD para las pólizas de seguros
 class PolizaController extends Controller
 {
     public function __construct()
@@ -33,7 +34,9 @@ class PolizaController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Muestra una lista de las pólizas, dependiendo del rol del usuario.
+     * Si es un superadministrador, muestra todas las pólizas.
+     * Si es un usuario normal, muestra solo las pólizas de las comunidades donde es propietario o está asignado.
      */
     public function index()
     {
@@ -69,24 +72,10 @@ class PolizaController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    // public function create()
-    // {
-    //     $companias = Compania::all();
-    //     $comunidades = Comunidad::all();
-    //     $agentes = Agente::all();
-
-    //     return Inertia::render('polizas/create', compact('companias', 'comunidades', 'agentes'));
-    // }
-
-    /**
-     * Store a newly created resource in storage.
+     * Almacena una nueva póliza en la base de datos.
      */
     public function store(Request $request)
     {
-
-
         // Capitalizar solo la primera palabra del alias antes de la validación
         $request->merge([
             'alias' => ucfirst(($request->alias)),
@@ -133,17 +122,20 @@ class PolizaController extends Controller
             'observaciones.max' => 'Las observaciones no deben exceder los 1000 carácteres.',
             'estado.required' => 'El estado es obligatorio.',
         ]);
+
         try {
             // Inicializar la variable para la URL del PDF
             $pdfUrl = null;
 
             // Verificar si se subió un archivo PDF
             if ($request->hasFile('pdf_poliza')) {
+                // Obtener el archivo PDF del formulario
                 $pdf_poliza = $request->file('pdf_poliza');
 
                 // Intentar almacenar el archivo en el servidor
                 $path = $pdf_poliza->storeAs('polizas', $pdf_poliza->getClientOriginalName());
 
+                // Verificar si el almacenamiento fue exitoso
                 if ($path) {
                     // Si el almacenamiento es exitoso, generar la URL del archivo
                     $pdfUrl = asset('storage/' . $path);
@@ -152,6 +144,7 @@ class PolizaController extends Controller
 
             // Crear la póliza con los datos del formulario y la URL del PDF
             Poliza::create(array_merge($request->all(), ['pdf_poliza' => $pdfUrl]));
+
             Log::info('Póliza creada', ['poliza_id' => $request->id, 'user_id' => Auth::id()]);
 
             return redirect()->route('polizas.index')->with([
@@ -172,12 +165,15 @@ class PolizaController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Muestra los detalles de una póliza específica.
      */
     public function show(string $id)
     {
         try {
+            // Cargar la póliza con sus relaciones necesarias
             $poliza = Poliza::with(['compania', 'comunidad', 'siniestros', 'agente', 'chats.usuario'])->findOrFail($id);
+            
+            // Aplicar politica de autorización
             $this->authorize('view', $poliza);
 
             $siniestros = $poliza->siniestros;
@@ -212,25 +208,14 @@ class PolizaController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    // public function edit(string $id)
-    // {
-    //     $poliza = Poliza::findOrFail($id);
-    //     $companias = Compania::all();
-    //     $comunidades = Comunidad::all();
-    //     $agentes = Agente::all();
-
-    //     return Inertia::render('polizas/edit', compact('poliza', 'companias', 'comunidades', 'agentes'));
-    // }
-
-    /**
-     * Update the specified resource in storage.
+     * Actualiza una póliza existente en la base de datos.
      */
     public function update(Request $request, string $id)
     {
-
+        // Busca la póliza por ID o lanza una excepción si no se encuentra
         $poliza = Poliza::findOrFail($id);
+
+        // Verifica autorización para actualizar la póliza
         $this->authorize('update', $poliza);
 
         // Capitalizar solo la primera palabra del alias antes de la validación
@@ -323,12 +308,15 @@ class PolizaController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina una póliza de la base de datos y su archivo PDF asociado.
      */
     public function destroy($id)
     {
         try {
+            // Busca la póliza por ID o lanza una excepción si no se encuentra
             $poliza = Poliza::findOrFail($id);
+
+            // Verifica autorización para eliminar la póliza
             $this->authorize('delete', $poliza);
 
             // Si existe un PDF asociado, lo borramos del disco privado
@@ -360,7 +348,7 @@ class PolizaController extends Controller
     }
 
     /**
-     * Create a mail to anulate a policy
+     * Solicita la anulación de una póliza enviando un correo al propietario de la comunidad.
      */
     public function solicitarAnulacion(Poliza $poliza)
     {
@@ -379,6 +367,8 @@ class PolizaController extends Controller
 
             // Enviar el correo de solicitud de anulación al email del propietario
             Mail::to($propietario->email)->send(new SolicitudAnulacionPoliza($poliza));
+
+            // Registrar la acción en los logs
             Log::info('Solicitud de anulación enviada', ['poliza_id' => $poliza->id, 'email' => $propietario->email]);
 
             return redirect()->route('polizas.index')->with([
@@ -403,6 +393,7 @@ class PolizaController extends Controller
     public function servePDF($id)
     {
         try {
+            // Busca la póliza por ID o lanza una excepción si no se encuentra
             $poliza = Poliza::findOrFail($id);
 
             // Verifica autorización
@@ -420,6 +411,9 @@ class PolizaController extends Controller
             Log::info('Sirviendo archivo PDF', ['poliza_id' => $id, 'file' => $filename]);
 
             // Retorna el archivo como respuesta de descarga
+            // Response::file() permite servir archivos directamente desde el servidor
+            // con el tipo de contenido adecuado y la opción de mostrar en línea
+            // o descargar según el navegador del usuario.
             return Response::file($path, [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'inline; filename="' . $filename . '"'

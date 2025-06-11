@@ -11,13 +11,14 @@ use App\Models\ChatSiniestro;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * Esta clase maneja el evento cuando se envía un mensaje en un chat relacionado con un siniestro
+ * Implementa ShouldBroadcastNow para transmitir el evento inmediatamente sin usar colas
+ */
 class MessageSentSiniestro implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
     public function __construct(public ChatSiniestro $message)
     {
         try {
@@ -32,30 +33,25 @@ class MessageSentSiniestro implements ShouldBroadcastNow
         }
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-
-    // En MessageSent.php - SOLO PARA PRUEBAS
+    // Define el canal privado donde se transmitirá el mensaje
     public function broadcastOn(): array
     {
         $channel = 'chatSiniestro.' . $this->message->id_siniestro;
         try {
             Log::info("📺 Broadcasting en canal privado: " . $channel);
+            return [
+                new PrivateChannel($channel),
+            ];
         } catch (Throwable $e) {
             Log::error("❌ Error al definir canal de broadcast: " . $e->getMessage(), [
                 'exception' => $e,
             ]);
+            return [];
         }
 
-        return [
-            new PrivateChannel($channel),
-        ];
     }
 
-
+    // Define los datos que se transmitirán con el evento
     public function broadcastWith(): array
     {
         try {

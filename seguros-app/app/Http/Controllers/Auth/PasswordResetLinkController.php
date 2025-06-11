@@ -12,10 +12,11 @@ use Inertia\Response;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
+// Esta clase maneja la lógica para enviar un enlace de restablecimiento de contraseña
 class PasswordResetLinkController extends Controller
 {
     /**
-     * Show the password reset link request page.
+     * Muestra la vista de solicitud de enlace de restablecimiento de contraseña.
      */
     public function create(Request $request): Response
     {
@@ -33,13 +34,14 @@ class PasswordResetLinkController extends Controller
     }
 
     /**
-     * Handle an incoming password reset link request.
+     * Maneja la solicitud para enviar un enlace de restablecimiento de contraseña.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
         try {
+            // Validar el email con una expresión regular para asegurar un formato correcto
             $request->validate([
                 'email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
             ],[
@@ -47,15 +49,18 @@ class PasswordResetLinkController extends Controller
                 'email.email' => 'El formato del email es inválido.',
             ]);
 
+            // Intentar enviar el enlace de restablecimiento de contraseña
             $status = Password::sendResetLink(
                 $request->only('email')
             );
 
+            // Verificar el estado del envío del enlace
             if ($status === Password::RESET_LINK_SENT) {
                 Log::info('✔ Enlace de restablecimiento de contraseña enviado', ['email' => $request->email]);
                 return back()->with('status', __('Te enviaremos un enlace para restablecer tu contraseña si la cuenta existe.'));
             }
 
+            // Si el estado no es exitoso, lanzar una excepción de validación
             throw ValidationException::withMessages([
                 'email' => [__($status)],
             ]);

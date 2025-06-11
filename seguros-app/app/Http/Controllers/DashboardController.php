@@ -11,14 +11,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+// Controlador para manejar el dashboard de la aplicación
 class DashboardController extends Controller
 {
     public function index()
     {
+        // Segun el rol del usuario, se obtienen diferentes datos para el dashboard
         try{
             $user = Auth::user(); // Obtener el usuario autenticado
 
-            // Verificar si el usuario tiene el rol de administrador
+            // Verificar si el usuario tiene el rol de superadministrador
             if ($user->rol->nombre == 'Superadministrador') {
                 $comunidades = Comunidad::all()->count();
                 $polizas = Poliza::where('estado', 'En Vigor')->count();

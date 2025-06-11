@@ -10,6 +10,9 @@ use Inertia\Response;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+// Esta clase maneja la lógica para mostrar la página de verificación de email.(no se usa actualmente)
+// Se utiliza para mostrar un mensaje al usuario si su correo electrónico ya está verificado o no
+// Si el correo ya está verificado, redirige al dashboard con un mensaje de éxito
 class EmailVerificationPromptController extends Controller
 {
     /**

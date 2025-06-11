@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Compania;
 use Inertia\Inertia;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+// Este controlador maneja las operaciones relacionadas con las compañías de seguros
+// y sus teléfonos de asistencia.
 class CompaniaController extends Controller
 {
+    // Metodo para mostrar la lista de compañías de seguros y sus teléfonos de asistencia.
     public function telefonosAsistencia()
     {
         try {
@@ -23,17 +25,13 @@ class CompaniaController extends Controller
             // Pasar los datos a la vista
             return Inertia::render('telefonos-asistencia', [
                 'companias' => $companias,
-                // 'success' => [
-                //     'id' => uniqid(),
-                //     'mensaje' => "Teléfonos de asistencia cargados correctamente"
-                // ],
             ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al cargar los teléfonos de asistencia:', [
                 'exception' => $e,
             ]);
 
-            // Puedes redirigir a una página de error o mostrar un mensaje amigable
+            // Redirigir a una página de error o mostrar un mensaje amigable
             return redirect()->back()->with([
                 'error' => [
                     'id' => uniqid(),

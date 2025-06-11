@@ -15,7 +15,7 @@ use Throwable;
 class PasswordController extends Controller
 {
     /**
-     * Show the user's password settings page.
+     * Muestra la página de edición de contraseña.
      */
     public function edit(): Response
     {
@@ -23,7 +23,7 @@ class PasswordController extends Controller
     }
 
     /**
-     * Update the user's password.
+     * Maneja la solicitud de actualización de contraseña.
      */
     public function update(Request $request): RedirectResponse
     {
@@ -56,6 +56,9 @@ class PasswordController extends Controller
             'password.regex' => 'La contraseña debe tener al menos 8 carácteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-).',
         ]);
 
+        // Actualizar la contraseña del usuario autenticado
+        // Se utiliza Hash::make para encriptar la nueva contraseña
+        // y se guarda en la base de datos.
         $request->user()->update([
             'password' => Hash::make($request->password),
         ]);
@@ -67,6 +70,7 @@ class PasswordController extends Controller
             'email' => $request->user()->email ?? null,
         ]);
 
+        // Redirige al usuario a la página anterior con un mensaje de éxito
         return back()->with([
             'success' => [
                 'id' => uniqid(),

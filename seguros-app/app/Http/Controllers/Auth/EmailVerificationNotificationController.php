@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+// Esta clase maneja el envío de notificaciones de verificación de email (actualmente no se usa)
 class EmailVerificationNotificationController extends Controller
 {
     /**

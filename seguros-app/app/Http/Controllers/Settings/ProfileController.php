@@ -13,10 +13,14 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
 
+/**
+ * Esta clase maneja la lógica de configuración del perfil del usuario.
+ * Permite editar y actualizar la información del perfil, así como eliminar la cuenta.
+ */
 class ProfileController extends Controller
 {
     /**
-     * Show the user's profile settings page.
+     * Mostrar la página de configuración del perfil del usuario.
      */
     public function edit(Request $request): Response
     {
@@ -27,13 +31,19 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's profile settings.
+     * Actualizar la información del perfil del usuario.
      */
+    // Validar los datos del perfil usando el request personalizado
+    // El request ProfileUpdateRequest ya maneja las validaciones necesarias
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         try {
+            //fill() se usa para llenar el modelo con los datos validados del request
+            // El método validated() devuelve los datos validados del request
             $request->user()->fill($request->validated());
-
+            
+            // isDirty verifica si el campo email ha cambiado, 
+            // y si es así, se establece email_verified_at a null para forzar la verificación del email nuevamente           
             if ($request->user()->isDirty('email')) {
                 $request->user()->email_verified_at = null;
             }
@@ -71,7 +81,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Delete the user's account.
+     * Eliminar la cuenta del usuario. (actualemente no se usa) 
      */
     public function destroy(Request $request): RedirectResponse
     {

@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Throwable;
-use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
 
-class AgenteController extends BaseController
+// Este controlador maneja las operaciones CRUD para los agentes
+class AgenteController extends Controller
 {
     public function __construct()
     {
@@ -23,7 +23,7 @@ class AgenteController extends BaseController
         $this->middleware(CheckPermiso::class . ':agentes.eliminar', ['only' => ['destroy']]);
     }
     /**
-     * Display a listing of the resource.
+     * Metodo para mostrar la lista de agentes.
      */
     public function index()
     {
@@ -35,24 +35,18 @@ class AgenteController extends BaseController
         ]); // Retornar la vista con los datos
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    // public function create()
-    // {
-    //     return Inertia::render('agentes/create'); // Retornar la vista para crear un nuevo agente
-    // }
 
     /**
-     * Store a newly created resource in storage.
+     * Metodo para guardar un nuevo agente.
      */
     public function store(Request $request)
     {
-
+        // Modificar el nombre del agente para que comience con mayúscula
         $request->merge([
             'nombre' => ucfirst(($request->nombre))
         ]);
 
+        // Validar los datos del formulario
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
             'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
@@ -65,6 +59,7 @@ class AgenteController extends BaseController
             'email.regex' => 'El formato del email es inválido.',
             'telefono' => 'Formato de teléfono incorrecto',
         ]);
+
         try {
             Agente::create($request->all()); // Crear un nuevo agente
 
@@ -80,6 +75,7 @@ class AgenteController extends BaseController
                         'mensaje' => "Agente creado correctamente",
                     ],
                 ]);
+
         } catch (Throwable $e) {
             Log::error('❌ Error al crear el agente: ' . $e->getMessage(), [
                 'exception' => $e,
@@ -97,35 +93,18 @@ class AgenteController extends BaseController
     }
 
     /**
-     * Display the specified resource.
-     */
-    // public function show(Agente $agente)
-    // {
-    //     return view('agentes.show', compact('agente')); // Retornar la vista con los detalles del agente
-    // }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // public function edit($id)
-    // {
-    //     $agente = Agente::findOrFail($id); // Buscar el agente por ID
-    //     return Inertia::render('agentes/edit', [
-    //         'agente' => $agente, // Pasar el agente a la vista
-    //     ]); // Retornar la vista para editar el agente
-    // }
-
-    /**
-     * Update the specified resource in storage.
+     * Metodo para actualizar un agente.
      */
     public function update(Request $request, $id)
     {
-
-        $agente = Agente::findOrFail($id); // Buscar el agente por ID
+        // Buscar el agente por ID
+        $agente = Agente::findOrFail($id);
+        // Modificar el nombre del agente para que comience con mayúscula
         $request->merge([
             'nombre' => ucfirst(($request->nombre))
         ]);
 
+        // Validar los datos del formulario
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
             'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
@@ -145,6 +124,7 @@ class AgenteController extends BaseController
             'email.regex' => 'El formato del email es inválido.',
             'telefono' => 'Formato de teléfono incorrecto',
         ]);
+
         try {
             $agente->update($request->all()); // Actualizar el agente
 
@@ -177,13 +157,16 @@ class AgenteController extends BaseController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Metodo para eliminar un agente.
      */
     public function destroy($id)
     {
         try {
-            $agente = Agente::findOrFail($id); // Buscar el agente por ID
-            $agente->delete(); // Eliminar el agente
+            // Buscar el agente por ID
+            $agente = Agente::findOrFail($id);
+
+            // Eliminar el agente
+            $agente->delete();
 
             Log::info('🗑️ Agente eliminado correctamente.', [
                 'agente_id' => $id,

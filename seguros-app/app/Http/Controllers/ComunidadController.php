@@ -13,6 +13,7 @@ use Throwable;
 
 use App\Http\Middleware\CheckPermiso;
 
+// Este controlador maneja las operaciones CRUD para las comunidades
 class ComunidadController extends Controller
 {
     public function __construct()
@@ -26,37 +27,46 @@ class ComunidadController extends Controller
         $this->middleware(CheckPermiso::class . ':comunidades.eliminar', ['only' => ['destroy']]);
     }
     /**
-     * Display a listing of the resource.
+     * Muestra una lista de las comunidades.
      */
     public function index()
     {
         try {
-            $user = Auth::user(); // Obtener el usuario autenticado
-            $id_usuario_creador = Subusuario::where('id', $user->id)->value('id_usuario_creador') ?? 0; // Obtener el id_usuario_creador del usuario autenticado, si existe
+            // Obtener el usuario autenticado
+            $user = Auth::user();
+
+            // Obtener el id_usuario_creador del usuario autenticado, si existe
+            $id_usuario_creador = Subusuario::where('id', $user->id)->value('id_usuario_creador') ?? 0;
+
             // Verificar si el usuario tiene el rol de administrador
             if ($user->rol->nombre == 'Superadministrador') {
-                $comunidades = Comunidad::with('users')->get(); // Obtener todas las comunidades
-                $usuarios = User::all(); // Obtener todos los usuarios
+                $comunidades = Comunidad::with('users')->get(); // Obtener todas las comunidades con sus usuarios
+
+                //Obtener todos los usuarios
+                $usuarios = User::all();
             } else {
-                // Obtener comunidades donde el usuario es propietario O está asignado como usuario
+                // Obtener comunidades donde el usuario es propietario o está asignado como usuario
                 $comunidades = Comunidad::where('id_propietario', $user->id)
                     ->orWhereHas('users', function ($query) use ($user) {
                         $query->where('users.id', $user->id);
                     })
                     ->with('users')
                     ->get();
+
+                // Obtener empleados relacionados con el usuario autenticado o en caso con su creador
                 $empleados = Subusuario::where('id_usuario_creador', $user->id)
                     ->orWhere('id_usuario_creador', $id_usuario_creador)
                     ->where('id', '!=', $user->id) // Excluir al usuario autenticado
                     ->get(); // Obtener empleados relacionados con el usuario autenticado
-    
+
+                // Si no hay empleados, no habrá usuarios
                 if ($empleados->isEmpty()) {
-                    $usuarios = []; // Obtener todos los usuarios si no hay empleados
+                    $usuarios = [];
                 } else {
-                    $usuarios = User::whereIn('id', $empleados->pluck('id'))->get(); // Obtener usuarios según los empleados
+                    // Obtener usuarios según los empleados
+                    $usuarios = User::whereIn('id', $empleados->pluck('id'))->get();
                 }
             }
-            
 
             Log::info('✅ Comunidades cargadas correctamente.', [
                 'user_id' => $user->id,
@@ -68,35 +78,25 @@ class ComunidadController extends Controller
                 'comunidades' => $comunidades,
                 'usuarios' => $usuarios,
             ]); // Retornar la vista con los datos
+
         } catch (Throwable $e) {
             Log::error('❌ Error al cargar comunidades:', ['exception' => $e]);
+
             return redirect()->back()->with([
-                    'error' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Error al cargar las comunidades",
-                    ],
-                ]);
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al cargar las comunidades",
+                ],
+            ]);
             // ->withErrors('Ocurrió un error al cargar comunidades.');
         }
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    // public function create()
-    // {
-    //     $usuarios = User::all(); // Obtener todos los usuarios
-    //     return Inertia::render('comunidades/create', [
-    //         'usuarios' => $usuarios, // Pasar los usuarios a la vista
-    //     ]); // Retornar la vista para crear una nueva comunidad
-    // }
-
-    /**
-     * Store a newly created resource in storage.
+     * Almacena una nueva comunidad en la base de datos.
      */
     public function store(Request $request)
     {
-
         $user = Auth::user(); // Obtener el usuario autenticado
         $id_usuario_creador = Subusuario::where('id', $user->id)->value('id_usuario_creador') ?? 0; // Obtener el id_usuario_creador del usuario autenticado, si existe
 
@@ -134,20 +134,19 @@ class ComunidadController extends Controller
         ]);
 
         try {
-            if ($id_usuario_creador != 0) {
-                $request->merge(['id_propietario' => $id_usuario_creador]); // Asignar el ID del usuario creador al request
-            }else{
-                $request->merge(['id_propietario' => $user->id]); // Asignar el ID del propietario al request
-            }
             // Si el usuario autenticado es subusuario administrador
             if ($id_usuario_creador != 0) {
-                // Agregar el usuario autenticado a la lista de usuarios
-                $request->merge(['usuarios' => array_merge($request->usuarios ?? [], [$user->id])]); // Asegurarse de que el usuario autenticado esté en la lista de usuarios
+                // Asignar el ID del usuario creador como propietario al request
+                $request->merge(['id_propietario' => $id_usuario_creador]);
+                // Asegurarse de que el usuario autenticado esté en la lista de usuarios
+                $request->merge(['usuarios' => array_merge($request->usuarios ?? [], [$user->id])]);
+            } else {
+                // Asignar el ID del usuario como propietario al request
+                $request->merge(['id_propietario' => $user->id]);
             }
+
             // Crear la comunidad sin los usuarios
             $comunidad = Comunidad::create($request->except('usuarios'));
-
-            
 
             // Sincronizar los usuarios seleccionados con la tabla pivote
             if ($request->has('usuarios')) {
@@ -160,7 +159,7 @@ class ComunidadController extends Controller
             ]);
 
             return redirect()->route('comunidades.index')
-            ->with([
+                ->with([
                     'success' => [
                         'id' => uniqid(),
                         'mensaje' => "Comunidad creada correctamente",
@@ -169,44 +168,23 @@ class ComunidadController extends Controller
         } catch (Throwable $e) {
             Log::error('❌ Error al crear comunidad:', ['exception' => $e]);
             return redirect()->back()->with([
-                    'error' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Error al crear la comunidad",
-                    ],
-                ]);
-                // ->withErrors('Ocurrió un error al crear la comunidad.');
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al crear la comunidad",
+                ],
+            ]);
+            // ->withErrors('Ocurrió un error al crear la comunidad.');
         }
     }
 
     /**
-     * Display the specified resource.
-     */
-    // public function show($id)
-    // {
-    //     $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
-    //     return Inertia::render('Comunidad/Show', ['comunidad' => $comunidad]);
-    // }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // public function edit($id)
-    // {
-    //     $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
-    //     $usuarios = User::all(); // Obtener todos los usuarios
-    //     return Inertia::render('comunidades/edit', [
-    //         'comunidad' => $comunidad, // Pasar la comunidad a la vista
-    //         'usuarios' => $usuarios, // Pasar los usuarios a la vista
-    //     ]); // Retornar la vista para editar la comunidad
-    // }
-
-    /**
-     * Update the specified resource in storage.
+     * Actualiza una comunidad existente en la base de datos.
      */
     public function update(Request $request, $id)
     {
 
         $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+        // Verificar si el usuario tiene permiso para actualizar la comunidad
         $this->authorize('update', $comunidad);
 
         $request->merge([
@@ -256,7 +234,7 @@ class ComunidadController extends Controller
             ]);
 
             return redirect()->route('comunidades.index')
-            ->with([
+                ->with([
                     'success' => [
                         'id' => uniqid(),
                         'mensaje' => "Comunidad actualizada correctamente",
@@ -265,22 +243,25 @@ class ComunidadController extends Controller
         } catch (Throwable $e) {
             Log::error('❌ Error al actualizar comunidad:', ['exception' => $e]);
             return redirect()->back()->with([
-                    'error' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Error al actualizar la comunidad",
-                    ],
-                ]);
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al actualizar la comunidad",
+                ],
+            ]);
             // ->withErrors('Ocurrió un error al actualizar la comunidad.');
         }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina una comunidad de la base de datos.
      */
     public function destroy($id)
     {
         try {
             $comunidad = Comunidad::findOrFail($id); // Buscar la comunidad por ID
+            // Verifica autorización
+            $this->authorize('delete', $comunidad);
+            
             $comunidad->users()->detach(); // Desvincular usuarios de la comunidad
             $comunidad->caracteristica()->delete(); // Eliminar la característica asociada
             $comunidad->presupuestos()->delete(); // Eliminar los presupuestos asociados
@@ -293,19 +274,19 @@ class ComunidadController extends Controller
             ]);
 
             return redirect()->route('comunidades.index')->with([
-                    'success' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Comunidad eliminada correctamente",
-                    ],
-                ]);
+                'success' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Comunidad eliminada correctamente",
+                ],
+            ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al eliminar comunidad:', ['exception' => $e]);
             return redirect()->back()->with([
-                    'error' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Error al eliminar la comunidad",
-                    ],
-                ]);
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al eliminar la comunidad",
+                ],
+            ]);
             // ->withErrors('Ocurrió un error al eliminar la comunidad.');
         }
     }

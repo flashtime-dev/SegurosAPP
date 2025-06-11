@@ -14,31 +14,36 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * Controlador para gestionar usuarios y empleados.
+ */
 class UserController extends BaseController
 {
     public function __construct()
     {
         // Aplica middleware de permisos a métodos específicos
 
-        //Usuarios
+        //Usuarios y Empleados
         $this->middleware(CheckPermiso::class . ':usuarios.ver', ['only' => ['index']]);
+        $this->middleware(CheckPermiso::class . ':empleados.ver', ['only' => ['empleados']]);
         $this->middleware(CheckPermiso::class . ':usuarios.crear|empleados.crear', ['only' => ['store']]);
         $this->middleware(CheckPermiso::class . ':usuarios.editar|empleados.editar', ['only' => ['update']]);
         $this->middleware(CheckPermiso::class . ':usuarios.eliminar|empleados.eliminar', ['only' => ['destroy']]);
 
-        //Empleados
-        $this->middleware(CheckPermiso::class . ':empleados.ver', ['only' => ['empleados']]);
-        // $this->middleware(CheckPermiso::class . ':empleados.crear', ['only' => ['store']]);
-        // $this->middleware(CheckPermiso::class . ':empleados.editar', ['only' => ['update']]);
-        // $this->middleware(CheckPermiso::class . ':empleados.eliminar', ['only' => ['destroy']]);
     }
 
+    /**
+     * Muestra la lista de todos los usuarios.
+     */
     public function index()
     {
         try {
+            // Cargar todos los usuarios con sus roles y subusuarios relacionados
             $users = User::with('rol', 'subusuarios.usuario:id,id_rol,name,email,address,phone,state', 'usuarioCreador')->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
-            Log::info('Usuarios cargados correctamente.');
             //dd($users); // Debugging: Verificar los datos de los usuarios
+            
+            Log::info('Usuarios cargados correctamente.');
+
             return Inertia::render('usuarios/index', [
                 'users' => $users,
                 'roles' => Rol::all(),
@@ -55,11 +60,17 @@ class UserController extends BaseController
         }
     }
 
+    /**
+     * Muestra la lista de empleados relacionados con el usuario autenticado.
+     */
     public function empleados()
     {
         try {
+            // Obtener la sesion de usuario autenticado y su id_usuario_creador
             $user = Auth::user();
             $id_usuario_creador = Subusuario::where('id', $user->id)->value('id_usuario_creador') ?? 0; // Obtener el id_usuario_creador del usuario autenticado, si existe
+            
+            // Cargar los empleados relacionados con el usuario autenticado y su id_usuario_creador
             $users = User::with(
                 'rol',
                 'subusuarios.usuario:id,id_rol,name,email,address,phone,state',
@@ -71,6 +82,7 @@ class UserController extends BaseController
                 })
                 ->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
 
+            // Sacamos el usuario autenticado y cargamos sus relaciones
             $userLogged = User::findOrFail($user->id); // Obtener el usuario autenticado
             $userLogged->load(
                 'rol',
@@ -97,6 +109,9 @@ class UserController extends BaseController
         }
     }
 
+    /**
+     *  Almacena un nuevo usuario en la base de datos.
+     */
     public function store(Request $request)
     {
 
@@ -135,6 +150,7 @@ class UserController extends BaseController
             'id_usuario_creador.exists' => 'El creador del usuario debe existir',
         ]);
         try {
+            // Crear un nuevo usuario con los datos del formulario
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -145,12 +161,15 @@ class UserController extends BaseController
                 'state' => $request->boolean('state'), // Convertir a booleano
             ]);
 
+            // Si el usuario tiene un id_usuario_creador, crear un subusuario
+            //filled('id_usuario_creador') verifica si el campo está presente y no está vacío
             if ($user && $request->filled('id_usuario_creador')) {
                 Subusuario::create([
                     'id' => $user->id,
                     'id_usuario_creador' => $request->id_usuario_creador,
                 ]);
             }
+
             Log::info('Usuario creado correctamente: ID ' . $user->id);
             return redirect()->back()->with([
                 'success' => [
@@ -172,23 +191,10 @@ class UserController extends BaseController
     }
 
     /**
-     * Display the specified resource.
+     * Actualiza un usuario existente en la base de datos.
      */
-    // public function show($id)
-    // {
-    //     $user = User::findOrFail($id); // Buscar el usuario por ID
-    //     $user->load('rol'); // Cargar el rol del usuario
-    //     $roles = Rol::all(); // Obtener todos los roles
-    //     return Inertia::render('usuarios/show', [
-    //         'user' => $user, // Pasar el usuario a la vista
-    //         'rol' => $user->rol, // Pasar el rol del usuario a la vista
-    //         'roles' => $roles, // Pasar todos los roles a la vista
-    //     ]); // Retornar la vista con los detalles del usuario
-    // }
-
     public function update(Request $request, $id)
     {
-
         $user = User::findOrFail($id); // Buscar el usuario por ID
         // Capitalizar cada palabra del nombre antes de la validación
         $request->merge([
@@ -259,6 +265,7 @@ class UserController extends BaseController
                     ]);
                 }
             }
+
             Log::info('Usuario actualizado correctamente: ID ' . $user->id);
             return redirect()->back()->with([
                 'success' => [
@@ -280,13 +287,26 @@ class UserController extends BaseController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un usuario de la base de datos.
      */
     public function destroy($id)
     {
         try {
             $user = User::findOrFail($id); // Buscar el usuario por ID
+
+            // Verificar si el usuario tiene subusuarios asociados
+            $subusuarios = Subusuario::where('id_usuario_creador', $user->id)->get();
+            if ($subusuarios) {
+                // Si tiene subusuarios, eliminarlos primero
+                foreach ($subusuarios as $subusuario) {
+                    // Eliminar cada subusuario
+                    $subusuario->delete();
+                    Log::info('Subusuario eliminado correctamente: ID ' . $subusuario->id);
+                }
+            }
+
             $user->delete(); // Eliminar el usuario
+
             Log::info('Usuario eliminado correctamente: ID ' . $id);
             return redirect()->back()->with([
                 'success' => [

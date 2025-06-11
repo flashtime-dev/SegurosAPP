@@ -16,10 +16,14 @@ use Inertia\Response;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * Esta clase maneja la lógica para restablecer la contraseña de un usuario.
+ * Permite mostrar el formulario de restablecimiento y procesar la solicitud de nuevo password.
+ */
 class NewPasswordController extends Controller
 {
     /**
-     * Show the password reset page.
+     * Muestra la página de restablecimiento de contraseña.
      */
     public function create(Request $request): Response
     {
@@ -39,16 +43,17 @@ class NewPasswordController extends Controller
     }
 
     /**
-     * Handle an incoming new password request.
+     * Procesa la solicitud de restablecimiento de contraseña.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
-        // de las validaciones he quitado Rules\Password::defaults()
+        // De las validaciones se ha quitado Rules\Password::defaults()
         $request->validate([
             'token' => 'required',
             'email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
+            // 'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'password' => ['required', 'confirmed', 'regex:/^(?=.*[a-zñ])(?=.*[A-ZÑ])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-znÑ\d@$!%*?&#_.-]{8,}$/'],
         ], [
             'email.required' => 'El campo email es obligatorio.',
@@ -58,9 +63,8 @@ class NewPasswordController extends Controller
             'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)',
         ]);
         try {
-            // Here we will attempt to reset the user's password. If it is successful we
-            // will update the password on an actual user model and persist it to the
-            // database. Otherwise we will parse the error and return the response.
+            // Intentamos restablecer la contraseña del usuario utilizando el token proporcionado
+            // y el nuevo password. Si el restablecimiento es exitoso, se dispara el evento PasswordReset.
             $status = Password::reset(
                 $request->only('email', 'password', 'password_confirmation', 'token'),
                 function ($user) use ($request) {
@@ -73,14 +77,14 @@ class NewPasswordController extends Controller
                 }
             );
 
-            // If the password was successfully reset, we will redirect the user back to
-            // the application's home authenticated view. If there is an error we can
-            // redirect them back to where they came from with their error message.
+            // Verificamos el estado del restablecimiento de contraseña
+            // Si el estado es Password::PasswordReset, significa que la contraseña se ha restablecido correctamente
             if ($status == Password::PasswordReset) {
                 Log::info('✔ Contraseña restablecida correctamente', ['email' => $request->email]);
                 return to_route('login')->with('status', __($status));
             }
-
+            
+            // Si no, lanzamos una excepción de validación con el mensaje de error correspondiente
             throw ValidationException::withMessages([
                 'email' => [__($status)],
             ]);

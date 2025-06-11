@@ -13,6 +13,7 @@ use App\Http\Middleware\CheckPermiso;
 use Throwable;
 use Illuminate\Support\Facades\Log;
 
+// Este controlador maneja las operaciones CRUD para los roles en la aplicación.
 class RolController extends BaseController
 {
     public function __construct()
@@ -27,7 +28,7 @@ class RolController extends BaseController
     }
 
     /**
-     * Display a listing of the resource.
+     * Mostrar una lista de los recursos.
      */
     public function index()
     {
@@ -55,15 +56,6 @@ class RolController extends BaseController
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    // public function create()
-    // {
-    //     // Ya no es necesario, se utiliza el modal
-    //     abort(404);
-    // }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -80,6 +72,7 @@ class RolController extends BaseController
             'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
         ]);
         try {
+            // Crear un nuevo rol con el nombre proporcionado
             $rol = Rol::create([
                 'nombre' => $request->nombre,
             ]);
@@ -87,9 +80,11 @@ class RolController extends BaseController
             // se esta mandando un array de permisos con solo los ids
             //dd($request->permisos); // Debugging: Verificar los datos de los permisos
 
+            // Si se proporcionan permisos
             if ($request->has('permisos')) {
                 $rol->permisos()->attach($request->permisos); // Crear la relación entre el rol y los permisos
             } else {
+                // Si no se proporcionan permisos, se eliminan las relaciones existentes
                 $rol->permisos()->detach(); // Eliminar la relación entre el rol y los permisos
             }
 
@@ -112,51 +107,32 @@ class RolController extends BaseController
     }
 
     /**
-     * Display the specified resource.
-     */
-    // public function show($id)
-    // {
-    //     $rol = Rol::findOrFail($id); // Buscar el rol por ID
-    //     $rol->load('permisos'); // Cargar los permisos del rol
-    //     return Inertia::render(
-    //         'roles/show', [
-    //             'rol' => $rol,
-    //             'permisos' => $rol->permisos, // Pasar los permisos del rol a la vista
-    //         ]
-    //     ); // Retornar la vista con los detalles del rol
-    // }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // public function edit($id)
-    // {
-    //     // Ya no es necesario, se utiliza el modal
-    //     abort(404);
-    // }
-
-    /**
-     * Update the specified resource in storage.
+     *  Actualizar el recurso especificado en almacenamiento.
      */
     public function update(Request $request, $id)
     {
-
+        // Validar que el ID del rol exista
         $rol = Rol::findOrFail($id); // Buscar el rol por ID
+
         // Capitalizar solo la primera palabra del nombre antes de la validación
         $request->merge([
             'nombre' => ucfirst(($request->nombre))
         ]);
 
+        // Validar los datos de entrada
         $request->validate([
             'nombre' => 'required|string|min:2|max:50',
             'permisos' => 'nullable|array',
             'permisos.*' => 'exists:permisos,id', // Validar que los permisos existan
         ]);
+
         try {
+            // Actualizar el rol con el nuevo nombre
             $rol->update([
                 'nombre' => $request->nombre,
             ]);
 
+            // Si se proporcionan permisos
             if ($request->has('permisos')) {
                 $rol->permisos()->sync($request->permisos); // Actualizar permisos del rol
             }
@@ -181,7 +157,7 @@ class RolController extends BaseController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Eliminar el recurso especificado de almacenamiento.
      */
     public function destroy($id)
     {

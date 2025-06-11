@@ -16,6 +16,12 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
 
+/**
+ * Esta clase maneja la lógica de registro de nuevos usuarios.
+ * Permite mostrar el formulario de registro y procesar la solicitud de creación de un nuevo usuario.
+ * Actualemente en desuso ya que nuestra aplicación no permite el registro de nuevos usuarios.
+ * En su lugar, los usuarios deben ser creados por un superadministrador o administrador.
+ */
 class RegisteredUserController extends Controller
 {
     /**

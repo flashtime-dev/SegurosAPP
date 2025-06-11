@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 use Illuminate\Auth\Access\AuthorizationException;
 
+/**
+ * Controlador para gestionar las operaciones relacionadas con los siniestros.
+ * Incluye métodos para listar, crear, actualizar, eliminar y mostrar siniestros.
+ */
 class SiniestroController extends Controller
 {
     public function __construct()
@@ -27,7 +31,7 @@ class SiniestroController extends Controller
         $this->middleware(CheckPermiso::class . ':siniestros.eliminar', ['only' => ['destroy']]);
     }
     /**
-     * Display a listing of the resource.
+     * Muestra una lista de los siniestros.
      */
     public function index()
     {
@@ -39,7 +43,7 @@ class SiniestroController extends Controller
                 $siniestros = Siniestro::with('poliza', 'contactos')->get(); // Obtener todos los siniestros con sus relaciones
                 $polizas = Poliza::all(); // Obtener todas las pólizas
             } else {
-                // Obtener comunidades donde el usuario es propietario O está asignado como usuario
+                // Obtener comunidades donde el usuario es propietario o está asignado como usuario
                 $comunidades = Comunidad::where('id_propietario', $user->id)
                     ->orWhereHas('users', function ($query) use ($user) {
                         $query->where('users.id', $user->id);
@@ -47,10 +51,13 @@ class SiniestroController extends Controller
                     ->with('users')
                     ->get();
 
+                //obtener siniestros de las pólizas de las comunidades del usuario
                 $siniestros = Siniestro::whereIn('id_poliza', Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->pluck('id'))
                     ->with(['poliza', 'contactos'])
                     ->get();
-                $polizas = Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->get(); // Obtener pólizas de las comunidades del usuario
+
+                // Obtener pólizas de las comunidades del usuario
+                $polizas = Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->get();
                 //dd($polizas); // Debugging: Verificar las pólizas cargadas
             }
             Log::info("SiniestroController@index - Siniestros cargados correctamente");
@@ -71,26 +78,17 @@ class SiniestroController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    // public function create()
-    // {
-    //     $polizas = Poliza::all(); // Obtener todas las pólizas
-    //     $contactos = Contacto::all(); // Obtener todos los contactos
-    //     return view('siniestros.create', compact('polizas', 'contactos')); // Retornar la vista para crear un nuevo siniestro
-    // }
-
-    /**
-     * Store a newly created resource in storage.
+     *  Almacena un nuevo siniestro en la base de datos.
      */
     public function store(Request $request)
     {
-
+        // Capitalizar solo la primera palabra de los campos declaracion y tramitador
         $request->merge([
             'declaracion' => ucfirst($request->declaracion),
             'tramitador' => ucfirst($request->tramitador),
         ]);
 
+        // Validación de los datos del siniestro
         $request->validate([
             'id_poliza' => 'required|exists:polizas,id',
             'declaracion' => 'required|string|min:10|max:1000',
@@ -137,6 +135,7 @@ class SiniestroController extends Controller
             'contactos.*.telefono' => 'Formato de teléfono incorrecto',
         ]);
         try {
+            // Preparar datos excepto contactos y archivos
             $data = $request->except(['contactos', 'files']);
 
             // Determinar si hay archivos adjuntos
@@ -174,7 +173,9 @@ class SiniestroController extends Controller
                     $siniestro->contactos()->create($contacto);
                 }
             }
+
             Log::info("SiniestroController@store - Siniestro creado correctamente", ['id' => $siniestro->id]);
+            // Redirigir a la lista de siniestros con un mensaje de éxito
             return redirect()->route('siniestros.index')->with([
                 'success' => [
                     'id' => uniqid(),
@@ -193,15 +194,19 @@ class SiniestroController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mostrar los detalles de un siniestro específico.
      */
     public function show($id)
     {
         try {
             $siniestro = Siniestro::with('poliza.compania', 'contactos', 'chats.usuario', 'adjuntos')->findOrFail($id); // Buscar el siniestro por ID
-            $this->authorize('view', $siniestro);
             //dd($siniestro); // Debugging: Verificar el siniestro cargado
+
+            // Verificar si el usuario tiene permiso para ver el siniestro
+            $this->authorize('view', $siniestro);
+
             Log::info("SiniestroController@show - Mostrando siniestro ID {$id}");
+
             return Inertia::render('siniestros/show', [
                 'chats' => $siniestro->chats, // Pasar los chats a la vista
                 'authUser' => Auth::id(), // Pasar el ID del usuario autenticado a la vista
@@ -230,17 +235,7 @@ class SiniestroController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    // public function edit(Siniestro $siniestro)
-    // {
-    //     $polizas = Poliza::all(); // Obtener todas las pólizas
-    //     $contactos = Contacto::all(); // Obtener todos los contactos
-    //     return view('siniestros.edit', compact('siniestro', 'polizas', 'contactos')); // Retornar la vista para editar el siniestro
-    // }
-
-    /**
-     * Update the specified resource in storage.
+     *  Actualiza un siniestro existente en la base de datos.
      */
     public function update(Request $request, Siniestro $siniestro)
     {
@@ -376,12 +371,15 @@ class SiniestroController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un siniestro y sus archivos asociados.
      */
     public function destroy($id)
     {
         try {
+            // Buscar el siniestro por ID 
             $siniestro = Siniestro::findOrFail($id);
+
+            // Verificar si el usuario tiene permiso para eliminar el siniestro
             $this->authorize('delete', $siniestro);
 
             // Borrar toda la carpeta de archivos (si existe).
@@ -419,10 +417,16 @@ class SiniestroController extends Controller
         }
     }
 
+    /**
+     *  Devuelve un archivo PDF asociado a un siniestro.
+     */
     public function servePDF($id, $filename)
     {
         try {
+            // Buscar el siniestro por ID
             $siniestro = Siniestro::findOrFail($id);
+
+            // Verificar si el usuario tiene permiso para ver el siniestro
             $this->authorize('view', $siniestro);
 
             // Validar que el archivo solicitado pertenece al siniestro
@@ -430,6 +434,7 @@ class SiniestroController extends Controller
                 ->where('url_adjunto', 'like', "%/s-{$id}/{$filename}")
                 ->first();
 
+            // Si no se encuentra el adjunto, abortar con error 404
             if (!$adjunto) {
                 Log::warning("Archivo no encontrado o no autorizado para siniestro {$id}: {$filename}");
                 abort(404, 'El archivo solicitado no está asociado a este siniestro.');
@@ -438,11 +443,16 @@ class SiniestroController extends Controller
             // Construir la ruta real del archivo
             $path = storage_path("app/private/siniestros/s-{$id}/{$filename}");
 
+            // Verificar si el archivo físico existe
             if (!file_exists($path)) {
                 Log::warning("Archivo físico no encontrado: {$path}");
                 abort(404, 'Archivo no encontrado en el servidor.');
             }
+
+            // Registrar el acceso al archivo
             Log::info("Archivo PDF servido correctamente: siniestro {$id} - {$filename}");
+
+            // Devolver el archivo PDF como respuesta
             return Response::file($path, [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'inline; filename="' . $filename . '"',
@@ -457,11 +467,19 @@ class SiniestroController extends Controller
         }
     }
 
+    /**
+     * Cierra un siniestro cambiando su estado a "Cerrado".
+     */
     public function cerrar($id)
     {
         try {
+            // Buscar el siniestro por ID
             $siniestro = Siniestro::findOrFail($id);
+
+            // Verificar si el usuario tiene permiso para actualizar el siniestro
             $this->authorize('update', $siniestro);
+
+            // Verificar si el siniestro ya está cerrado
             if ($siniestro->estado === 'Cerrado') {
                 return back()->with([
                     'info' => [

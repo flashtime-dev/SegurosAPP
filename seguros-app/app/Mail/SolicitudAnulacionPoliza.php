@@ -17,7 +17,7 @@ class SolicitudAnulacionPoliza extends Mailable
     public $poliza; // propiedad pública para acceder desde la vista
 
     /**
-     * Create a new message instance.
+     * Crear una nueva instancia del mensaje.
      */
     public function __construct(Poliza $poliza)
     {
@@ -25,7 +25,7 @@ class SolicitudAnulacionPoliza extends Mailable
     }
 
     /**
-     * Get the message envelope.
+     * Definir el asunto del mensaje.
      */
     public function envelope(): Envelope
     {
@@ -35,12 +35,12 @@ class SolicitudAnulacionPoliza extends Mailable
     }
 
     /**
-     * Get the message content definition.
+     *  Definir el contenido del mensaje.
      */
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.polizas.solicitud_anulacion',
+            markdown: 'emails.polizas.solicitud_anulacion', // plantilla blade markdown
             with: [
                 'poliza' => $this->poliza,
                 // aquí puedes pasar más variables si las necesitas
@@ -49,7 +49,7 @@ class SolicitudAnulacionPoliza extends Mailable
     }
 
     /**
-     * Get the attachments for the message.
+     * Definir los adjuntos del mensaje.
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */

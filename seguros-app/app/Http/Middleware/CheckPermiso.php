@@ -13,14 +13,16 @@ use Throwable;
 class CheckPermiso
 {
     /**
-     * Handle an incoming request.
+     * Este middleware verifica si el usuario autenticado tiene uno de los permisos requeridos.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next, string $permisoNombres): Response
     {
         try{
+            // Verifica si el usuario está autenticado
             $user = Auth::user();
+            // Si no hay usuario autenticado, redirigir a la página de login
             if (!$user) {
                 Log::warning('Intento de acceso sin autenticar.');
                 return redirect()->route('login');
@@ -35,13 +37,15 @@ class CheckPermiso
             $nombres = explode('|', $permisoNombres);
 
             foreach ($nombres as $nombre) {
+                // Verifica si el permiso existe en la base de datos
                 $permiso = Permiso::where('nombre', $nombre)->first();
 
+                // Si uno de los permisos no existe, lanza error 500
                 if (!$permiso) {
-                    // Si uno de los permisos no existe, lanza error 500
                     abort(500, "Permiso '{$nombre}' no está registrado en la base de datos.");
                 }
 
+                // Verifica si el usuario tiene el permiso requerido
                 if ($permiso && $user->rol && $user->rol->permisos->contains('id', $permiso->id)) {
                     Log::info("Acceso concedido al usuario ID {$user->id} con permiso '{$nombre}' en ruta {$request->route()->getName()}");
                     return $next($request);

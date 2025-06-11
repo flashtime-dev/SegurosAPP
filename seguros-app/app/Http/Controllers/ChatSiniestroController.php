@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Throwable;
-use Illuminate\Routing\Controller as BaseController;
 use App\Http\Middleware\CheckPermiso;
 
-class ChatSiniestroController extends BaseController
+// Controlador para manejar los chats de siniestros
+class ChatSiniestroController extends Controller
 {
     public function __construct()
     {
@@ -19,7 +19,7 @@ class ChatSiniestroController extends BaseController
         $this->middleware(CheckPermiso::class . ':chats_siniestros.crear', ['only' => ['store']]);
     }
     /**
-     * Store a newly created resource in storage.
+     * Método para almacenar un nuevo mensaje en el chat de un siniestro.
      */
     public function store(Request $request, $idSiniestro)
     {
@@ -30,11 +30,13 @@ class ChatSiniestroController extends BaseController
                 'mensaje' => $request->mensaje
             ]);
 
+            // Validar los datos de entrada
             $request->validate([
                 'mensaje' => 'required|string|max:1000',
                 'adjunto' => 'nullable|boolean',
             ]);
 
+            // Crear el mensaje del chat de siniestro
             $chat = ChatSiniestro::create([
                 'id_siniestro' => $idSiniestro,
                 'id_usuario' => Auth::id(), // Usuario autenticado
@@ -43,14 +45,16 @@ class ChatSiniestroController extends BaseController
             ]);
 
             // Cargar el usuario para incluirlo en la respuesta
-            
-            $chat->load('usuario'); // Carga la relación usuario
+            $chat->load('usuario');
 
             Log::info("💾 Chat creado", [
                 'chat_id' => $chat->id,
                 'chat_data' => $chat->toArray()
             ]);
 
+            // Enviar el mensaje a otros usuarios conectados
+            // Esto asume que tienes configurado broadcasting en tu aplicación
+            // y que el evento MessageSentSiniestro está correctamente configurado
             Log::info("📡 Enviando broadcast");
             broadcast(new MessageSentSiniestro($chat))->toOthers();
             Log::info("📡 Broadcast enviado");

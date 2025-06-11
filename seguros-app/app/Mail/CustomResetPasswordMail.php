@@ -16,7 +16,7 @@ class CustomResetPasswordMail extends Mailable
     public $user;
 
     /**
-     * Create a new message instance.
+     *  Crear una nueva instancia de mensaje.
      */
     public function __construct($user, $token)
     {
@@ -25,7 +25,7 @@ class CustomResetPasswordMail extends Mailable
     }
 
     /**
-     * Get the message envelope.
+     *  Definir el sobre del mensaje.
      */
     public function envelope(): Envelope
     {
@@ -35,12 +35,12 @@ class CustomResetPasswordMail extends Mailable
     }
 
     /**
-     * Get the message content definition.
+     *  Definir el contenido del mensaje.
      */
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.auth.reset_password', // tu plantilla blade markdown
+            markdown: 'emails.auth.reset_password', // plantilla blade markdown
             with: [
                 'user' => $this->user,
                 'token' => $this->token,
@@ -50,7 +50,7 @@ class CustomResetPasswordMail extends Mailable
     }
 
     /**
-     * Get the attachments for the message.
+     *  Definir los adjuntos del mensaje.
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
