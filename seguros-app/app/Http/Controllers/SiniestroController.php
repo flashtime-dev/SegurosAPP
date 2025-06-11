@@ -14,6 +14,7 @@ use App\Http\Middleware\CheckPermiso;
 
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class SiniestroController extends Controller
 {
@@ -61,11 +62,11 @@ class SiniestroController extends Controller
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@index: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->with([
-                    'error' => [
-                        'id' => uniqid(),
-                        'mensaje' => "Error al cargar la lista de siniestros",
-                    ],
-                ]);
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al cargar la lista de siniestros",
+                ],
+            ]);
         }
     }
 
@@ -149,7 +150,6 @@ class SiniestroController extends Controller
                     // Cambiar el adjunto a true
                     $siniestro->adjunto = true;
                     $siniestro->save();
-
                 }
             }
 
@@ -194,6 +194,15 @@ class SiniestroController extends Controller
                 'contactos' => $siniestro->contactos, // Pasar los contactos a la vista
                 'poliza' => $siniestro->poliza, // Pasar la póliza a la vista
             ]); // Retornar la vista con los detalles del siniestro
+        } catch (AuthorizationException $e) {
+            Log::warning("Acceso denegado al siniestro ID {$id} por el usuario ID " . Auth::id());
+
+            return redirect()->route('siniestros.index')->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "No tienes acceso a este siniestro",
+                ],
+            ]);
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@show: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->route('siniestros.index')->with([

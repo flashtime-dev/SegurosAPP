@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Response;
 use App\Mail\SolicitudAnulacionPoliza;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class PolizaController extends Controller
 {
@@ -161,20 +162,39 @@ class PolizaController extends Controller
      */
     public function show(string $id)
     {
-        $poliza = Poliza::with(['compania', 'comunidad', 'siniestros', 'agente', 'chats.usuario'])->findOrFail($id);
-        $this->authorize('view', $poliza);
+        try {
+            $poliza = Poliza::with(['compania', 'comunidad', 'siniestros', 'agente', 'chats.usuario'])->findOrFail($id);
+            $this->authorize('view', $poliza);
 
-        $siniestros = $poliza->siniestros;
-        $chats = $poliza->chats()->with('usuario')->orderBy('created_at')->get();
-        $authUser = Auth::id();
-        Log::info('Mostrando póliza', ['poliza_id' => $id, 'user_id' => $authUser]);
+            $siniestros = $poliza->siniestros;
+            $chats = $poliza->chats()->with('usuario')->orderBy('created_at')->get();
+            $authUser = Auth::id();
+            Log::info('Mostrando póliza', ['poliza_id' => $id, 'user_id' => $authUser]);
 
-        return Inertia::render('polizas/show', [
-            'poliza' => $poliza,
-            'siniestros' => $siniestros,
-            'chats' => $chats,
-            'authUser' => $authUser,
-        ]);
+            return Inertia::render('polizas/show', [
+                'poliza' => $poliza,
+                'siniestros' => $siniestros,
+                'chats' => $chats,
+                'authUser' => $authUser,
+            ]);
+        } catch (AuthorizationException $e) {
+            Log::warning("Acceso denegado a la Póliza ID {$id} por el usuario ID " . Auth::id());
+
+            return redirect()->route('polizas.index')->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "No tienes acceso a esta póliza",
+                ],
+            ]);
+        } catch (Throwable $e) {
+            Log::error('Error en PolizaController@show: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->route('polizas.index')->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al cargar la póliza",
+                ],
+            ]);
+        }
     }
 
     /**
@@ -337,7 +357,7 @@ class PolizaController extends Controller
                 'success' => [
                     'id' => uniqid(),
                     'mensaje' => "Solicitud de anulación enviada correctamente para la póliza con la comunidad "
-                    .$poliza->comunidad->nombre. ($poliza->numero ? " y número " . $poliza->numero : ", sin número"),
+                        . $poliza->comunidad->nombre . ($poliza->numero ? " y número " . $poliza->numero : ", sin número"),
                 ],
             ]);
         } catch (Throwable $e) {
@@ -346,7 +366,7 @@ class PolizaController extends Controller
                 'error' => [
                     'id' => uniqid(),
                     'mensaje' => "Error al enviar la solicitud de anulación para la póliza con la comunidad "
-                    .$poliza->comunidad->nombre. ($poliza->numero ? " y número " . $poliza->numero : ", sin número"),
+                        . $poliza->comunidad->nombre . ($poliza->numero ? " y número " . $poliza->numero : ", sin número"),
                 ],
             ]);
         }
