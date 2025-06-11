@@ -14,7 +14,6 @@ class SubUsuariosSeeder_Prueba extends Seeder
     public function run(): void
     {
         $subusuarios = [
-            ['id' => 3,  'id_usuario_creador' => 3],
             ['id' => 4,  'id_usuario_creador' => 3],
             ['id' => 5,  'id_usuario_creador' => 3],
             ['id' => 6,  'id_usuario_creador' => 3],
