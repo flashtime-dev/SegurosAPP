@@ -128,6 +128,7 @@ class UserController extends BaseController
             'password.regex' => 'La contraseña debe ser de 8 caracteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)',
             'phone' => 'Formato de teléfono incorrecto',
             'state.required' => 'El estado es obligatorio',
+            'state.boolean' => 'El estado no es correcto.',
             'state.exists' => 'El estado seleccionado no es vállido',
             'address.min' => 'La dirección debe tener al menos 3 caracteres',
             'address.max' => 'La dirección no puede exceder los 255 caracteres',
@@ -198,8 +199,15 @@ class UserController extends BaseController
         // Validar los datos del formulario
         $request->validate([
             'name' => 'required|string|min:2|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
-            'password' => 'required|string|confirmed|regex:/^(?=.*[a-zñ])(?=.*[A-ZÑ])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-zñÑ\d@$!%*?&#_.-]{8,}$/',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                'unique:users,email,' . $user->id, // Excluir el correo actual del usuario
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i', // Validar formato de correo electrónico
+            ],
+            'password' => 'nullable|string|confirmed|regex:/^(?=.*[a-zñ])(?=.*[A-ZÑ])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-zñÑ\d@$!%*?&#_.-]{8,}$/', // Contraseña opcional
             'id_rol' => 'required|exists:roles,id',
             'address' => 'nullable|string|min:3|max:255',
             'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
@@ -218,6 +226,7 @@ class UserController extends BaseController
             'password.regex' => 'La contraseña debe ser de 8 caracteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)',
             'phone' => 'Formato de teléfono incorrecto',
             'state.required' => 'El estado es obligatorio',
+            'state.boolean' => 'El estado no es correcto.',
             'state.exists' => 'El estado seleccionado no es vállido',
             'address.min' => 'La dirección debe tener al menos 3 caracteres',
             'address.max' => 'La dirección no puede exceder los 255 caracteres',

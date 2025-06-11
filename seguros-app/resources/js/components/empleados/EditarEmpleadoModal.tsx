@@ -133,6 +133,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
                                     onChange={(e) => setData('password', e.target.value)}
                                     disabled={processing}
                                     placeholder="Nueva contraseña"
+                                    title="La contraseña debe ser de 8 caracteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)"
                                 />
                                 <InputError message={errors.password} className="mt-2" />
                             </div>
@@ -146,6 +147,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
                                     onChange={(e) => setData('password_confirmation', e.target.value)}
                                     disabled={processing}
                                     placeholder="Confirmar contraseña"
+                                    title="La contraseña debe ser de 8 caracteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)"
                                 />
                                 <InputError message={errors.password_confirmation} className="mt-2" />
                             </div>
