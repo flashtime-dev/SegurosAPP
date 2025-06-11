@@ -26,7 +26,9 @@ type Props = {
 };
 
 export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: Props) {
-    const empleados = usuarios.filter((usuario) => usuario.usuario_creador === null);
+    const empleados = usuarios.filter(
+        (usuario) => usuario.usuario_creador === null && usuario.rol.id === 2
+    );
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",

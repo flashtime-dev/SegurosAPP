@@ -27,7 +27,9 @@ type Props = {
 };
 
 export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, user }: Props) {
-    const empleados = usuarios.filter((usuario) => usuario.usuario_creador === null);
+    const empleados = usuarios.filter(
+        (usuario) => usuario.usuario_creador === null && usuario.rol.id === 2
+    );
     const { data, setData, put, processing, errors, reset } = useForm({
         name: "",
         email: "",
