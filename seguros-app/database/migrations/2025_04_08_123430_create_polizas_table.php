@@ -24,7 +24,7 @@ return new class extends Migration
             $table->decimal('prima_neta', 10, 2); // Prima neta obligatoria
             $table->decimal('prima_total', 10, 2); // Prima total obligatoria
             $table->string('pdf_poliza', 255)->nullable(); // PDF de la póliza opcional
-            $table->text('observaciones')->nullable(); // Observaciones opcionales
+            $table->text('observaciones', 1000)->nullable(); // Observaciones opcionales
             $table->enum('estado', ['En Vigor', 'Anulada', 'Solicitada', 'Externa', 'Vencida']); // Estado obligatorio
             $table->timestamps();
         });
