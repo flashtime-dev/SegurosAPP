@@ -29,7 +29,6 @@ class UserController extends BaseController
         $this->middleware(CheckPermiso::class . ':usuarios.crear|empleados.crear', ['only' => ['store']]);
         $this->middleware(CheckPermiso::class . ':usuarios.editar|empleados.editar', ['only' => ['update']]);
         $this->middleware(CheckPermiso::class . ':usuarios.eliminar|empleados.eliminar', ['only' => ['destroy']]);
-
     }
 
     /**
@@ -41,7 +40,7 @@ class UserController extends BaseController
             // Cargar todos los usuarios con sus roles y subusuarios relacionados
             $users = User::with('rol', 'subusuarios.usuario:id,id_rol,name,email,address,phone,state', 'usuarioCreador')->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
             //dd($users); // Debugging: Verificar los datos de los usuarios
-            
+
             Log::info('Usuarios cargados correctamente.');
 
             return Inertia::render('usuarios/index', [
@@ -69,7 +68,7 @@ class UserController extends BaseController
             // Obtener la sesion de usuario autenticado y su id_usuario_creador
             $user = Auth::user();
             $id_usuario_creador = Subusuario::where('id', $user->id)->value('id_usuario_creador') ?? 0; // Obtener el id_usuario_creador del usuario autenticado, si existe
-            
+
             // Cargar los empleados relacionados con el usuario autenticado y su id_usuario_creador
             $users = User::with(
                 'rol',
@@ -114,7 +113,6 @@ class UserController extends BaseController
      */
     public function store(Request $request)
     {
-
         // Capitalizar cada palabra del nombre antes de la validación
         $request->merge([
             'name' => ucfirst(($request->name)),
@@ -150,6 +148,11 @@ class UserController extends BaseController
             'id_usuario_creador.exists' => 'El creador del usuario debe existir',
         ]);
         try {
+            // Si el usuario es superadministrador, ignoramos cualquier id_usuario_creador
+            if ($request->id_rol == 1) {
+                $request->merge(['id_usuario_creador' => null]);
+            }
+
             // Crear un nuevo usuario con los datos del formulario
             $user = User::create([
                 'name' => $request->name,
@@ -160,10 +163,9 @@ class UserController extends BaseController
                 'phone' => $request->phone,
                 'state' => $request->boolean('state'), // Convertir a booleano
             ]);
-
             // Si el usuario tiene un id_usuario_creador, crear un subusuario
             //filled('id_usuario_creador') verifica si el campo está presente y no está vacío
-            if ($user && $request->filled('id_usuario_creador')) {
+            if ($user && $user->id_rol != 1 && $request->filled('id_usuario_creador')) {
                 Subusuario::create([
                     'id' => $user->id,
                     'id_usuario_creador' => $request->id_usuario_creador,
@@ -239,6 +241,11 @@ class UserController extends BaseController
             'id_usuario_creador.exists' => 'El creador del usuario debe existir',
         ]);
         try {
+            // Si el usuario es superadministrador, ignoramos cualquier id_usuario_creador
+            if ($request->id_rol == 1) {
+                $request->merge(['id_usuario_creador' => null]);
+            }
+
             // Actualizar los datos del usuario
             $user->update([
                 'name' => $request->name,
@@ -250,7 +257,10 @@ class UserController extends BaseController
                 'state' => $request->state ?? $user->state,
             ]);
 
-            if ($user && $request->filled('id_usuario_creador')) {
+            // Si el usuario es superadministrador, eliminar cualquier registro en subusuarios para este usuario
+            if ($user->id_rol == 1) {
+                Subusuario::where('id', $user->id)->delete();
+            } elseif ($request->filled('id_usuario_creador')) {
                 // Si el usuario tiene un id_usuario_creador, actualizarlo
                 $subusuario = Subusuario::where('id', $user->id)->first();
                 if ($subusuario) {
