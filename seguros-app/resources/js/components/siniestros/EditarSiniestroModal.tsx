@@ -349,6 +349,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                     }
                                                     placeholder="Gerente de Siniestros"
                                                 />
+                                                <InputError message={(errors as Record<string, string>)[`contactos.${index}.cargo`]} />
                                             </div>
                                             <div>
                                                 <Label htmlFor={`piso-${index}`}>Piso</Label>
@@ -365,6 +366,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                                     }
                                                     placeholder="Piso 3"
                                                 />
+                                                <InputError message={(errors as Record<string, string>)[`contactos.${index}.piso`]} />
                                             </div>
                                             <div>
                                                 <Label htmlFor="telefono">Teléfono *</Label>

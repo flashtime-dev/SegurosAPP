@@ -39,7 +39,7 @@ type FormData = {
 
 export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSeleccionada }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
-        id_poliza: polizaSeleccionada || '',
+        id_poliza: polizaSeleccionada || '125',
         declaracion: '',
         tramitador: '',
         expediente: '',
@@ -226,8 +226,10 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                             : "Ningún archivo seleccionado"}
                                     </div>
                                 </label>
-
+                                
                                 <InputError message={errors.files} className="mt-2" />
+                                {/* Errores individuales por archivo */}
+ 
                                 {/* Si quieres mostrar el error de cada archivo, podrías descomentar:
                                     <InputError message={errors["files.*"]} />
                                 */}
@@ -281,6 +283,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                                     )}
                                                     placeholder="Gerente de Siniestros"
                                                 />
+                                                <InputError message={(errors as Record<string, string>)[`contactos.${index}.cargo`]} />
                                             </div>
                                             <div>
                                                 <Label htmlFor={`piso-${index}`}>Piso</Label>
@@ -294,6 +297,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                                     )}
                                                     placeholder="Piso 3"
                                                 />
+                                                <InputError message={(errors as Record<string, string>)[`contactos.${index}.piso`]} />
                                             </div>
                                             <div>
                                                 <Label htmlFor="telefono">Teléfono *</Label>
