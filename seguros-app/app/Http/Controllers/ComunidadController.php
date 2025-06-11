@@ -119,10 +119,18 @@ class ComunidadController extends Controller
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
         ], [
             'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'nombre.max' => 'El nombre no puede tener más de 255 caracteres.',
+            'nombre.required' => 'El nombre es obligatorio.',
+            'cif.required' => 'El CIF es obligatorio',
             'cif.regex' => 'El CIF debe comenzar con una letra válida y seguir con 8 dígitos.',
             'cif.unique' => 'El CIF ya está en uso.',
+            'direccion.min' => 'La dirección debe tener al menos 3 caracteres.',
+            'direccion.max' => 'La dirección no puede exceder de 255 caracteres.',
+            'ubi_catastral.min' => 'La ubicación catastral debe tener al menos 3 caracteres.',
+            'ubi_catastral.max' => 'La ubicación catastral no puede exceder de 255 caracteres.',
             'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
             'telefono' => 'Formato de teléfono incorrecto',
+            'usuarios.exists' => 'Alguno de los usuarios seleccionados no existe.',
         ]);
 
         try {
@@ -211,7 +219,7 @@ class ComunidadController extends Controller
 
         $request->validate([
             'nombre' => 'required|string|min:2|max:255',
-            'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
+            'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif',
             'direccion' => 'nullable|string|min:3|max:255',
             'ubi_catastral' => 'nullable|string|min:3|max:255',
             'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
@@ -219,11 +227,19 @@ class ComunidadController extends Controller
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
         ], [
-            'nombre.min' => 'El nombre debe tener al menos 2 carácteres.',
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'nombre.max' => 'El nombre no puede tener más de 255 caracteres.',
+            'nombre.required' => 'El nombre es obligatorio.',
+            'cif.required' => 'El CIF es obligatorio',
             'cif.regex' => 'El CIF debe comenzar con una letra válida y seguir con 8 dígitos.',
             'cif.unique' => 'El CIF ya está en uso.',
-            'ref_catastral.regex' => 'La referencia catastral debe tener 20 carácteres alfanuméricos.',
+            'direccion.min' => 'La dirección debe tener al menos 3 caracteres.',
+            'direccion.max' => 'La dirección no puede exceder de 255 caracteres.',
+            'ubi_catastral.min' => 'La ubicación catastral debe tener al menos 3 caracteres.',
+            'ubi_catastral.max' => 'La ubicación catastral no puede exceder de 255 caracteres.',
+            'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
             'telefono' => 'Formato de teléfono incorrecto',
+            'usuarios.exists' => 'Alguno de los usuarios seleccionados no existe.',
         ]);
         try {
             // Actualizar los datos de la comunidad excepto los usuarios
