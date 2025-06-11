@@ -109,21 +109,29 @@ class UserController extends BaseController
         $request->validate([
             'name' => 'required|string|min:2|max:255',
             'email' => 'required|string|email|max:255|unique:users,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
-            'password' => 'required|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-z\d@$!%*?&#_.-]{8,}$/',
+            'password' => 'required|string|confirmed|regex:/^(?=.*[a-z]ñ)(?=.*[A-ZÑ])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-zñÑ\d@$!%*?&#_.-]{8,}$/',
             'id_rol' => 'required|exists:roles,id',
             'address' => 'nullable|string|min:3|max:255',
             'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-            'state' => 'required|boolean',
+            'state' => 'required|boolean|exists:users,state',
             'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
         ], [
             'name.min' => 'El nombre debe tener al menos 2 caracteres',
+            'name.max' => 'El nombre no puede exeder los 255 caracters',
+            'name.required' => 'El nombre es obligatorio',
             'email.required' => 'El correo electrónico es obligatorio',
             'email.unique' => 'El correo electrónico ya está en uso',
             'email.regex' => 'El formato del correo electrónico es inválido',
             'id_rol.required' => 'Debes seleccionar un rol',
+            'id_rol.exists' => 'El rol seleccionado no es válido',
             'password.confirmed' => 'Las contraseñas no coinciden',
-            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)',
+            'password.regex' => 'La contraseña debe ser de 8 caracteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)',
             'phone' => 'Formato de teléfono incorrecto',
+            'state.required' => 'El estado es obligatorio',
+            'state.exists' => 'El estado seleccionado no es vállido',
+            'address.min' => 'La dirección debe tener al menos 3 caracteres',
+            'address.max' => 'La dirección no puede exceder los 255 caracteres',
+            'id_usuario_creador.exists' => 'El creador del usuario debe existir',
         ]);
         try {
             $user = User::create([
@@ -190,26 +198,30 @@ class UserController extends BaseController
         // Validar los datos del formulario
         $request->validate([
             'name' => 'required|string|min:2|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users,email,' . $user->id, // Excluir el correo actual del usuario
-                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i', // Validar formato de correo electrónico
-            ],
-            'password' => 'nullable|string|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-z\d@$!%*?&#_.-]{8,}$/', // Contraseña opcional
+            'email' => 'required|string|email|max:255|unique:users,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
+            'password' => 'required|string|confirmed|regex:/^(?=.*[a-z]ñ)(?=.*[A-ZÑ])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-zñÑ\d@$!%*?&#_.-]{8,}$/',
             'id_rol' => 'required|exists:roles,id',
             'address' => 'nullable|string|min:3|max:255',
             'phone' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
-            'state' => 'required|boolean',
+            'state' => 'required|boolean|exists:users,state',
             'id_usuario_creador' => 'nullable|exists:users,id', // Validar que el id_usuario_creador exista
         ], [
             'name.min' => 'El nombre debe tener al menos 2 caracteres',
-            'email.regex' => 'El formato del correo electrónico es inválido.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password.regex' => 'La contraseña debe ser de 8 carácteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)',
+            'name.max' => 'El nombre no puede exeder los 255 caracters',
+            'name.required' => 'El nombre es obligatorio',
+            'email.required' => 'El correo electrónico es obligatorio',
+            'email.unique' => 'El correo electrónico ya está en uso',
+            'email.regex' => 'El formato del correo electrónico es inválido',
+            'id_rol.required' => 'Debes seleccionar un rol',
+            'id_rol.exists' => 'El rol seleccionado no es válido',
+            'password.confirmed' => 'Las contraseñas no coinciden',
+            'password.regex' => 'La contraseña debe ser de 8 caracteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)',
             'phone' => 'Formato de teléfono incorrecto',
+            'state.required' => 'El estado es obligatorio',
+            'state.exists' => 'El estado seleccionado no es vállido',
+            'address.min' => 'La dirección debe tener al menos 3 caracteres',
+            'address.max' => 'La dirección no puede exceder los 255 caracteres',
+            'id_usuario_creador.exists' => 'El creador del usuario debe existir',
         ]);
         try {
             // Actualizar los datos del usuario
