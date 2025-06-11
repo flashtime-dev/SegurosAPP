@@ -46,14 +46,14 @@ class PasswordController extends Controller
                 'required',
                 'string',
                 'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&#_.]{8,}$/',
+                'regex:/^(?=.*[a-zñ])(?=.*[A-ZÑ])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-zñÑ\d@$!%*?&#_.-]{8,}$/',
             ],
         ], [
             'current_password.required' => 'La contraseña actual es obligatoria.',
             'current_password.current_password' => 'La contraseña actual es incorrecta.',
             'password.required' => 'La nueva contraseña es obligatoria.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password.regex' => 'La contraseña debe tener al menos 8 carácteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.).',
+            'password.regex' => 'La contraseña debe tener al menos 8 carácteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-).',
         ]);
 
         $request->user()->update([

@@ -59,6 +59,8 @@ class AgenteController extends BaseController
             'email' => 'nullable|string|email|max:255|unique:agentes,email|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i',
         ], [
             'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'nombre.max' => 'El nombre no puede exceder los 255 caracteres.',
+            'nombre.required' => 'El nombre es obligatorio.',
             'email.unique' => 'El email ya está en uso.',
             'email.regex' => 'El formato del email es inválido.',
             'telefono' => 'Formato de teléfono incorrecto',
@@ -137,6 +139,8 @@ class AgenteController extends BaseController
             ],
         ], [
             'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'nombre.max' => 'El nombre no puede exceder los 255 caracteres.',
+            'nombre.required' => 'El nombre es obligatorio.',
             'email.unique' => 'El email ya está en uso.',
             'email.regex' => 'El formato del email es inválido.',
             'telefono' => 'Formato de teléfono incorrecto',

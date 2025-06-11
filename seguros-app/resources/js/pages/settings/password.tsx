@@ -86,6 +86,7 @@ export default function Password() {
                                 className="mt-1 block w-full"
                                 autoComplete="new-password"
                                 placeholder="Nueva contraseña"
+                                title="La contraseña debe ser de 8 caracteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)"
                             />
 
                             <InputError message={errors.password} />
@@ -102,6 +103,7 @@ export default function Password() {
                                 className="mt-1 block w-full"
                                 autoComplete="new-password"
                                 placeholder="Confirmar contraseña"
+                                title="La contraseña debe ser de 8 caracteres y contener al menos: una letra mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-)"
                             />
 
                             <InputError message={errors.password_confirmation} />
