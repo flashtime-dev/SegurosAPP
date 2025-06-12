@@ -26,12 +26,10 @@ export function PolizaLogoAcciones({ logoUrl, telefono, polizaId, numeroPoliza, 
             <div className="w-full space-y-2">
                 <Button
                     variant="outline"
-                    className={cn(
-                        "w-full dark:border-gray-500",
-                        noSePuede
+                    className={`w-full dark:border-gray-500 ${noSePuede
                             ? "cursor-not-allowed bg-gray-300 hover:bg-gray-300 opacity-50 dark:hover:bg-gray-600"
                             : "cursor-pointer hover:dark:bg-gray-700"
-                    )}
+                        }`}
                     onClick={onCrearSiniestro}
                     disabled={noSePuede}
                 >
@@ -39,12 +37,10 @@ export function PolizaLogoAcciones({ logoUrl, telefono, polizaId, numeroPoliza, 
                 </Button>
                 <Button
                     variant="outline"
-                    className={cn(
-                        "w-full dark:border-gray-500",
-                        noSePuede
-                            ? "cursor-not-allowed bg-gray-300 hover:bg-gray-300 opacity-50 dark:hover:bg-gray-600"
-                            : "cursor-pointer hover:dark:bg-gray-700"
-                    )}
+                    className={`w-full dark:border-gray-500 ${noSePuede
+                        ? "cursor-not-allowed bg-gray-300 hover:bg-gray-300 opacity-50 dark:hover:bg-gray-600"
+                        : "cursor-pointer hover:dark:bg-gray-700"
+                        }`}
                     onClick={() => setIsAnulacionModalOpen(true)}
                     disabled={noSePuede}
                 >
