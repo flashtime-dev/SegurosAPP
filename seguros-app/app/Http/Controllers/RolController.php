@@ -45,7 +45,7 @@ class RolController extends BaseController
             ]); // Retornar la vista con los datos
         } catch (Throwable $t) {
             Log::error('Error al listar roles: ' . $t->getMessage(), ['exception' => $t]);
-            return redirect()->route('roles.index')->with([
+            return redirect()->back()->with([
                     'error' => [
                         'id' => uniqid(),
                         'mensaje' => "Error al listar los roles",
