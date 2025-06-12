@@ -57,7 +57,7 @@ class PasswordResetLinkController extends Controller
             // Verificar el estado del envío del enlace
             if ($status === Password::RESET_LINK_SENT) {
                 Log::info('✔ Enlace de restablecimiento de contraseña enviado', ['email' => $request->email]);
-                return back()->with('status', __('Te enviaremos un enlace para restablecer tu contraseña si la cuenta existe.'));
+                return back()->with('status', __('Te enviaremos un enlace para restablecer tu contraseña.'));
             }
 
             // Si el estado no es exitoso, lanzar una excepción de validación
