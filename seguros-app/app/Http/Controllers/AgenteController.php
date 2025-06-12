@@ -27,12 +27,25 @@ class AgenteController extends Controller
      */
     public function index()
     {
-        $agentes = Agente::all(); // Obtener todos los agentes
-        return Inertia::render('agentes/index', [
-            'agentes' => $agentes, // Pasar los agentes a la vista
-            'success' => session('success'), // Pasar el mensaje de éxito a la vista
-            'error' => session('error'), // Pasar el mensaje de error a la vista
-        ]); // Retornar la vista con los datos
+        try{
+            $agentes = Agente::all(); // Obtener todos los agentes
+            return Inertia::render('agentes/index', [
+                'agentes' => $agentes, // Pasar los agentes a la vista
+                'success' => session('success'), // Pasar el mensaje de éxito a la vista
+                'error' => session('error'), // Pasar el mensaje de error a la vista
+            ]); // Retornar la vista con los datos
+        } catch (\Throwable $e) {
+            Log::error('❌ Error al obtener los agentes: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
+
+            return redirect()->back()->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => 'Error al cargar agentes',
+                ]
+            ]);
+        }
     }
 
 
