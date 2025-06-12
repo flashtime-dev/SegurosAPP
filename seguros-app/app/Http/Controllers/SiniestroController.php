@@ -463,7 +463,12 @@ class SiniestroController extends Controller
                 'filename' => $filename,
                 'exception' => $e
             ]);
-            return $this->handleException($e, 'SiniestroController@servePDF', 'siniestros.index', 'Error al servir el archivo PDF.');
+            return redirect()->route('siniestros.index')->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al mostrar el archivo Adjunto",
+                ],
+            ]);
         }
     }
 
