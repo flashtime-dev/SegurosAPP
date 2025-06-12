@@ -24,19 +24,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Rutas para el manejo de usuarios
-    Route::resource('usuarios', UserController::class)->except(['create', 'edit', 'show']);
+    Route::resource('usuarios', UserController::class)->except(['create', 'edit']);
 
     // Rutas para el manejo de roles
-    Route::resource('roles', RolController::class)->except(['create', 'edit', 'show']);
+    Route::resource('roles', RolController::class)->except(['create', 'edit']);
 
     // Rutas para el manejo de empleados(reutiliza rutas de usuarios)
     Route::get('empleados', [UserController::class, 'empleados'])->name('empleados.index');
 
     // Rutas para el manejo de comunidades
-    Route::resource('comunidades', ComunidadController::class)->except(['create', 'edit', 'show']);
+    Route::resource('comunidades', ComunidadController::class)->except(['create', 'edit']);
 
     // Rutas para el manejo de agentes
-    Route::resource('agentes', AgenteController::class)->except(['create', 'edit', 'show']);
+    Route::resource('agentes', AgenteController::class)->except(['create', 'edit']);
 
     // Rutas para el manejo de pólizas
     Route::resource('polizas', PolizaController::class)->except(['create', 'edit']);

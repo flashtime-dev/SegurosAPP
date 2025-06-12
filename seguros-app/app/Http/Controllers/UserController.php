@@ -190,6 +190,12 @@ class UserController extends BaseController
         }
     }
 
+    public function show($id)
+    {
+        //error 404 porque este método no está implementado
+        return abort(404, 'Método no implementado');
+    }
+
     /**
      * Actualiza un usuario existente en la base de datos.
      */

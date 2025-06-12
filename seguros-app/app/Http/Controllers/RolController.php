@@ -106,6 +106,12 @@ class RolController extends BaseController
         }
     }
 
+    public function show($id)
+    {
+        //error 404 porque este método no está implementado
+        return abort(404, 'Método no implementado');
+    }
+    
     /**
      *  Actualizar el recurso especificado en almacenamiento.
      */
