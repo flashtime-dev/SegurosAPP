@@ -1,3 +1,6 @@
+//En este archivo se definen los tipos de datos utilizados en la aplicación
+// y se exportan para su uso en otros módulos de TypeScript.
+
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 

@@ -10,13 +10,13 @@ import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
 export function UserCard({ usuario, onEdit }: { usuario: User; onEdit?: () => void }) {
     // Ref para el botón del menú
     const menuButtonRef = React.useRef<HTMLButtonElement>(null);
-    // Ref para controlar si el menú está abierto 
+    // Ref para controlar si el menú está abierto
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
     const handleEdit = (e: Event) => {
         e.preventDefault();
         
-        // Devolver el foco al botón del menú antes de cerrar
+        // Devolver el foco al botón del menú antes de cerrarlo
         if (menuButtonRef.current) {
             menuButtonRef.current.focus();
         }
@@ -26,7 +26,7 @@ export function UserCard({ usuario, onEdit }: { usuario: User; onEdit?: () => vo
         
         // Esperar a que termine la animación de cierre antes de abrir el modal
         setTimeout(() => {
-            if (onEdit) onEdit();
+            if (onEdit) onEdit(); // Llamar a la función onEdit pasada como prop
         }, 100);
     };
 

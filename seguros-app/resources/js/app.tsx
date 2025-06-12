@@ -1,3 +1,5 @@
+// Este archivo es el punto de entrada de tu aplicación React, configura el
+// sistema de navegación SPA y establece la estructura básica de la aplicación
 import '../css/app.css';
 
 import { createInertiaApp } from '@inertiajs/react';

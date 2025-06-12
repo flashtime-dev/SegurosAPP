@@ -165,14 +165,18 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                             </div> */}
                             <div>
                                 <Label htmlFor="phone">Teléfono</Label>
+                                {/* Componente para los telefonos */}
                                 <PhoneInputField
                                     value={data.phone}
                                     onChange={(value) => {
+                                        //Si no tiene valor se pone en vacio
                                         if (!value) {
                                             setData("phone", "");
                                             return;
                                         }
+                                        // Quitar todos los espacios
                                         const cleaned = value.replace(/\s/g, "");
+                                        // Comprobar que empieza por +, si no se lo agregamos
                                         const normalized = cleaned === "" ? "" : (cleaned.startsWith("+") ? cleaned : `+${cleaned}`);
                                         setData("phone", normalized);
                                     }}

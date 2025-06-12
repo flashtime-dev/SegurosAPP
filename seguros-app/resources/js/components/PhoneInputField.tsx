@@ -21,9 +21,9 @@ export default function PhoneInputField({ value, onChange, error, name = "phone"
                 onChange={(phone) => onChange(phone)}
                 inputProps={{
                     name,
-                    required: false,
+                    required: require,
                     autoFocus: false,
-                    placeholder: "+34 123 456 789",
+                    placeholder: "+34 654 321 723",
                 }}
                 // Sólo estos países estarán disponibles en el dropdown
                 onlyCountries={["es", "us", "fr", "gb", "de", "it", "pt", "mx", "ar", "br"]}

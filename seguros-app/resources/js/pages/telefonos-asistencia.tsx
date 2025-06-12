@@ -60,8 +60,9 @@ export default function TelefonosAsistencia() {
                 ))}
             </div>
 
-            {/* Modal para mostrar los detalles de la compañía */}
+            {/* Modal para mostrar los detalles de la compañía, si hay compañia seleccionada renderiza el componente */}
             {selectedCompania && (
+                // Controlamos si el modal esta abierto o cerrado. Si esta abierto y hay un cambio reseteamos la compañia
                 <Dialog open={!!selectedCompania} onOpenChange={() => setSelectedCompania(null)}>
                     <DialogContent>
                         <DialogHeader>

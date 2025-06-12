@@ -1,3 +1,4 @@
+// Configuración de Echo para Laravel con Reverb
 import Echo from 'laravel-echo';
 
 import Pusher from 'pusher-js';

@@ -14,7 +14,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Dashboard({comunidades, polizas, siniestros}: { comunidades: number, polizas: number, siniestros: number }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
+            {/* Titulo de la pestaña */}
             <Head title="Panel de Control" />
+
+            {/* Contenido del panel de control */}
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
@@ -53,9 +56,10 @@ export default function Dashboard({comunidades, polizas, siniestros}: { comunida
                         </div>
                     </div>
                 </div>
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
+                {/* Caja sombra para simular contenido */}
+                {/* <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                </div>
+                </div> */}
             </div>
         </AppLayout>
     );
