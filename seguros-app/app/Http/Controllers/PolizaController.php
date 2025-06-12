@@ -38,37 +38,52 @@ class PolizaController extends Controller
      * Si es un superadministrador, muestra todas las pólizas.
      * Si es un usuario normal, muestra solo las pólizas de las comunidades donde es propietario o está asignado.
      */
+    
     public function index()
     {
-        $user = Auth::user(); // Obtener el usuario autenticado
+        try{
+            $user = Auth::user(); // Obtener el usuario autenticado
 
-        // Verificar si el usuario tiene el rol de administrador
-        if ($user->rol->nombre == 'Superadministrador') {
-            $polizas = Poliza::with(['compania', 'comunidad', 'agente'])->get();
-            $companias = Compania::all();
-            $comunidades = Comunidad::all();
-            $agentes = Agente::all();
-        } else {
-            // Obtener comunidades donde el usuario es propietario O está asignado como usuario
-            $comunidades = Comunidad::where('id_propietario', $user->id)
-                ->orWhereHas('users', function ($query) use ($user) {
-                    $query->where('users.id', $user->id);
-                })
-                ->get();
-            $polizas = Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))
-                ->with(['compania', 'comunidad', 'agente'])
-                ->get();
-            $companias = Compania::all();
-            $agentes = Agente::all();
+            // Verificar si el usuario tiene el rol de administrador
+            if ($user->rol->nombre == 'Superadministrador') {
+                $polizas = Poliza::with(['compania', 'comunidad', 'agente'])->get();
+                $companias = Compania::all();
+                $comunidades = Comunidad::all();
+                $agentes = Agente::all();
+            } else {
+                // Obtener comunidades donde el usuario es propietario O está asignado como usuario
+                $comunidades = Comunidad::where('id_propietario', $user->id)
+                    ->orWhereHas('users', function ($query) use ($user) {
+                        $query->where('users.id', $user->id);
+                    })
+                    ->get();
+                $polizas = Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))
+                    ->with(['compania', 'comunidad', 'agente'])
+                    ->get();
+                $companias = Compania::all();
+                $agentes = Agente::all();
+            }
+
+            Log::info('Polizas listadas', ['user_id' => $user->id, 'count' => $polizas->count()]);
+            return Inertia::render('polizas/index', [
+                'polizas' => $polizas,
+                'companias' => $companias,
+                'comunidades' => $comunidades,
+                'agentes' => $agentes,
+            ]);
+        } catch (Throwable $e) {
+            Log::error('❌ Error al listar las pólizas: ' . $e->getMessage(), [
+                'exception' => $e,
+                'user_id' => Auth::id(),
+            ]);
+
+            return redirect()->back()->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => 'Error al cargar las pólizas',
+                ]
+            ]);
         }
-
-        Log::info('Polizas listadas', ['user_id' => $user->id, 'count' => $polizas->count()]);
-        return Inertia::render('polizas/index', [
-            'polizas' => $polizas,
-            'companias' => $companias,
-            'comunidades' => $comunidades,
-            'agentes' => $agentes,
-        ]);
     }
 
     /**
