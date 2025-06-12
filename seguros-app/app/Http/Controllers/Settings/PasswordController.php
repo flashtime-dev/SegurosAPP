@@ -55,27 +55,41 @@ class PasswordController extends Controller
             'password.confirmed' => 'Las contraseñas no coinciden.',
             'password.regex' => 'La contraseña debe tener al menos 8 carácteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-).',
         ]);
+        try{
+            // Actualizar la contraseña del usuario autenticado
+            // Se utiliza Hash::make para encriptar la nueva contraseña
+            // y se guarda en la base de datos.
+            $request->user()->update([
+                'password' => Hash::make($request->password),
+            ]);
 
-        // Actualizar la contraseña del usuario autenticado
-        // Se utiliza Hash::make para encriptar la nueva contraseña
-        // y se guarda en la base de datos.
-        $request->user()->update([
-            'password' => Hash::make($request->password),
-        ]);
+            // Finaliza validaciones personalizadas
 
-        // Finaliza validaciones personalizadas
+            Log::info('🔒 Contraseña actualizada correctamente.', [
+                'user_id' => $request->user()->id ?? null,
+                'email' => $request->user()->email ?? null,
+            ]);
 
-        Log::info('🔒 Contraseña actualizada correctamente.', [
-            'user_id' => $request->user()->id ?? null,
-            'email' => $request->user()->email ?? null,
-        ]);
+            // Redirige al usuario a la página anterior con un mensaje de éxito
+            return back()->with([
+                'success' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Tu contraseña ha sido actualizada correctamente",
+                ],
+            ]);
+        } catch (Throwable $e) {
+            Log::error('❌ Error al actualizar la contraseña del usuario: ' . $e->getMessage(), [
+                'exception' => $e,
+                'user_id' => $request->user()->id ?? null,
+                'email' => $request->user()->email ?? null,
+            ]);
 
-        // Redirige al usuario a la página anterior con un mensaje de éxito
-        return back()->with([
-            'success' => [
-                'id' => uniqid(),
-                'mensaje' => "Tu contraseña ha sido actualizada correctamente",
-            ],
-        ]);
+            return back()->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Se produjo un error al actualizar la contraseña. Intentalo de nuevo",
+                    ],
+                ]);
+        }
     }
 }

@@ -37,6 +37,9 @@ class UserController extends BaseController
     public function index()
     {
         try {
+            // Forzar una excepción directamente
+            // throw new \Exception('Forzado para entrar al catch');
+
             // Cargar todos los usuarios con sus roles y subusuarios relacionados
             $users = User::with('rol', 'subusuarios.usuario:id,id_rol,name,email,address,phone,state', 'usuarioCreador')->get(['id', 'id_rol', 'name', 'email', 'address', 'phone', 'state']);
             //dd($users); // Debugging: Verificar los datos de los usuarios
