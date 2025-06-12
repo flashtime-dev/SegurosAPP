@@ -49,7 +49,7 @@ const FiltroPolizas: React.FC<FiltroPolizasProps> = ({ onFilter }) => {
             <input
                 type="text"
                 name="cif"
-                placeholder="CIF"
+                placeholder="CIF de la comunidad"
                 value={cif}
                 onChange={(e) => setCif(e.target.value)}
                 className="px-4 py-2 border rounded shadow-sm w-full"

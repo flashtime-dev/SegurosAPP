@@ -29,7 +29,7 @@ export function SiniestroMenu({ poliza, siniestro, contactos, chats, authUser }:
                     <div className="flex flex-col md:flex-row justify-between gap-6">
                         <SiniestroDetalles siniestro={siniestro} />
                         <div className="md:w-1/3 w-full">
-                            <SiniestroLogoAcciones id={siniestro.id} logoUrl={poliza.compania.url_logo} />
+                            <SiniestroLogoAcciones id={siniestro.id} logoUrl={poliza.compania.url_logo} estadoSiniestro={siniestro.estado} />
                         </div>
                     </div>
                     <SiniestroChat chats={chats} authUser={authUser} siniestroId={siniestro.id} isClosed={isClosed} />

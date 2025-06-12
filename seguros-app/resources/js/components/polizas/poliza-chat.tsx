@@ -85,11 +85,11 @@ export function PolizaChat({ chats: initialChats, authUser, polizaId, isClosed }
                         className="border rounded-md p-2 flex-grow dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                         disabled={isClosed}
                     />
-                    <button type="submit" className={`text-white rounded-md p-2 ${
-                            isClosed ? 'bg-gray-400 cursor-not-allowed' : 'cursor-pointer bg-blue-500 dark:bg-blue-700 hover:bg-blue-600 dark:hover:bg-blue-800 focus-visible:ring-blue-300 dark:focus-visible:ring-blue-400'
+                    <Button type="submit" className={`text-gray-100 rounded-md p-5 ${
+                            isClosed ? '!bg-gray-400 cursor-not-allowed' : 'cursor-pointer bg-blue-500 dark:bg-blue-700 hover:bg-blue-600 dark:hover:bg-blue-800 focus-visible:ring-blue-300 dark:focus-visible:ring-blue-400'
                         }`} disabled={isClosed}>
                         Enviar
-                    </button>
+                    </Button>
                 </form>
             </div>
         </div>

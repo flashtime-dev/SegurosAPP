@@ -27,6 +27,7 @@ export function PolizaMenu({ poliza, siniestros, chats, authUser }: { poliza: Po
                                 logoUrl={poliza.compania.url_logo}
                                 polizaId={poliza.id}
                                 numeroPoliza={poliza.numero}
+                                estadoPoliza={poliza.estado}
                                 onCrearSiniestro={() => setIsCreatingSiniestro(true)}
                             />
                         </div>
