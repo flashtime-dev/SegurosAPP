@@ -8,17 +8,20 @@ import { Button } from '@/components/ui/button';
 import { Agente } from '@/types';
 import { useEffect } from 'react';
 
+//Las props controlan si el modal esta visible y la funcion para cerrar el modal.
 export default function EditarAgenteModal({ isOpen, onClose, agente }: {
     isOpen: boolean,
     onClose: () => void,
     agente: Agente | null
 }) {
+    //Datos del form
     const { data, setData, put, processing, errors, reset } = useForm({
         nombre: '',
         email: '',
         telefono: '',
     });
 
+    //Actualizacion automatica de los datos en relacion al agente
     useEffect(() => {
         if (agente) {
             setData({
@@ -29,6 +32,7 @@ export default function EditarAgenteModal({ isOpen, onClose, agente }: {
         }
     }, [agente]);
 
+    //Envio del form
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!agente) return;

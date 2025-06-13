@@ -19,7 +19,6 @@ import { Rol, User } from "@/types";
 import PhoneInputField from "@/components/PhoneInputField";
 
 type Props = {
-    usuarios: User[];
     isOpen: boolean;
     onClose: () => void;
     roles: Rol[];
@@ -27,7 +26,8 @@ type Props = {
     rolUsuarioActual: number;
 };
 
-export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, user, rolUsuarioActual }: Props) {
+export default function EditarEmpleadoModal({ isOpen, onClose, roles, user, rolUsuarioActual }: Props) {
+    //Datos del formulario
     const { data, setData, put, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -39,7 +39,9 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
         id_rol: "",
     });
 
-    console.log("user", user);
+    //console.log("user", user);
+
+    //Actualizar automaticamente los datos del formulario en base al usuario
     useEffect(() => {
         if (user) {
             setData({
@@ -66,6 +68,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
         return true; // Otros roles pueden ver todos
     });
 
+    //Enviar formulario
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         // Capitaliza la primera letra del nombre

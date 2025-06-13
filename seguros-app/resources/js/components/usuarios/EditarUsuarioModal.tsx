@@ -27,9 +27,12 @@ type Props = {
 };
 
 export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, user }: Props) {
-    const empleados = usuarios.filter(
+    //Filtro para solo mostrar solo los administradores principales
+    const adminPrincipales = usuarios.filter(
         (usuario) => usuario.usuario_creador === null && usuario.rol.id === 2
     );
+
+    //Datos para el formulario por defecto
     const { data, setData, put, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -42,11 +45,15 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
         id_usuario_creador: "",
     });
 
+    //Si el rol es superadmin
     const isSuperadmin = data.id_rol === '1';
 
-    console.log("user", user);
+    //console.log("user", user); //Debug
+
+    // Si hay cambios en el usuario actualizar los datos del formulario
     useEffect(() => {
         if (user) {
+            //Asignar datos del usuario seleccionado (user)
             setData({
                 name: user.name || "",
                 email: user.email || "",
@@ -63,12 +70,16 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
         }
     }, [user]);
 
+    // Funcion al enviar el formulario
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
         // Capitaliza la primera letra del nombre
         setData('name', data.name.charAt(0).toUpperCase() + data.name.slice(1));
         setData('address', data.address.charAt(0).toUpperCase() + data.address.slice(1));
+        
         if (user) {
+            //Mandar los datos a la ruta put
             put(route("usuarios.update", user.id), {
                 onSuccess: () => {
                     reset();
@@ -174,6 +185,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
 
                             <div>
                                 <Label htmlFor="phone">Teléfono</Label>
+                                {/* Componente para los telefonos */}
                                 <PhoneInputField
                                     value={data.phone}
                                     onChange={(value) => {
@@ -181,7 +193,9 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
                                             setData("phone", "");
                                             return;
                                         }
+                                        // Quitar todos los espacios
                                         const cleaned = value.replace(/\s/g, "");
+                                        // Comprobar que empieza por +, si no se lo agregamos
                                         const normalized = cleaned === "" ? "" : (cleaned.startsWith("+") ? cleaned : `+${cleaned}`);
                                         setData("phone", normalized);
                                     }}
@@ -241,7 +255,7 @@ export default function EditarUsuarioModal({ usuarios, isOpen, onClose, roles, u
                                         <SelectValue placeholder="Selecciona un usuario en caso afirmativo" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {empleados.map((usuario) => (
+                                        {adminPrincipales.map((usuario) => (
                                             <SelectItem key={usuario.id} value={String(usuario.id)}>
                                                 {usuario.name}
                                             </SelectItem>

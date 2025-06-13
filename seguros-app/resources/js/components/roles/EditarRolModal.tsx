@@ -10,36 +10,46 @@ import InputError from "@/components/input-error";
 import { LoaderCircle } from "lucide-react";
 
 type Props = {
-    isOpen: boolean;
-    onClose: () => void;
-    rol: Rol;
-    permisos: Permiso[];
-    permisosRol: Permiso[];
+    isOpen: boolean;        // Controla la visibilidad del modal
+    onClose: () => void;    // Función para cerrar el modal
+    rol: Rol;              // El rol que se va a editar
+    permisos: Permiso[];   // Lista de todos los permisos disponibles
+    permisosRol: Permiso[]; // Permisos actuales del rol
 };
 
 export default function EditarRolModal({ isOpen, onClose, rol, permisos, permisosRol }: Props) {
+    //Inicializacion del formulario
     const { data, setData, put, processing, errors, reset } = useForm({
-        nombre: rol.nombre || '',
-        permisos: (permisosRol || []).map((permiso) => permiso.id),
+        nombre: rol.nombre || '',  // Nombre actual del rol o cadena vacía
+        permisos: (permisosRol || []).map((permiso) => permiso.id), // IDs de los permisos actuales
     });
 
+    //Estado de permisos seleccionados
     const [selectedPermisos, setSelectedPermisos] = useState<Permiso[]>(
+        // Filtra los permisos iniciales para mostrar solo los asignados al rol
         permisos.filter((permiso) => (permisosRol || []).some((p) => p.id === permiso.id))
     );
 
+    //Añadir permiso
     const addPermiso = (permiso: Permiso) => {
+        //Si no encuentra el permiso
         if (!selectedPermisos.find((p) => p.id === permiso.id)) {
+            //Añade el permiso a los seleccionados
             setSelectedPermisos([...selectedPermisos, permiso]);
+            //Actualiza los permisos del form
             setData('permisos', [...data.permisos, permiso.id]);
         }
     };
 
+    //Borrar permiso
     const removePermiso = (permiso: Permiso) => {
+        // Filtra el permiso de los seleccionados
         const updatedPermisos = selectedPermisos.filter((p) => p.id !== permiso.id);
         setSelectedPermisos(updatedPermisos);
         setData('permisos', data.permisos.filter((id) => id !== permiso.id));
     };
 
+    //Envio del form
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         put(route('roles.update', rol.id), {

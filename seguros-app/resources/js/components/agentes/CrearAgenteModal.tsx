@@ -6,13 +6,16 @@ import PhoneInputField from "@/components/PhoneInputField";
 import { useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 
+//Las props controlan si el modal esta visible y la funcion para cerrar el modal
 export default function CrearAgenteModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+    //Datos del formulario
     const { data, setData, post, processing, errors, reset } = useForm({
         nombre: '',
         email: '',
         telefono: '',
     });
 
+    //Funcion para enviar form
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('agentes.store'), {

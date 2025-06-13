@@ -18,27 +18,32 @@ interface Props {
 }
 
 export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) {
+    // Definimos los estados para manejar la creación y edición de usuarios
     const [selectedRol, setSelectedRol] = useState<Rol | null>(null);
     const [isMenuOpen, setIsMenuOpen] = useState<{ [key: number]: boolean }>({});
+
+    //Referencias botones de id:elemento
     const menuButtonRefs = useRef<{ [key: number]: HTMLButtonElement | null }>({});
 
+    // Funcion para cambiar el foco y evitar problemas al editar un rol
     const handleEditRol = (e: Event, rol: Rol) => {
         e.preventDefault();
-        
+
         // Devolver el foco al botón del menú antes de cerrar
         if (menuButtonRefs.current[rol.id]) {
             menuButtonRefs.current[rol.id]?.focus();
         }
-        
+
         // Asegurarnos de que el menú se cierre correctamente
         setIsMenuOpen(prev => ({ ...prev, [rol.id]: false }));
-        
+
         // Esperar a que termine la animación de cierre antes de abrir el modal
         setTimeout(() => {
             if (onEditRol) onEditRol(rol);
         }, 100);
     };
 
+    // Funcion para eliminar un rol
     const handleDeleteRol = (rolId: number) => {
         if (confirm('¿Estás seguro de que deseas eliminar este rol?')) {
             router.delete(route('roles.destroy', rolId), {
@@ -51,6 +56,7 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
         }
     };
 
+    // Funcion con parametro 'id' que llama a otra funcion con otro parametro 'el'
     const setMenuButtonRef = (id: number) => (el: HTMLButtonElement | null) => {
         menuButtonRefs.current[id] = el;
     };
@@ -67,6 +73,7 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
                 <CardContent>
                     <ScrollArea className="h-72 pr-2">
                         <ul className="space-y-2">
+                            {/* Mostrar cada rol */}
                             {roles.map((rol) => (
                                 <li key={rol.id} className="flex items-center">
                                     <div
@@ -77,16 +84,22 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
                                     >
                                         {rol.nombre}
                                         <div className="justify-end ml-auto flex items-center">
+                                            {/* Menu de los 3 puntitos */}
                                             <DropdownMenu
+                                                // Inicialmente estara cerrado
                                                 open={isMenuOpen[rol.id]}
+                                                //Aqui asignamos si el menu se abre o cierra
                                                 onOpenChange={(open) => setIsMenuOpen(prev => ({ ...prev, [rol.id]: open }))}
                                             >
+                                                {/* Le añadimos la referencia del boton con el id del rol que apuntara al elemento menu */}
                                                 <DropdownMenuTrigger
                                                     ref={setMenuButtonRef(rol.id)}
                                                     className="ml-2 focus:outline-none"
                                                 >
+                                                    {/* Icono de 3 puntitos */}
                                                     <EllipsisVertical className="w-5 h-5 text-gray-500 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-400" />
                                                 </DropdownMenuTrigger>
+                                                {/* Contenido del menu */}
                                                 <DropdownMenuContent align="end" className="z-10">
                                                     <DropdownMenuItem onSelect={(e) => handleEditRol(e, rol)}>
                                                         <Edit className="w-4 h-4 mr-1 inline dark:text-gray-300" />
@@ -119,22 +132,35 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
+                    {/* Si hay un rol seleccionado... */}
                     {selectedRol ? (
                         <ScrollArea className="h-72 pr-2">
+                            {/* Mostrar los permisos del rol */}
                             {selectedRol.permisos && selectedRol.permisos.length > 0 ? (
-                                Object.entries(
-                                    selectedRol.permisos.reduce((acc, permiso) => {
+                                /* Mostrar permisos agrupados por tipo */
+                                Object.entries( // Transforma el objeto en un array de pares [tipo, permisos[]], para poder iterarlo con .map
+                                    // se agrupan los permisos en acc
+                                    selectedRol.permisos.reduce((acumulador, permiso) => {
+                                        // Si no hay tipo, asigna "Sin tipo"
                                         const tipo = permiso.id_tipo || "Sin tipo";
-                                        if (!acc[tipo]) acc[tipo] = [];
-                                        acc[tipo].push(permiso);
-                                        return acc;
-                                    }, {} as { [key: string]: any[] })
+
+                                        // Si no existe el array para ese tipo, crea uno
+                                        if (!acumulador[tipo]) acumulador[tipo] = [];
+
+                                        // Añade el permiso al array del tipo correspondiente
+                                        acumulador[tipo].push(permiso);
+
+                                        //Se devuelve el acumulador para tomarlo como valor inicial al siguiente permiso
+                                        return acumulador;
+                                    }, {} as { [key: string]: any[] }) // Marca el formato del objeto
                                 ).map(([tipo, permisos]) => (
                                     <div key={tipo} className="mb-4">
                                         <h3 className="text-md font-semibold mb-2">
+                                            {/* encontrar el nombre del id del tipo */}
                                             {tipoPermisos.find(t => t.id.toString() === tipo)?.nombre || tipo}
                                         </h3>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            {/* Mostrar los permisos */}
                                             {permisos.map(permiso => (
                                                 <div
                                                     key={permiso.id}
@@ -147,10 +173,14 @@ export function MostrarRolesPermisos({ roles, tipoPermisos, onEditRol }: Props) 
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-center text-gray-500 dark:text-gray-400">Este rol no tiene permisos asignados</p>
+                                // Mensaje si el rol no tiene permisos
+                                selectedRol.nombre === 'Superadministrador'
+                                    ? <p className="text-center text-gray-500 dark:text-gray-400">El superadministrador tiene acceso a todo, no necesita permisos</p>
+                                    : <p className="text-center text-gray-500 dark:text-gray-400">Este rol no tiene permisos asignados</p>
                             )}
                         </ScrollArea>
                     ) : (
+                        // Si no hay un rol seleccionado mostrar mensaje
                         <div className="h-72 flex items-center justify-center">
                             <p className="text-gray-500 dark:text-gray-400">Selecciona un rol para ver sus permisos asignados</p>
                         </div>

@@ -19,22 +19,25 @@ import { Rol, User } from "@/types";
 import PhoneInputField from "@/components/PhoneInputField";
 
 type Props = {
-    usuarios: User[];
+    usuario: User;
     isOpen: boolean;
     onClose: () => void;
     roles: Rol[];
     rolUsuarioActual: number;
 };
 
-export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles, rolUsuarioActual }: Props) {
+export default function CrearEmpleadoModal({ usuario, isOpen, onClose, roles, rolUsuarioActual }: Props) {
+    //Determinar si el usuario administrador es subusuario o admin principal
     let usuarioCreador;
-    if (usuarios[0].usuario_creador) {
-        usuarioCreador = usuarios[0].usuario_creador.id_usuario_creador;
+    if (usuario.usuario_creador) {
+        usuarioCreador = usuario.usuario_creador.id_usuario_creador;
     } else {
-        usuarioCreador = usuarios[0].id;
+        usuarioCreador = usuario.id;
     }
 
-    console.log("Usuario creador:", usuarioCreador);
+    //console.log("Usuario creador:", usuarioCreador);
+
+    //Datos del formulario
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -42,7 +45,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles, ro
         password_confirmation: "",
         address: "",
         phone: "",
-        state: "1",
+        state: "1", //Activo por defecto
         id_rol: "3",
         id_usuario_creador: String(usuarioCreador),
     });
@@ -56,6 +59,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles, ro
         return true; // Otros roles pueden ver todos
     });
 
+    //Envio del formulario
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         // Capitaliza la primera letra del nombre

@@ -31,7 +31,7 @@ export default function Index() {
                 {/* Titulo del contenido */}
                 <h1 className="text-2xl font-bold mb-6">Usuarios</h1>
                 <div className="flex justify-between items-center">
-                    {/* Submenu dentro de usuarios */}
+                    {/* Submenu usuarios/roles */}
                     <UsuariosMenu/>
 
                     {/* Botón para crear un nuevo usuario */}

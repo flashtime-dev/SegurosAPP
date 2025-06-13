@@ -10,12 +10,14 @@ import EditarEmpleadoModal from "@/components/empleados/EditarEmpleadoModal";
 import CrearEmpleadoModal from "@/components/empleados/CrearEmpleadoModal";
 
 export default function Index() {
-    const {user, users, roles } = usePage<{ user: User, users: User[], roles: Rol[] }>().props;
-    const userLogged = [user];
-    const [isCreating, setIsCreating] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<User | null>(null);
+    //Obtener datos de la pagina
+    const { user, users, roles } = usePage<{ user: User, users: User[], roles: Rol[] }>().props;
+    const userLogged = user;  // Array con el usuario actual para pasar a modales
+    const [isCreating, setIsCreating] = useState(false);  // Controla modal de creación
+    const [isEditing, setIsEditing] = useState(false);    // Controla modal de edición
+    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<User | null>(null);  // Usuario a editar
 
+    //Funcion para editar
     const handleEdit = (usuario: User) => {
         setUsuarioSeleccionado(usuario);
         setIsEditing(true);
@@ -26,10 +28,11 @@ export default function Index() {
             <Head title="Empleados" />
             <div className="container mx-auto px-4 py-6">
                 <Button className="mb-5" onClick={() => setIsCreating(true)}>
-                    <Plus className="mr-2"/>Nuevo empleado
+                    <Plus className="mr-2" />Nuevo empleado
                 </Button>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    {/* Mostrar usuarios */}
                     {users.map((usuario) => (
                         <UserCard
                             key={usuario.id}
@@ -40,17 +43,18 @@ export default function Index() {
                 </div>
             </div>
 
+            {/* Modal para crear */}
             <CrearEmpleadoModal
-                usuarios={userLogged}
+                usuario={userLogged}
                 isOpen={isCreating}
                 onClose={() => setIsCreating(false)}
                 roles={roles}
                 rolUsuarioActual={user.rol.id}
             />
 
+            {/* Modal para editar */}
             {usuarioSeleccionado && (
                 <EditarEmpleadoModal
-                    usuarios={userLogged}
                     isOpen={isEditing}
                     onClose={() => {
                         setIsEditing(false);

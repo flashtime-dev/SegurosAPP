@@ -8,14 +8,18 @@ import { Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Index({ agentes }: { agentes: Agente[] }) {
+    // Estados para modales y edición
     const [editingAgente, setEditingAgente] = useState<Agente | null>(null);
     const [isCreating, setIsCreating] = useState(false); // Estado para el modal de creación
+    
+    //Datos para formulario
     const { data, setData, post, put, processing, errors, reset } = useForm({
         nombre: '',
         email: '',
         telefono: '',
     });
 
+    //Actualizar al editar
     const handleEdit = (agente: Agente) => {
         setEditingAgente(agente);
         setData({
@@ -49,12 +53,14 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
                             </tr>
                         </thead>
                         <tbody>
+                            {/* Mostrar agentes */}
                             {agentes.map((agente) => (
                                 <tr key={agente.id} className="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <td className="border-b px-4 py-2">{agente.nombre}</td>
                                     <td className="border-b px-4 py-2">{agente.email}</td>
                                     <td className="border-b px-4 py-2">{agente.telefono}</td>
                                     <td className="flex space-x-2 border-b px-4 py-2">
+                                        {/* Boton para abrir modal de editar */}
                                         <Button
                                             variant="outline"
                                             size="sm"
@@ -63,6 +69,8 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
                                         >
                                             <Edit className="h-4 w-4" />
                                         </Button>
+
+                                        {/* Boton para eliminar */}
                                         <Button
                                             variant="outline"
                                             size="sm"
@@ -81,9 +89,9 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
                         </tbody>
                     </table>
                 </div>
-
+                {/* Modal para crear agente */}
                 {isCreating && <CrearAgenteModal isOpen={isCreating} onClose={() => setIsCreating(false)} />}
-
+                {/* Modal para editar */}
                 {editingAgente && <EditarAgenteModal isOpen={!!editingAgente} onClose={() => setEditingAgente(null)} agente={editingAgente} />}
             </div>
         </AppLayout>

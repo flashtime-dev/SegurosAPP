@@ -26,9 +26,12 @@ type Props = {
 };
 
 export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: Props) {
-    const empleados = usuarios.filter(
+    //Filtro para solo mostrar solo los administradores principales
+    const adminPrincipales = usuarios.filter(
         (usuario) => usuario.usuario_creador === null && usuario.rol.id === 2
     );
+    
+    //Datos para el formulario por defecto
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -41,13 +44,18 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
         id_usuario_creador: "",
     });
     
+    //Si el rol es superadmin
     const isSuperadmin = data.id_rol === '1';
 
+    //Funcion para el envio de formulario
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
         // Capitaliza la primera letra del nombre
         setData('name', data.name.charAt(0).toUpperCase() + data.name.slice(1));
         setData('address', data.address.charAt(0).toUpperCase() + data.address.slice(1));
+
+        //Enviar los datos
         post(route("usuarios.store"), {
             onSuccess: () => {
                 reset();
@@ -152,17 +160,6 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                 <InputError message={errors.address} className="mt-2" />
                             </div>
 
-                            {/* <div>
-                                <Label htmlFor="phone">Teléfono</Label>
-                                <Input
-                                    id="phone"
-                                    value={data.phone}
-                                    onChange={(e) => setData('phone', e.target.value)}
-                                    disabled={processing}
-                                    placeholder="+34 123 456 789"
-                                />
-                                <InputError message={errors.phone} className="mt-2" />
-                            </div> */}
                             <div>
                                 <Label htmlFor="phone">Teléfono</Label>
                                 {/* Componente para los telefonos */}
@@ -236,7 +233,7 @@ export default function CrearUsuarioModal({ usuarios, isOpen, onClose, roles }: 
                                         <SelectValue placeholder="Selecciona un usuario en caso afirmativo" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {empleados.map((usuario) => (
+                                        {adminPrincipales.map((usuario) => (
                                             <SelectItem key={usuario.id} value={String(usuario.id)}>
                                                 {usuario.name}
                                             </SelectItem>
