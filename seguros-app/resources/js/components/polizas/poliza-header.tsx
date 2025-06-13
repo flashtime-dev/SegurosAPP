@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge"; // asumiendo que tienes uno, o lo puedes crear
 
+// Esta función toma un estado de tipo string y devuelve una "variación" o "estilo" basado en ese estado.
 function estadoToVariant(estado: string) {
     switch (estado.toLowerCase()) {
         case "en vigor":
@@ -16,6 +17,7 @@ function estadoToVariant(estado: string) {
             return "vencida";
     }
 }
+// Componente principal que recibe los props 'comunidad' y 'estado'.
 export function PolizaHeader({ comunidad, estado }: { comunidad: string; estado: string }) {
     return (
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">

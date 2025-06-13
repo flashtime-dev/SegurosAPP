@@ -1,7 +1,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-
+ // Componente principal de la tarjeta (Card)
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -14,7 +14,7 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
     />
   )
 }
-
+// Componente para el encabezado de la tarjeta (CardHeader)
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -24,7 +24,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     />
   )
 }
-
+// Componente para el título de la tarjeta (CardTitle)
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -34,7 +34,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     />
   )
 }
-
+// Componente para la descripción de la tarjeta (CardDescription)
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -44,7 +44,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
     />
   )
 }
-
+// Componente para el contenido de la tarjeta (CardContent)
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -55,6 +55,7 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+// Componente para el pie de página de la tarjeta (CardFooter)
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -64,5 +65,5 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
     />
   )
 }
-
+// Exportación de todos los componentes de la tarjeta
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

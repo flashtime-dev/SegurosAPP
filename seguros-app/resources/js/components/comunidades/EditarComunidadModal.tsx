@@ -18,13 +18,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { User, Comunidad } from "@/types";
 import PhoneInputField from "@/components/PhoneInputField";
 
+// Definición de los props que recibe el componente
 type Props = {
-    isOpen: boolean;
-    onClose: () => void;
-    usuarios: User[];
-    comunidad: Comunidad;
+    isOpen: boolean; // Controla si el modal está abierto o cerrado
+    onClose: () => void; // Función para cerrar el modal
+    usuarios: User[]; // Lista de usuarios disponibles para la comunidad
+    comunidad: Comunidad; // Datos de la comunidad a editar
 };
-
+// Componente para editar los datos de una comunidad existente
 export default function EditarComunidadModal({ isOpen, onClose, usuarios, comunidad }: Props) {
     const { data, setData, put, processing, errors, reset } = useForm({
         nombre: '',
@@ -33,11 +34,12 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
         ubi_catastral: '',
         ref_catastral: '',
         telefono: '',
-        usuarios: [] as number[],
+        usuarios: [] as number[], // Lista de IDs de usuarios asociados a la comunidad
     });
-
+    // useEffect para cargar los datos de la comunidad cuando se abre el modal
     useEffect(() => {
         if (comunidad) {
+            // Si se recibe una comunidad, se establece el estado con sus datos
             setData({
                 nombre: comunidad.nombre || '',
                 cif: comunidad.cif || '',
@@ -45,17 +47,19 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                 ubi_catastral: comunidad.ubi_catastral || '',
                 ref_catastral: comunidad.ref_catastral || '',
                 telefono: comunidad.telefono || '',
-                usuarios: comunidad.users?.map(u => u.id) || [],
+                usuarios: comunidad.users?.map((u) => u.id) || [], // Asocia los usuarios de la comunidad
             });
         } else {
+            // Si no hay comunidad, resetea el formulario
             reset();
         }
-    }, [comunidad]);
-
+    }, [comunidad]); // Se ejecuta cada vez que cambia el prop 'comunidad'
+    // Función para manejar el envío del formulario (actualizar la comunidad)
     const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+        e.preventDefault(); // Evita la acción predeterminada del formulario (recarga de página)
+        // Si hay una comunidad, se actualiza usando el método put
         if (comunidad) {
-            put(route("comunidades.update", comunidad.id), {
+            put(route('comunidades.update', comunidad.id), {
                 onSuccess: () => {
                     reset();
                     onClose();
@@ -65,18 +69,20 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
     };
 
     return (
+        // Modal para editar la comunidad, se controla con el prop 'isOpen'
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle>Editar Comunidad</DialogTitle>
-                    <DialogDescription>
-                        Modifica los campos para actualizar la comunidad.
-                    </DialogDescription>
+                    <DialogDescription>Modifica los campos para actualizar la comunidad.</DialogDescription>
                 </DialogHeader>
 
                 <ScrollArea className="max-h-[70vh]">
+                    {/* Formulario para editar los datos de la comunidad */}
+                    {/* Campo de nombre de la comunidad */}
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid gap-4">
+                            {/* Campo de nombre de la comunidad */}
                             <div>
                                 <Label htmlFor="nombre">Nombre *</Label>
                                 <Input
@@ -84,6 +90,7 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                     value={data.nombre}
                                     onChange={(e) => {
                                         const value = e.target.value;
+                                        // Convierte la primera letra a mayúscula
                                         setData('nombre', value.charAt(0).toUpperCase() + value.slice(1));
                                     }}
                                     disabled={processing}
@@ -92,7 +99,7 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                 />
                                 <InputError message={errors.nombre} className="mt-2" />
                             </div>
-
+                            {/* Campo de CIF (Código de Identificación Fiscal) */}
                             <div>
                                 <Label htmlFor="cif">CIF *</Label>
                                 <Input
@@ -106,7 +113,7 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                 />
                                 <InputError message={errors.cif} className="mt-2" />
                             </div>
-
+                            {/* Campo de dirección */}
                             <div>
                                 <Label htmlFor="direccion">Dirección</Label>
                                 <Input
@@ -121,7 +128,7 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                 />
                                 <InputError message={errors.direccion} className="mt-2" />
                             </div>
-
+                            {/* Campo de ubicación catastral */}
                             <div>
                                 <Label htmlFor="ubi_catastral">Ubicación Catastral</Label>
                                 <Input
@@ -136,7 +143,7 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                 />
                                 <InputError message={errors.ubi_catastral} className="mt-2" />
                             </div>
-
+                            {/* Campo de referencia catastral */}
                             <div>
                                 <Label htmlFor="ref_catastral">Referencia Catastral</Label>
                                 <Input
@@ -148,40 +155,47 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                 />
                                 <InputError message={errors.ref_catastral} className="mt-2" />
                             </div>
-
+                            {/* Campo de teléfono */}
                             <div>
                                 <Label htmlFor="telefono">Teléfono</Label>
                                 <PhoneInputField
                                     value={data.telefono}
                                     onChange={(value) => {
                                         if (!value) {
-                                            setData("telefono", "");
+                                            setData('telefono', '');
                                             return;
                                         }
-                                        const cleaned = value.replace(/\s/g, "");
-                                        const normalized = cleaned.startsWith("+") ? cleaned : `+${cleaned}`;
-                                        setData("telefono", normalized);
+                                        const cleaned = value.replace(/\s/g, '');
+                                        const normalized = cleaned.startsWith('+') ? cleaned : `+${cleaned}`;
+                                        setData('telefono', normalized);
                                     }}
                                     error={errors.telefono}
                                 />
                             </div>
 
-                            {/* Campo para añadir usuarios */}
+                            {/* Campo para seleccionar y añadir usuarios */}
                             <div>
                                 <Label>Usuarios de la Comunidad</Label>
-                                <div className="flex flex-wrap gap-2 mb-2">
+                                <div className="mb-2 flex flex-wrap gap-2">
+                                    {/* Muestra los usuarios ya añadidos a la comunidad */}
                                     {data.usuarios.map((userId) => {
-                                        const usuario = usuarios.find(u => u.id === userId);
+                                        const usuario = usuarios.find((u) => u.id === userId);
                                         if (!usuario) return null;
                                         return (
-                                            <div key={userId} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2">
+                                            <div key={userId} className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 dark:bg-gray-700">
                                                 <span>{usuario.name}</span>
+                                                {/* Botón para eliminar usuario de la lista */}
                                                 <Button
                                                     type="button"
                                                     variant="ghost"
                                                     size="sm"
                                                     className="h-auto p-1"
-                                                    onClick={() => setData('usuarios', data.usuarios.filter(id => id !== userId))}
+                                                    onClick={() =>
+                                                        setData(
+                                                            'usuarios',
+                                                            data.usuarios.filter((id) => id !== userId),
+                                                        )
+                                                    }
                                                 >
                                                     ✕
                                                 </Button>
@@ -190,6 +204,7 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                     })}
                                 </div>
                                 <div className="flex gap-2">
+                                    {/* Selector desplegable para agregar usuarios */}
                                     <Select
                                         onValueChange={(value) => {
                                             const id = Number(value);
@@ -202,9 +217,10 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Selecciona un usuario para agregar" />
                                         </SelectTrigger>
+                                        {/* Muestra los usuarios disponibles que no han sido seleccionados */}
                                         <SelectContent>
                                             {usuarios
-                                                .filter(u => !data.usuarios.includes(u.id))
+                                                .filter((u) => !data.usuarios.includes(u.id))
                                                 .map((usuario) => (
                                                     <SelectItem className="hover:bg-gray-100" key={usuario.id} value={String(usuario.id)}>
                                                         {usuario.name} ({usuario.email})
@@ -215,7 +231,7 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                 </div>
                             </div>
                         </div>
-
+                        {/* Botones de acción al final del modal */}
                         <DialogFooter>
                             <DialogClose asChild>
                                 <Button type="button" variant="outline" onClick={onClose}>
@@ -223,7 +239,7 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                 </Button>
                             </DialogClose>
                             <Button type="submit" disabled={processing}>
-                                {processing ? "Guardando..." : "Guardar cambios"}
+                                {processing ? 'Guardando...' : 'Guardar cambios'}
                             </Button>
                         </DialogFooter>
                     </form>

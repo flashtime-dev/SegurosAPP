@@ -23,59 +23,60 @@ type Props = {
     companias: Compania[];
     comunidades: Comunidad[];
     agentes: Agente[];
-    poliza?: any;
+    poliza?: any; 
 };
 
 export default function EditarPolizaModal({ isOpen, onClose, companias, comunidades, agentes, poliza }: Props & { poliza?: any }) {
+    // Uso del hook useForm para manejar el estado del formulario
     const { data, setData, post, processing, errors, reset } = useForm({
-        _method: "PUT", // Importante: agregar este campo para simular PUT
-        id_compania: "",
-        id_comunidad: "",
-        id_agente: "",
-        alias: "",
-        numero: "",
-        fecha_efecto: "",
-        cuenta: "",
-        forma_pago: "",
-        prima_neta: "",
-        prima_total: "",
-        pdf_poliza: null as File | null,
-        observaciones: "",
-        estado: "",
+        _method: 'PUT', // Definir el método HTTP como PUT, ya que estamos actualizando una póliza
+        id_compania: '',
+        id_comunidad: '',
+        id_agente: '',
+        alias: '',
+        numero: '',
+        fecha_efecto: '',
+        cuenta: '',
+        forma_pago: '',
+        prima_neta: '',
+        prima_total: '',
+        pdf_poliza: null as File | null, // Para manejar el archivo PDF de la póliza (si se adjunta uno nuevo)
+        observaciones: '',
+        estado: '',
     });
-
+    // useEffect que se ejecuta cada vez que `poliza` cambia, para rellenar el formulario con los datos existentes.
     useEffect(() => {
         if (poliza) {
             const formatFecha = (fecha: string) => {
                 const date = new Date(fecha);
-                return date.toISOString().split("T")[0]; // Convierte a "yyyy-MM-dd"
+                return date.toISOString().split('T')[0]; // Convierte a "yyyy-MM-dd"
             };
-
+            // Actualizar el estado del formulario con los datos de la póliza
             setData({
-                _method: "PUT", // Mantener el método
-                id_compania: String(poliza.id_compania) || "",
-                id_comunidad: String(poliza.id_comunidad) || "",
-                id_agente: String(poliza.id_agente) || "",
-                alias: poliza.alias || "",
-                numero: poliza.numero || "",
-                fecha_efecto: formatFecha(poliza.fecha_efecto) || "",
-                cuenta: poliza.cuenta || "",
-                forma_pago: poliza.forma_pago || "",
-                prima_neta: poliza.prima_neta || "",
-                prima_total: poliza.prima_total || "",
+                _method: 'PUT', // Mantener el método
+                id_compania: String(poliza.id_compania) || '',
+                id_comunidad: String(poliza.id_comunidad) || '',
+                id_agente: String(poliza.id_agente) || '',
+                alias: poliza.alias || '',
+                numero: poliza.numero || '',
+                fecha_efecto: formatFecha(poliza.fecha_efecto) || '',
+                cuenta: poliza.cuenta || '',
+                forma_pago: poliza.forma_pago || '',
+                prima_neta: poliza.prima_neta || '',
+                prima_total: poliza.prima_total || '',
                 pdf_poliza: null,
-                observaciones: poliza.observaciones || "",
-                estado: poliza.estado || "",
+                observaciones: poliza.observaciones || '',
+                estado: poliza.estado || '',
             });
         }
-    }, [poliza, companias, comunidades, agentes]);
-
+    }, [poliza, companias, comunidades, agentes]); // Dependencias: cuando cambian estos datos, actualizamos el estado
+    // Función que maneja el envío del formulario
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (poliza) {
             // Usar POST en lugar de PUT para manejar archivos correctamente
-            post(route("polizas.update", poliza.id), {
-                forceFormData: true, // Forzar el uso de FormData
+            post(route('polizas.update', poliza.id), {
+                forceFormData: true, // Forzar el uso de FormData para manejar el archivo PDF correctamente
                 onSuccess: () => {
                     reset();
                     onClose();
@@ -89,9 +90,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle>Editar Póliza</DialogTitle>
-                    <DialogDescription>
-                        Modifica los campos para actualizar la póliza.
-                    </DialogDescription>
+                    <DialogDescription>Modifica los campos para actualizar la póliza.</DialogDescription>
                 </DialogHeader>
 
                 {/* ScrollArea para el contenido del formulario */}
@@ -100,11 +99,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                         {/* Compañía */}
                         <div>
                             <Label htmlFor="id_compania">Compañía *</Label>
-                            <Select
-                                onValueChange={(value) => setData("id_compania", value)}
-                                value={data.id_compania}
-                                required
-                            >
+                            <Select onValueChange={(value) => setData('id_compania', value)} value={data.id_compania} required>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecciona una compañía" />
                                 </SelectTrigger>
@@ -122,11 +117,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                         {/* Comunidad */}
                         <div>
                             <Label htmlFor="id_comunidad">Comunidad *</Label>
-                            <Select
-                                onValueChange={(value) => setData("id_comunidad", value)}
-                                value={data.id_comunidad}
-                                required
-                            >
+                            <Select onValueChange={(value) => setData('id_comunidad', value)} value={data.id_comunidad} required>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecciona una comunidad" />
                                 </SelectTrigger>
@@ -144,10 +135,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                         {/* Agente */}
                         <div>
                             <Label htmlFor="id_agente">Agente</Label>
-                            <Select
-                                onValueChange={(value) => setData("id_agente", value)}
-                                value={data.id_agente}
-                            >
+                            <Select onValueChange={(value) => setData('id_agente', value)} value={data.id_agente}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecciona un agente" />
                                 </SelectTrigger>
@@ -184,7 +172,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <Input
                                 id="numero"
                                 value={data.numero}
-                                onChange={(e) => setData("numero", e.target.value)}
+                                onChange={(e) => setData('numero', e.target.value)}
                                 disabled={processing}
                                 placeholder="123456789012345678901"
                                 required
@@ -200,7 +188,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 type="date"
                                 className="cursor-pointer"
                                 value={data.fecha_efecto}
-                                onChange={(e) => setData("fecha_efecto", e.target.value)}
+                                onChange={(e) => setData('fecha_efecto', e.target.value)}
                                 style={{ colorScheme: 'dark' }}
                                 disabled={processing}
                                 required
@@ -214,7 +202,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <Input
                                 id="cuenta"
                                 value={data.cuenta}
-                                onChange={(e) => setData("cuenta", e.target.value)}
+                                onChange={(e) => setData('cuenta', e.target.value)}
                                 disabled={processing}
                                 placeholder="1234 5678 90 1234567890"
                             />
@@ -224,16 +212,12 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                         {/* Forma de pago */}
                         <div>
                             <Label htmlFor="forma_pago">Forma de Pago *</Label>
-                            <Select
-                                onValueChange={(value) => setData("forma_pago", value)}
-                                value={data.forma_pago}
-                                required
-                            >
+                            <Select onValueChange={(value) => setData('forma_pago', value)} value={data.forma_pago} required>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecciona una forma de pago" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {["Bianual", "Anual", "Semestral", "Trimestral", "Mensual"].map((forma) => (
+                                    {['Bianual', 'Anual', 'Semestral', 'Trimestral', 'Mensual'].map((forma) => (
                                         <SelectItem key={forma} value={forma}>
                                             {forma}
                                         </SelectItem>
@@ -251,7 +235,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 type="number"
                                 step="0.01"
                                 value={data.prima_neta}
-                                onChange={(e) => setData("prima_neta", e.target.value)}
+                                onChange={(e) => setData('prima_neta', e.target.value)}
                                 disabled={processing}
                                 required
                                 placeholder="0.00"
@@ -267,7 +251,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 type="number"
                                 step="0.01"
                                 value={data.prima_total}
-                                onChange={(e) => setData("prima_total", e.target.value)}
+                                onChange={(e) => setData('prima_total', e.target.value)}
                                 disabled={processing}
                                 required
                                 placeholder="0.00"
@@ -283,20 +267,13 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 type="file"
                                 accept=".pdf" // Solo permite archivos PDF
                                 className="hidden"
-                                onChange={(e) => setData("pdf_poliza", e.target.files?.[0] || null)} // Solo selecciona un archivo
+                                onChange={(e) => setData('pdf_poliza', e.target.files?.[0] || null)} // Solo selecciona un archivo
                                 disabled={processing}
                             />
                             {/* Botón personalizado que abre el selector de archivo */}
                             <label htmlFor="pdf_poliza">
-                                <div
-                                    className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 border-input file:text-foreground placeholder:text-muted-foreground
-                                            selection:bg-primary selection:text-primary-foreground flex h-auto w-full min-w-0 flex-col space-y-1 whitespace-normal rounded-md
-                                            border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0
-                                            file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm
-                                            focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40
-                                            aria-invalid:border-destructive"
-                                >
-                                    {data.pdf_poliza?.name || "Ningún archivo seleccionado"}
+                                <div className="border-input file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex h-auto w-full min-w-0 cursor-pointer flex-col space-y-1 rounded-md border bg-transparent px-3 py-2 text-base whitespace-normal shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium hover:bg-gray-100 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:hover:bg-gray-800">
+                                    {data.pdf_poliza?.name || 'Ningún archivo seleccionado'}
 
                                     {/* Esta linea muestra los archivos que tiene la poliza si es que hay */}
                                     {/* {data.pdf_poliza?.name || poliza?.pdf_poliza?.split("/").pop()?.replace(/^\d+_/, "") || "Ningún archivo seleccionado"} */}
@@ -311,9 +288,9 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <textarea
                                 id="observaciones"
                                 value={data.observaciones}
-                                onChange={(e) => setData("observaciones", e.target.value)}
+                                onChange={(e) => setData('observaciones', e.target.value)}
                                 disabled={processing}
-                                className="w-full border rounded-md p-2"
+                                className="w-full rounded-md border p-2"
                                 placeholder="Escribe tus observaciones sobre la póliza aquí..."
                             />
                             <InputError message={errors.observaciones} className="mt-2" />
@@ -322,16 +299,12 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                         {/* Estado */}
                         <div>
                             <Label htmlFor="estado">Estado *</Label>
-                            <Select
-                                onValueChange={(value) => setData("estado", value)}
-                                value={data.estado}
-                                required
-                            >
+                            <Select onValueChange={(value) => setData('estado', value)} value={data.estado} required>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecciona un estado" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {["En Vigor", "Anulada", "Solicitada", "Externa", "Vencida"].map((estado) => (
+                                    {['En Vigor', 'Anulada', 'Solicitada', 'Externa', 'Vencida'].map((estado) => (
                                         <SelectItem key={estado} value={estado}>
                                             {estado}
                                         </SelectItem>
@@ -348,7 +321,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                                 </Button>
                             </DialogClose>
                             <Button type="submit" disabled={processing}>
-                                {processing ? "Guardando..." : "Guardar Cambios"}
+                                {processing ? 'Guardando...' : 'Guardar Cambios'}
                             </Button>
                         </DialogFooter>
                     </form>

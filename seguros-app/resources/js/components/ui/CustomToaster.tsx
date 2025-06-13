@@ -1,4 +1,4 @@
-import { CheckCircle, XCircle, Info, Zap } from "lucide-react";
+import { CheckCircle, XCircle, Info } from "lucide-react";
 
 export default function CustomToast({ type, message }: { type: 'success' | 'error' | 'info'; message: string }) {
     const icons = {
