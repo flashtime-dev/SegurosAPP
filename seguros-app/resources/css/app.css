@@ -270,4 +270,3 @@
 .dark .react-tel-input .country-list::-webkit-scrollbar-thumb:hover {
     background-color: oklch(0.319 0 0); /* más claro que var(--accent) */
 }
-
