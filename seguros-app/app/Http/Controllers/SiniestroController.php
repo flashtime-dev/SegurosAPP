@@ -121,9 +121,9 @@ class SiniestroController extends Controller
             'exp_asist.min' => 'El expediente asistencia debe tener al menos 2 caracteres.',
             'exp_asist.max' => 'El expediente asistencia no puede exceder los 50 caracteres.',
             'files.array' => 'Los archivos deben ser un array.',
-            'files.*.file' => 'Algún archivo no es válido.',
-            'files.*.mimes' => 'Cada archivo debe ser pdf, jpg, jpeg o png.',
-            'files.*.max' => 'Alguno de los archivos es mayor de 2MB.',
+            'files.*.file' => 'El archivo debe ser pdf, jpg, jpeg o png.',
+            'files.*.mimes' => 'El archivo debe ser pdf, jpg, jpeg o png.',
+            'files.*.max' => 'El archivo excede el límite de 2MB.',
             'contactos.*.nombre.required' => 'El nombre es obligatorio.',
             'contactos.*.nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
             'contactos.*.nombre.max' => 'El nombre no puede exceder los 255 caracteres.',
@@ -449,12 +449,22 @@ class SiniestroController extends Controller
                 abort(404, 'Archivo no encontrado en el servidor.');
             }
 
+            // Determinar el tipo de contenido según la extensión del archivo
+            $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+            $contentType = match ($extension) {
+                'pdf'  => 'application/pdf',
+                'jpg'  => 'image/jpeg',
+                'jpeg' => 'image/jpeg',
+                'png'  => 'image/png',
+                default => 'application/octet-stream',
+            };
+
             // Registrar el acceso al archivo
-            Log::info("Archivo PDF servido correctamente: siniestro {$id} - {$filename}");
+            Log::info("Archivo servido correctamente: siniestro {$id} - {$filename}");
 
             // Devolver el archivo PDF como respuesta
             return Response::file($path, [
-                'Content-Type' => 'application/pdf',
+                'Content-Type' => $contentType,
                 'Content-Disposition' => 'inline; filename="' . $filename . '"',
             ]);
         } catch (Throwable $e) {

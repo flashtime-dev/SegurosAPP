@@ -261,7 +261,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                     id="files"
                                     type="file"
                                     multiple
-                                    accept="*"
+                                    accept=".pdf,.jpg,.jpeg,.png"
                                     className="hidden"
                                     onChange={e => {
                                         if (e.target.files) {
@@ -281,17 +281,31 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                             file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm
                                             focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40
                                             aria-invalid:border-destructive"
-                                        >
+                                    >
                                         {data.files && data.files.length > 0
                                             ? data.files.map(file => file.name).join(', ')
                                             : "Ningún archivo seleccionado"}
                                     </div>
                                 </label>
 
-                                <InputError message={errors.files} className="mt-2" />
-                                {/* Si quieres mostrar el error de cada archivo, podrías descomentar:
-                                    <InputError message={errors["files.*"]} />
-                                */}
+                                {/* Visualización de errores */}
+                                {Object.entries(errors)
+                                    .filter(([key]) => key.startsWith('files.'))
+                                    .map(([key, message], index) => {
+                                        // Obtener el índice del archivo del key (files.0, files.1, etc.)
+                                        const fileIndex = parseInt(key.split('.')[1]);
+                                        // Obtener el nombre del archivo si existe
+                                        const fileName = data.files[fileIndex]?.name;
+
+                                        return (
+                                            <InputError
+                                                key={index}
+                                                message={fileName ? `${fileName}: ${message}` : message}
+                                                className="mt-2"
+                                            />
+                                        );
+                                    })
+                                }
                             </div>
 
                             {/* Contactos */}

@@ -26,7 +26,7 @@ return new class extends Migration
             $table->id(); // ID autoincremental
             $table->unsignedBigInteger('id_chat'); // Relación con chats_polizas
             $table->string('nombre', 255); // Nombre del adjunto obligatorio
-            $table->string('url_adjunto', 255); // URL del adjunto obligatorio
+            $table->string('url_adjunto', 500); // URL del adjunto obligatorio
             $table->timestamps(); // Timestamps para crear y actualizar
         });
 
@@ -46,7 +46,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_siniestro'); // Relación con siniestros
             $table->unsignedBigInteger('id_chat')->nullable(); // Relación con chats_siniestros
             $table->string('nombre', 255); // Nombre del adjunto obligatorio
-            $table->string('url_adjunto', 255); // URL del adjunto obligatorio
+            $table->string('url_adjunto', 500); // URL del adjunto obligatorio
             $table->timestamps(); // Timestamps para crear y actualizar
         });
     }

@@ -18,13 +18,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Poliza } from "@/types";
 import PhoneInputField from "@/components/PhoneInputField";
 
+// Definición de tipos para las props del componente
 type Props = {
-    isOpen: boolean;
-    onClose: () => void;
-    polizas: Poliza[];
-    polizaSeleccionada?: string;
+    isOpen: boolean; // Controla si el modal está abierto
+    onClose: () => void; // Función para cerrar el modal
+    polizas: Poliza[]; // Array de pólizas disponibles
+    polizaSeleccionada?: string; // Póliza pre-seleccionada (opcional)
 };
 
+// Definición del tipo para el formulario
 type FormData = {
     id_poliza: string;
     declaracion: string;
@@ -33,11 +35,12 @@ type FormData = {
     exp_cia: string;
     exp_asist: string;
     fecha_ocurrencia: string;
-    files: File[]; // cambiamos a array de archivos
-    contactos: { nombre: string; cargo: string; piso: string; telefono: string }[];
+    files: File[]; // Array de archivos adjuntos
+    contactos: { nombre: string; cargo: string; piso: string; telefono: string }[]; // Array de contactos con su información
 };
 
 export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSeleccionada }: Props) {
+    // Inicialización del formulario usando useForm de Inertia
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
         id_poliza: polizaSeleccionada || '',
         declaracion: '',
@@ -50,26 +53,31 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
         contactos: []
     });
 
+    // Efecto para actualizar la póliza seleccionada cuando cambia
     useEffect(() => {
         if (polizaSeleccionada) {
             setData('id_poliza', polizaSeleccionada);
         }
     }, [polizaSeleccionada]);
 
+    // Añade un nuevo contacto vacío al array de contactos
     const agregarContacto = () => {
         setData('contactos', [...data.contactos, { nombre: '', cargo: '', piso: '', telefono: '' }]);
     };
 
+    // Actualiza un campo específico de un contacto existente
     const actualizarContacto = (index: number, campo: string, valor: string) => {
         const nuevosContactos = [...data.contactos];
         nuevosContactos[index] = { ...nuevosContactos[index], [campo]: valor };
         setData('contactos', nuevosContactos);
     };
 
+    // Elimina un contacto específico del array
     const eliminarContacto = (index: number) => {
         setData('contactos', data.contactos.filter((_, i) => i !== index));
     };
 
+    // Manejar el envío del formulario
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(route("siniestros.store"), {
@@ -82,14 +90,16 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
+            {/* Contenido del modal */}
             <DialogContent className="sm:max-w-lg">
+                {/* Encabezado del modal */}
                 <DialogHeader>
                     <DialogTitle>Nuevo Siniestro</DialogTitle>
                     <DialogDescription>
                         Completa los campos para crear un nuevo siniestro.
                     </DialogDescription>
                 </DialogHeader>
-
+                {/* Contenido del modal */}
                 <ScrollArea className="max-h-[70vh]">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid gap-4">
@@ -200,7 +210,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                     id="files"
                                     type="file"
                                     multiple
-                                    accept="*"
+                                    accept=".pdf,.jpg,.jpeg,.png"
                                     className="hidden"
                                     onChange={e => {
                                         if (e.target.files) {
@@ -211,7 +221,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                     }}
                                 />
 
-                                {/* Botón estilizado */}
+                                {/* Área visible para mostrar archivos seleccionados */}
                                 <label htmlFor="files">
                                     <div
                                         className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 border-input file:text-foreground placeholder:text-muted-foreground
@@ -220,21 +230,34 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                             file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm
                                             focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40
                                             aria-invalid:border-destructive"
-                                        >
+                                    >
                                         {data.files && data.files.length > 0
                                             ? data.files.map(file => file.name).join('; ')
                                             : "Ningún archivo seleccionado"}
                                     </div>
                                 </label>
-                                
-                                <InputError message={errors.files} className="mt-2" />
-                                {/* Errores individuales por archivo */}
- 
-                                {/* Si quieres mostrar el error de cada archivo, podrías descomentar:
-                                    <InputError message={errors["files.*"]} />
-                                */}
+
+                                {/* Visualización de errores */}
+                                {Object.entries(errors)
+                                    .filter(([key]) => key.startsWith('files.'))
+                                    .map(([key, message], index) => {
+                                        // Obtener el índice del archivo del key (files.0, files.1, etc.)
+                                        const fileIndex = parseInt(key.split('.')[1]);
+                                        // Obtener el nombre del archivo si existe
+                                        const fileName = data.files[fileIndex]?.name;
+
+                                        return (
+                                            <InputError
+                                                key={index}
+                                                message={fileName ? `${fileName}: ${message}` : message}
+                                                className="mt-2"
+                                            />
+                                        );
+                                    })
+                                }
                             </div>
 
+                            {/* Sección de contactos */}
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
                                     <Label>Contactos</Label>
