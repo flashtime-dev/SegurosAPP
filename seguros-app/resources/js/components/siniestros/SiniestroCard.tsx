@@ -28,6 +28,7 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
         }
     };
 
+    //Funcion para editar y controlar el foco al abrir el modal
     const handleEdit = (e: Event) => {
         e.preventDefault();
 

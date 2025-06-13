@@ -4,10 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ChatSiniestro, Contacto, Poliza, Siniestro } from "@/types";
 import { SiniestroMenu } from "@/components/siniestros/SiniestroMenu";
 
+//Pagina para visualizar la informacion de cada siniestro
 export default function Show() {
-    const { props } = usePage<{ 
+    const { props } = usePage<{
         poliza: Poliza,
-        siniestro: Siniestro, 
+        siniestro: Siniestro,
         contactos: Contacto[],
         chats: ChatSiniestro[];
         authUser: number;

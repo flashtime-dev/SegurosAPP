@@ -8,7 +8,7 @@ interface Props {
     label: string;
     value?: string | React.ReactNode;
 }
-
+//Componente personalizado para etiquetas
 const DetailItem = ({ label, value }: Props) => (
     <div className="space-y-1">
         <Label>{label}</Label>
@@ -16,6 +16,7 @@ const DetailItem = ({ label, value }: Props) => (
     </div>
 );
 
+//funcion para formateo de la fecha
 function safeFormatDate(fecha?: string | null) {
     if (!fecha) return "-";
     const parsed = parseISO(fecha);

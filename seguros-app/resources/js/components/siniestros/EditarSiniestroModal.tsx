@@ -34,11 +34,12 @@ type FormData = {
     exp_cia: string;
     exp_asist: string;
     fecha_ocurrencia: string;
-    files: File[]; // Ahora el arreglo se llama `files`, tal como el backend espera
+    files: File[]; // Se llama `files` el backend espera ese nombre
     contactos: { nombre: string; cargo: string; piso: string; telefono: string }[];
 };
 
 export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniestro }: Props) {
+    //Datos de form
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
         _method: "PUT", // Importante: agregar este campo para simular PUT
         id_poliza: "",
@@ -48,12 +49,13 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
         exp_cia: "",
         exp_asist: "",
         fecha_ocurrencia: "",
-        files: [],       // inicializamos empty array
-        contactos: [],   // inicializamos vacío y luego lo llenamos en useEffect
+        files: [],
+        contactos: [],
     });
 
-    // dentro de tu componente:
     const wasOpenedRef = useRef(false);
+
+    //Cargar datos iniciales
     useEffect(() => {
         if (siniestro) {
             // Formateamos la fecha a "yyyy-MM-dd" para el input type="date"
@@ -74,6 +76,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                 fecha_ocurrencia: formatFecha(siniestro.fecha_ocurrencia),
                 files: [], // siempre empezamos vacío; si el usuario sube nuevos archivos, reemplazaremos
                 contactos: siniestro.contactos
+                    //Mapear datos de contactos
                     ? siniestro.contactos.map((c: any) => ({
                         nombre: c.nombre || "",
                         cargo: c.cargo || "",
@@ -90,6 +93,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
         }
     }, [siniestro]);
 
+    //Agragar contacto
     const agregarContacto = () => {
         setData("contactos", [
             ...data.contactos,
@@ -97,16 +101,15 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
         ]);
     };
 
-    const actualizarContacto = (
-        index: number,
-        campo: keyof FormData["contactos"][number],
-        valor: string
-    ) => {
+    //Actualizar contacto
+    // Actualizar contacto existente
+    const actualizarContacto = (index: number, campo: string, valor: string) => {
         const nuevosContactos = [...data.contactos];
         nuevosContactos[index] = { ...nuevosContactos[index], [campo]: valor };
         setData("contactos", nuevosContactos);
     };
 
+    //Eliminar contacto
     const eliminarContacto = (index: number) => {
         setData(
             "contactos",
@@ -114,6 +117,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
         );
     };
 
+    //Enviar formulario
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!siniestro) return;
@@ -152,6 +156,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                         <SelectValue placeholder="Selecciona una póliza" />
                                     </SelectTrigger>
                                     <SelectContent>
+                                        {/* Lista de polizas */}
                                         {polizas.map((poliza) => (
                                             <SelectItem key={poliza.id} value={String(poliza.id)}>
                                                 {poliza.numero}

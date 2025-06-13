@@ -8,18 +8,20 @@ interface Props {
     contactos: Contacto[];
 }
 
+//Formatear numero
 function formatPhoneNumber(phone?: string): string {
     if (!phone) return "-";
     try {
         const parsed = phone.startsWith("+")
             ? parsePhoneNumberFromString(phone)
-            : parsePhoneNumberFromString(phone, "ES"); // 🇪🇸
+            : parsePhoneNumberFromString(phone, "ES"); // Formato español en caso de no encontrar uno
         return parsed ? parsed.formatInternational() : phone;
     } catch {
         return phone;
     }
 }
 
+//Mostrar cards de contactos
 export default function TablaSiniestros({ contactos }: Props) {
     if (contactos.length === 0) {
         return <p className="text-center text-gray-500 dark:text-gray-400">No hay contactos para mostrar</p>;

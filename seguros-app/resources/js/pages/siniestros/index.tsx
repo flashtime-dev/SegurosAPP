@@ -9,14 +9,17 @@ import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Siniestros() {
+    //Obtener datos de la pagina
     const { props } = usePage<{ siniestros: Siniestro[], polizas: Poliza[]}>();
     const siniestros = props.siniestros;
     const polizas = props.polizas;
-    const [isCreating, setIsCreating] = useState(false); // Estado para el modal de creación
 
+    //Obtener estados de los componentes
+    const [isCreating, setIsCreating] = useState(false); // Estado para el modal de creación
     const [isEditing, setIsEditing] = useState(false);
     const [siniestroSeleccionado, setSiniestroSeleccionado] = useState<Siniestro | null>(null);
 
+    //Para manejar la edicion
     const handleEdit = (siniestro: Siniestro) => {
         setSiniestroSeleccionado(siniestro);
         setIsEditing(true);
@@ -33,6 +36,7 @@ export default function Siniestros() {
                     </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    {/* Mostrar todos los siniestro */}
                     {siniestros.map((siniestro) => (
                         <SiniestroCard siniestro={siniestro} key={siniestro.id} onEdit={() => { handleEdit(siniestro) }} />
                     ))}

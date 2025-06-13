@@ -19,22 +19,28 @@ export function SiniestroMenu({ poliza, siniestro, contactos, chats, authUser }:
                 </div>
                 <Badge variant={siniestro.estado as "Abierto"| "Cerrado" }>{siniestro.estado}</Badge>
             </div>
+            {/* Titulos del menu */}
             <Tabs defaultValue="ficha" className="w-full">
                 <TabsList className="mb-6">
                     <TabsTrigger value="ficha">Siniestro</TabsTrigger>
                     <TabsTrigger value="contactos">Contactos</TabsTrigger>
                 </TabsList>
 
+                {/* Contenido del menu */}
                 <TabsContent value="ficha">
                     <div className="flex flex-col md:flex-row justify-between gap-6">
+                        {/* Datos del siniestro */}
                         <SiniestroDetalles siniestro={siniestro} />
                         <div className="md:w-1/3 w-full">
+                        {/* Informacion de la compañia y acciones rapidas */}
                             <SiniestroLogoAcciones id={siniestro.id} logoUrl={poliza.compania.url_logo} estadoSiniestro={siniestro.estado} />
                         </div>
                     </div>
+                    {/* Chat del siniestro */}
                     <SiniestroChat chats={chats} authUser={authUser} siniestroId={siniestro.id} isClosed={isClosed} />
                 </TabsContent>
 
+                {/* Mostrar contactos */}
                 <TabsContent value="contactos">
                     <TablaContactos contactos={contactos} />
                 </TabsContent>

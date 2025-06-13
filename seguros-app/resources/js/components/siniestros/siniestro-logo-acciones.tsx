@@ -12,6 +12,7 @@ export function SiniestroLogoAcciones({ id, logoUrl, telefono, estadoSiniestro }
     const [loading, setLoading] = useState(false);
     const estaCerrado = estadoSiniestro?.toLowerCase() === "cerrado";
 
+    //Funcion para enviar a la ruta de cerrar siniestro en caso de confirmacion
     function handleCerrar() {
         setLoading(true);
         if (confirm('¿Estás seguro de que deseas cerrar este siniestro?')) {
@@ -25,6 +26,7 @@ export function SiniestroLogoAcciones({ id, logoUrl, telefono, estadoSiniestro }
 
     return (
         <div className="flex flex-col items-center gap-4">
+            {/* Informacion de la compañia */}
             <img src={logoUrl} alt="Logo Compañía" className="h-16 object-contain" />
             <p className="text-sm text-muted-foreground">{telefono}</p>
             <div className="w-full space-y-2">
