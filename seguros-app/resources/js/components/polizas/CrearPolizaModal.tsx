@@ -169,6 +169,7 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
                                 className="cursor-pointer"
                                 value={data.fecha_efecto}
                                 onChange={(e) => setData("fecha_efecto", e.target.value)}
+                                style={{ colorScheme: 'dark' }}
                                 disabled={processing}
                                 required
                             />

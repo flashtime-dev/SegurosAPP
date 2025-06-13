@@ -197,6 +197,7 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                     className="cursor-pointer"
                                     value={data.fecha_ocurrencia}
                                     onChange={e => setData('fecha_ocurrencia', e.target.value)}
+                                    style={{ colorScheme: 'dark' }}
                                 />
                                 <InputError message={errors.fecha_ocurrencia} />
                             </div>

@@ -248,6 +248,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                     onChange={(e) =>
                                         setData("fecha_ocurrencia", e.target.value)
                                     }
+                                    style={{ colorScheme: 'dark' }}
                                 />
                                 <InputError message={errors.fecha_ocurrencia} />
                             </div>
