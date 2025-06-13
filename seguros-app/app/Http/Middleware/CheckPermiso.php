@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Permiso;
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CheckPermiso
 {
@@ -42,7 +43,7 @@ class CheckPermiso
 
                 // Si uno de los permisos no existe, lanza error 500
                 if (!$permiso) {
-                    abort(500, "Permiso '{$nombre}' no está registrado en la base de datos.");
+                    abort(403, "Permiso '{$nombre}' no está registrado en la base de datos.");
                 }
 
                 // Verifica si el usuario tiene el permiso requerido
@@ -55,7 +56,10 @@ class CheckPermiso
             // Si no tiene ninguno de los permisos, denegar acceso
             return abort(403, 'Permiso denegado para el acceso');
         } catch (Throwable $e) {
-            Log::error('Error en middleware CheckPermiso: ' . $e->getMessage(), [
+            if ($e instanceof HttpException) {
+                throw $e;
+            }
+            Log::error('Excepción capturada en CheckPermiso: ' . $e->getMessage(), [
                 'exception' => $e,
                 'route' => $request->route()->getName(),
                 'user_id' => Auth::id(),
