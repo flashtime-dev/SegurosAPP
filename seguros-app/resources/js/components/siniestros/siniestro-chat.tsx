@@ -28,7 +28,7 @@ export function SiniestroChat({ chats: initialChats, authUser, siniestroId, isCl
 
     //Conexion del websocket
     useEffect(() => {
-        console.log(`🔌 Conectando al canal privado: chatSiniestro.${siniestroId}`);
+        //console.log(`🔌 Conectando al canal privado: chatSiniestro.${siniestroId}`);
         //const channel = window.Echo.channel(`chatPoliza.${polizaId}`); // channel() en lugar de private()
         const channel = window.Echo.private(`chatSiniestro.${siniestroId}`); // Asegúrate de que el canal sea privado si es necesario
 
