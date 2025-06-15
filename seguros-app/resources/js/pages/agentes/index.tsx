@@ -34,7 +34,7 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
         <AppLayout breadcrumbs={[{ title: 'Agentes', href: route('agentes.index') }]}>
             <Head title="Lista de Agentes" />
 
-            <div className="mx-auto max-w-6xl space-y-6 p-4">
+            <div className="space-y-6 px-4 py-5">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Lista de Agentes</h1>
                     <Button onClick={() => setIsCreating(true)} className="flex items-center space-x-2">

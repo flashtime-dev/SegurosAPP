@@ -5,48 +5,48 @@ import {
     PaginationLink,
     PaginationPrevious,
     PaginationNext,
-  } from "@/components/ui/pagination";
-  import React from "react";
-  
-  // Definición de las props que espera el componente de paginación
-  interface PaginacionPolizasProps {
+} from "@/components/ui/pagination";
+import React from "react";
+
+// Definición de las props que espera el componente de paginación
+interface PaginacionPolizasProps {
     paginaActual: number;
     totalPaginas: number;
     onPageChange: (pagina: number) => void;
-  }
-  // Función para generar las páginas de la paginación, teniendo en cuenta el número total de páginas y la página actual
-  const generarPaginas = (paginaActual: number, totalPaginas: number) => {
-      const paginas = []; // Inicializamos un array vacío para guardar las páginas
-      // Si el total de páginas es menor o igual a 7, mostramos todas las páginas
-      if (totalPaginas <= 7) {
-          for (let i = 1; i <= totalPaginas; i++) paginas.push(i);
-      } else {
-          paginas.push(1); // Siempre mostrar la primera página
+}
+// Función para generar las páginas de la paginación, teniendo en cuenta el número total de páginas y la página actual
+const generarPaginas = (paginaActual: number, totalPaginas: number) => {
+    const paginas = []; // Inicializamos un array vacío para guardar las páginas
+    // Si el total de páginas es menor o igual a 7, mostramos todas las páginas
+    if (totalPaginas <= 7) {
+        for (let i = 1; i <= totalPaginas; i++) paginas.push(i);
+    } else {
+        paginas.push(1); // Siempre mostrar la primera página
 
-          if (paginaActual > 4) paginas.push('...'); // Si la página actual está más allá de la cuarta, añadimos "..."
-          // Definir el rango de páginas cercanas a la página actual
-          const inicio = Math.max(2, paginaActual - 1); // El inicio es 2 o la página actual - 1
-          const fin = Math.min(totalPaginas - 1, paginaActual + 1); // El fin es la página actual + 1 o la penúltima página
-          // Agregar las páginas del rango cercano
-          for (let i = inicio; i <= fin; i++) paginas.push(i);
-          // Si la página actual está más cerca del final, añadir "..."
-          if (paginaActual < totalPaginas - 3) paginas.push('...');
-          // Siempre mostrar la última página
-          paginas.push(totalPaginas);
-      }
+        if (paginaActual > 4) paginas.push('...'); // Si la página actual está más allá de la cuarta, añadimos "..."
+        // Definir el rango de páginas cercanas a la página actual
+        const inicio = Math.max(2, paginaActual - 1); // El inicio es 2 o la página actual - 1
+        const fin = Math.min(totalPaginas - 1, paginaActual + 1); // El fin es la página actual + 1 o la penúltima página
+        // Agregar las páginas del rango cercano
+        for (let i = inicio; i <= fin; i++) paginas.push(i);
+        // Si la página actual está más cerca del final, añadir "..."
+        if (paginaActual < totalPaginas - 3) paginas.push('...');
+        // Siempre mostrar la última página
+        paginas.push(totalPaginas);
+    }
 
-      return paginas; // Devolvemos las páginas generadas
-  }; 
-  // Componente de paginación para las pólizas
-  const PaginacionPolizas: React.FC<PaginacionPolizasProps> = ({
+    return paginas; // Devolvemos las páginas generadas
+};
+// Componente de paginación para las pólizas
+const PaginacionPolizas: React.FC<PaginacionPolizasProps> = ({
     paginaActual,
     totalPaginas,
     onPageChange,
-  }) => {
+}) => {
     const paginas = generarPaginas(paginaActual, totalPaginas);
-  
+
     return (
-        <Pagination className="mt-6">
+        <Pagination className="mb-6">
             <PaginationContent>
                 {/* Botón para ir a la página anterior */}
                 <PaginationItem>
@@ -81,7 +81,6 @@ import {
             </PaginationContent>
         </Pagination>
     );
-  };
-  
-  export default PaginacionPolizas;
-  
+};
+
+export default PaginacionPolizas;

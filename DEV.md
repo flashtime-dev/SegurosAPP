@@ -353,11 +353,13 @@ Al usar Inertia nos evitamos el @csrf para la seguridad que evita injeccion masi
 
 ### 12. Integracion de middlewares
 
-### 13. Integracion de Chat en tiempo real
+### 13. Integracion de policies
 
-### 14. Integracion de Email
+### 14. Integracion de Chat en tiempo real
 
-### 15. Integracion de Notificaciones
+### 15. Integracion de Email
+
+### 16. Integracion de Notificaciones
 
 
 
