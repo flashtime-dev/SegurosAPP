@@ -1,6 +1,7 @@
 import CrearAgenteModal from '@/components/agentes/CrearAgenteModal';
 import EditarAgenteModal from '@/components/agentes/EditarAgenteModal';
 import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { Agente } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
@@ -11,7 +12,7 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
     // Estados para modales y edición
     const [editingAgente, setEditingAgente] = useState<Agente | null>(null);
     const [isCreating, setIsCreating] = useState(false); // Estado para el modal de creación
-    
+
     //Datos para formulario
     const { data, setData, post, put, processing, errors, reset } = useForm({
         nombre: '',
@@ -42,25 +43,13 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
                     </Button>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="min-w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                        <thead>
-                            <tr className="bg-gray-100 dark:bg-gray-900 text-left text-sm font-semibold text-gray-600 dark:text-gray-200">
-                                <th className="border-b px-4 py-2">Nombre</th>
-                                <th className="border-b px-4 py-2">Email</th>
-                                <th className="border-b px-4 py-2">Teléfono</th>
-                                <th className="border-b px-4 py-2">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* Mostrar agentes */}
-                            {agentes.map((agente) => (
-                                <tr key={agente.id} className="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    <td className="border-b px-4 py-2">{agente.nombre}</td>
-                                    <td className="border-b px-4 py-2">{agente.email}</td>
-                                    <td className="border-b px-4 py-2">{agente.telefono}</td>
-                                    <td className="flex space-x-2 border-b px-4 py-2">
-                                        {/* Boton para abrir modal de editar */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {agentes.map((agente) => (
+                        <Card key={agente.id} className="relative">
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="text-lg">{agente.nombre}</CardTitle>
+                                    <div className="flex space-x-2">
                                         <Button
                                             variant="outline"
                                             size="sm"
@@ -69,8 +58,6 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
                                         >
                                             <Edit className="h-4 w-4" />
                                         </Button>
-
-                                        {/* Boton para eliminar */}
                                         <Button
                                             variant="outline"
                                             size="sm"
@@ -83,12 +70,25 @@ export default function Index({ agentes }: { agentes: Agente[] }) {
                                         >
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                    </div>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <dl className="grid gap-2 text-sm">
+                                    <div className="flex justify-between items-center">
+                                        <dt className="font-medium text-gray-500 dark:text-gray-400">Email:</dt>
+                                        <dd className="text-gray-900 dark:text-gray-200">{agente.email}</dd>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <dt className="font-medium text-gray-500 dark:text-gray-400">Teléfono:</dt>
+                                        <dd className="text-gray-900 dark:text-gray-200">{agente.telefono}</dd>
+                                    </div>
+                                </dl>
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
+
                 {/* Modal para crear agente */}
                 {isCreating && <CrearAgenteModal isOpen={isCreating} onClose={() => setIsCreating(false)} />}
                 {/* Modal para editar */}
