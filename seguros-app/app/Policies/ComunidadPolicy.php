@@ -38,7 +38,7 @@ class ComunidadPolicy
     public function update(User $user, Comunidad $comunidad): bool
     {
         // Superadmin
-        if ($user->rol_id === 1) {
+        if ($user->id_rol === 1) {
             return true;
         }
 
@@ -54,7 +54,7 @@ class ComunidadPolicy
     public function delete(User $user, Comunidad $comunidad): bool
     {
         // Superadmin
-        if ($user->rol_id === 1) {
+        if ($user->id_rol === 1) {
             return true;
         }
 

@@ -29,8 +29,9 @@ class CheckPermiso
                 return redirect()->route('login');
             }
 
+            //dd($user->id_rol);
             // Si el usuario es superadmin, permitir acceso sin verificar permisos
-            if ($user->rol && $user->rol->id === 1) {
+            if ($user && $user->id_rol == 1) {
                 return $next($request);
             }
 

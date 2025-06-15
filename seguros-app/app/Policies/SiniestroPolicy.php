@@ -22,7 +22,7 @@ class SiniestroPolicy
     public function view(User $user, Siniestro $siniestro): bool
     {
         // Superadmin
-        if ($user->rol_id === 1) {
+        if ($user->id_rol === 1) {
             return true;
         }
 
@@ -46,7 +46,7 @@ class SiniestroPolicy
     public function update(User $user, Siniestro $siniestro): bool
     {
         // Superadmin
-        if ($user->rol_id === 1) {
+        if ($user->id_rol === 1) {
             return true;
         }
 
@@ -62,7 +62,7 @@ class SiniestroPolicy
     public function delete(User $user, Siniestro $siniestro): bool
     {
         // Superadmin
-        if ($user->rol_id === 1) {
+        if ($user->id_rol === 1) {
             return true;
         }
 

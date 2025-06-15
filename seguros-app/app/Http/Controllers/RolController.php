@@ -88,7 +88,7 @@ class RolController extends BaseController
                 $rol->permisos()->detach(); // Eliminar la relación entre el rol y los permisos
             }
 
-            Log::info('Rol creado correctamente', ['rol_id' => $rol->id, 'user_id' => Auth::id()]);
+            Log::info('Rol creado correctamente', ['id_rol' => $rol->id, 'user_id' => Auth::id()]);
             return redirect()->route('roles.index')->with([
                     'success' => [
                         'id' => uniqid(),
@@ -143,7 +143,7 @@ class RolController extends BaseController
                 $rol->permisos()->sync($request->permisos); // Actualizar permisos del rol
             }
 
-            Log::info('Rol actualizado correctamente', ['rol_id' => $rol->id, 'user_id' => Auth::id()]);
+            Log::info('Rol actualizado correctamente', ['id_rol' => $rol->id, 'user_id' => Auth::id()]);
             return redirect()->route('roles.index')->with([
                     'success' => [
                         'id' => uniqid(),
@@ -178,7 +178,7 @@ class RolController extends BaseController
             // Eliminar el rol y sus relaciones con permisos
             $rol->permisos()->detach(); // Eliminar las relaciones con permisos
             $rol->delete(); // Eliminar el rol
-            Log::info('Rol eliminado correctamente', ['rol_id' => $id, 'user_id' => Auth::id()]);
+            Log::info('Rol eliminado correctamente', ['id_rol' => $id, 'user_id' => Auth::id()]);
             return redirect()->route('roles.index')
             ->with([
                     'success' => [
