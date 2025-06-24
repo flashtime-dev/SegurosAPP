@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class LoginRequest extends FormRequest
 {
@@ -39,17 +41,43 @@ class LoginRequest extends FormRequest
      */
     public function authenticate(): void
     {
-        $this->ensureIsNotRateLimited();
+        try {
+            $this->ensureIsNotRateLimited();
+            if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+                RateLimiter::hit($this->throttleKey());
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+                throw ValidationException::withMessages([
+                    'email' => __('auth.failed'),
+                ]);
+            }
 
+            // Obtener el usuario autenticado después de Auth::attempt()
+            $user = Auth::user();
+
+            // Verificar si el usuario tiene state = 1 (activo)
+            if ((int) $user->state !== 1) {
+                Auth::logout();
+
+                throw ValidationException::withMessages([
+                    'email' => __('auth.inactive'),
+                ]);
+            }
+
+            RateLimiter::clear($this->throttleKey());
+        } catch (ValidationException $e) {
+            // Re-lanzar para que la validación falle como se espera
+            throw $e;
+        } catch (Throwable $e) {
+            Log::error('Error inesperado en LoginRequest@authenticate: ' . $e->getMessage(), [
+                'exception' => $e,
+                'email' => $this->input('email'),
+                'ip' => $this->ip(),
+            ]);
+            // Opcionalmente, podrías lanzar una excepción general o mostrar un mensaje genérico
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'email' => __('auth.unexpected_error'),
             ]);
         }
-
-        RateLimiter::clear($this->throttleKey());
     }
 
     /**
@@ -59,20 +87,32 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-            return;
+        try {
+            if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+                return;
+            }
+
+            event(new Lockout($this));
+            $seconds = RateLimiter::availableIn($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => __('auth.throttle', [
+                    'seconds' => $seconds,
+                    'minutes' => ceil($seconds / 60),
+                ]),
+            ]);
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (Throwable $e) {
+            Log::error('Error inesperado en LoginRequest@ensureIsNotRateLimited: ' . $e->getMessage(), [
+                'exception' => $e,
+                'email' => $this->input('email'),
+                'ip' => $this->ip(),
+            ]);
+            throw ValidationException::withMessages([
+                'email' => __('auth.unexpected_error'),
+            ]);
         }
-
-        event(new Lockout($this));
-
-        $seconds = RateLimiter::availableIn($this->throttleKey());
-
-        throw ValidationException::withMessages([
-            'email' => __('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
-        ]);
     }
 
     /**
@@ -80,6 +120,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
     }
 }

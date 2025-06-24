@@ -2,30 +2,59 @@ import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
+import { Rol, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { Building, FileText, LayoutGrid, Phone, ShieldUser , User, Zap } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Panel de Control',
         href: '/dashboard',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Usuarios',
+        href: '/usuarios',
+        icon: User,
+        role: [1],
+    },
+    {
+        title: 'Empleados',
+        href: '/empleados',
+        icon: User,
+        role: [2],
+    },
+    {
+        title: 'Comunidades',
+        href: '/comunidades',
+        icon: Building,
+        role: [1,2],
+    },
+    {
+        title: 'Agentes',
+        href: '/agentes',
+        icon: ShieldUser,
+        role: [1],
+    },
+    {
+        title: 'Polizas',
+        href: '/polizas',
+        icon: FileText,
+    },
+    {
+        title: 'Siniestros',
+        href: '/siniestros',
+        icon: Zap,
+    },
+    {
+        title: 'Telefonos de Asistencia',
+        href: '/telefonos-asistencia',
+        icon: Phone,
     },
 ];
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
-    },
 ];
 
 export function AppSidebar() {
@@ -44,7 +73,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={mainNavItems}/>
             </SidebarContent>
 
             <SidebarFooter>

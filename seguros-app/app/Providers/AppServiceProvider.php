@@ -19,6 +19,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        //              #
+        //            ###
+        //          #####
+        //        #######
+        //      #########
+        //    ######################
+        //  ######################
+        //             #########
+        //             #######
+        //             #####
+        //             ###
+        //             #
+        
+        // ⚡ Este rayo marca el inicio de algo poderoso... o no.
+        // Easter Egg by @Cristy
     }
 }

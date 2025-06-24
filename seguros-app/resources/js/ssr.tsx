@@ -1,3 +1,6 @@
+//Este archivo es fundamental para el renderizado del lado del servidor (SSR)
+// en una aplicación React con Inertia.js para Laravel.
+
 import { createInertiaApp } from '@inertiajs/react';
 import createServer from '@inertiajs/react/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
@@ -6,6 +9,7 @@ import { type RouteName, route } from 'ziggy-js';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+// Configuración del servidor SSR de Inertia.js
 createServer((page) =>
     createInertiaApp({
         page,

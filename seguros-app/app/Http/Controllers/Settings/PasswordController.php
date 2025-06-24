@@ -6,14 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class PasswordController extends Controller
 {
     /**
-     * Show the user's password settings page.
+     * Muestra la página de edición de contraseña.
      */
     public function edit(): Response
     {
@@ -21,19 +23,73 @@ class PasswordController extends Controller
     }
 
     /**
-     * Update the user's password.
+     * Maneja la solicitud de actualización de contraseña.
      */
     public function update(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
+        // Este comentario no se borra, en un futuro se deberí usar esta configuracion 
+        // para validar las contraseñas y otros campos
+
+        // $validated = $request->validate([
+        //     'current_password' => ['required', 'current_password'],
+        //     'password' => ['required', Password::defaults(), 'confirmed'],
+        // ]);
+
+        // $request->user()->update([
+        //     'password' => Hash::make($validated['password']),
+        // ]);
+
+        // Comienza validaciones personalizadas
+        $request->validate([
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                'regex:/^(?=.*[a-zñ])(?=.*[A-ZÑ])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-zñÑ\d@$!%*?&#_.-]{8,}$/',
+            ],
+        ], [
+            'current_password.required' => 'La contraseña actual es obligatoria.',
+            'current_password.current_password' => 'La contraseña actual es incorrecta.',
+            'password.required' => 'La nueva contraseña es obligatoria.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.regex' => 'La contraseña debe tener al menos 8 carácteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&#_.-).',
         ]);
+        try{
+            // Actualizar la contraseña del usuario autenticado
+            // Se utiliza Hash::make para encriptar la nueva contraseña
+            // y se guarda en la base de datos.
+            $request->user()->update([
+                'password' => Hash::make($request->password),
+            ]);
 
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
-        ]);
+            // Finaliza validaciones personalizadas
 
-        return back();
+            Log::info('🔒 Contraseña actualizada correctamente.', [
+                'user_id' => $request->user()->id ?? null,
+                'email' => $request->user()->email ?? null,
+            ]);
+
+            // Redirige al usuario a la página anterior con un mensaje de éxito
+            return back()->with([
+                'success' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Tu contraseña ha sido actualizada correctamente",
+                ],
+            ]);
+        } catch (Throwable $e) {
+            Log::error('❌ Error al actualizar la contraseña del usuario: ' . $e->getMessage(), [
+                'exception' => $e,
+                'user_id' => $request->user()->id ?? null,
+                'email' => $request->user()->email ?? null,
+            ]);
+
+            return back()->with([
+                    'error' => [
+                        'id' => uniqid(),
+                        'mensaje' => "Se produjo un error al actualizar la contraseña. Intentalo de nuevo",
+                    ],
+                ]);
+        }
     }
 }
