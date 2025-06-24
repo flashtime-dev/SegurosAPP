@@ -1,4 +1,4 @@
-# Gestor de Seguros - Seguros Axarquia
+# Gestor de Seguros - Seguros Axarquia - TFG Desarrollo de Aplicaciones Web
 
 Aplicación web para la gestión de seguros de edificios y comunidades de
 propietarios, que permite administrar pólizas, registrar y gestionar siniestros, y facilitar la
