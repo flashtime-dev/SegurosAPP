@@ -7,6 +7,9 @@ aseguradora, o el corredor de seguros. La interfaz tiene uso para que los usuari
 visualizar las pólizas administradas, reportar siniestros y dar seguimiento a sus solicitudes
 mediante un chat en vivo.
 
+## Documentacion del Proyecto Integrado
+Informacion en la carpeta docs.
+
 ## Tecnologías utilizadas
 
 - [Laravel](https://laravel.com/)
