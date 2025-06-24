@@ -25,7 +25,7 @@ Informacion en la carpeta docs.
 
 1. Clona el repositorio:
     ```bash
-    git clone https://github.com/cvaclop1911/proyecto-daw.git
+    git clone https://github.com/cvaclop1911/SegurosApp.git
     ```
 2. Copiar el archivo `.env.example` a `.env`
     Configurar las variables base de nuestra aplicacion como la Base de Datos, el nombre de la aplicacion...
