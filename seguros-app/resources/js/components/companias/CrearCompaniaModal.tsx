@@ -1,10 +1,9 @@
 import { useForm } from '@inertiajs/react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent,DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import TelefonosForm from './TelefonosForm';
-
 interface CrearCompaniaModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -34,7 +33,10 @@ export default function CrearCompaniaModal({ isOpen, onClose }: CrearCompaniaMod
     return (
         <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
             <DialogContent>
-                <DialogTitle>Crear Compañía</DialogTitle>
+                <DialogHeader>
+                    <DialogTitle>Crear Compañía</DialogTitle>
+                    <DialogDescription>Completa los campos para crear una nueva compañía.</DialogDescription>
+                </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <Label htmlFor="nombre">Nombre *</Label>
@@ -48,8 +50,8 @@ export default function CrearCompaniaModal({ isOpen, onClose }: CrearCompaniaMod
                     </div>
                     <div>
                         <Label>Teléfonos</Label>
-                        <TelefonosForm telefonos={data.telefonos} setTelefonos={t => setData('telefonos', t)} />
-                        {errors.telefonos && <p className="text-red-500 text-xs mt-1">{errors.telefonos}</p>}
+                        <TelefonosForm telefonos={data.telefonos} setTelefonos={t => setData('telefonos', t)} errors={errors}/>
+                        {/* {errors.telefonos && <p className="text-red-500 text-xs mt-1">{errors.telefonos}</p>} */}
                     </div>
                     <div className="flex justify-end gap-2">
                         <Button type="button" variant="secondary" onClick={onClose} disabled={processing}>

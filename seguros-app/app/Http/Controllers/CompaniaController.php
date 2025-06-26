@@ -56,11 +56,21 @@ class CompaniaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|min:2|max:255',
             'url_logo' => 'required|string|max:255',
             'telefonos' => 'array',
             'telefonos.*.telefono' => 'nullable|phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL',
-            'telefonos.*.descripcion' => 'nullable|string|max:255',
+            'telefonos.*.descripcion' => 'required|string|min:2|max:255',
+        ],[
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres',
+            'nombre.max' => 'El nombre no puede exeder los 255 caracters',
+            'nombre.required' => 'El nombre es obligatorio',
+            'url_logo.required' => 'La URL del logo es obligatoria',
+            'url_logo.max' => 'La URL del logo no puede exeder los 255 caracteres',
+            'telefonos.*.telefono' => 'Formato de teléfono incorrecto',
+            'telefonos.*.descripcion.required' => 'La descripción del teléfono es obligatoria',
+            'telefonos.*.descripcion.min' => 'La descripción del teléfono debe tener al menos 2 caracteres',
+            'telefonos.*.descripcion.max' => 'La descripción del teléfono no puede exeder los 255 caracteres',
         ]);
 
         try {
@@ -84,7 +94,7 @@ class CompaniaController extends Controller
             ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al crear compañía:', ['exception' => $e]);
-            return redirect()->back()->withErrors([
+            return redirect()->back()->with([
                 'error' => [
                     'id' => uniqid(),
                     'mensaje' => "Error al crear la compañía",
@@ -96,11 +106,21 @@ class CompaniaController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|min:2|max:255',
             'url_logo' => 'required|string|max:255',
             'telefonos' => 'array',
             'telefonos.*.telefono' => 'nullable|phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL',
-            'telefonos.*.descripcion' => 'nullable|string|max:255',
+            'telefonos.*.descripcion' => 'required|string|min:2|max:255',
+        ],[
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres',
+            'nombre.max' => 'El nombre no puede exeder los 255 caracters',
+            'nombre.required' => 'El nombre es obligatorio',
+            'url_logo.required' => 'La URL del logo es obligatoria',
+            'url_logo.max' => 'La URL del logo no puede exeder los 255 caracteres',
+            'telefonos.*.telefono' => 'Formato de teléfono incorrecto',
+            'telefonos.*.descripcion.required' => 'La descripción del teléfono es obligatoria',
+            'telefonos.*.descripcion.min' => 'La descripción del teléfono debe tener al menos 2 caracteres',
+            'telefonos.*.descripcion.max' => 'La descripción del teléfono no puede exeder los 255 caracteres',
         ]);
 
         try {
@@ -126,7 +146,7 @@ class CompaniaController extends Controller
             ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al actualizar compañía:', ['exception' => $e]);
-            return redirect()->back()->withErrors([
+            return redirect()->back()->with([
                 'error' => [
                     'id' => uniqid(),
                     'mensaje' => "Error al actualizar la compañía",
@@ -149,7 +169,7 @@ class CompaniaController extends Controller
             ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al eliminar compañía:', ['exception' => $e]);
-            return redirect()->back()->withErrors([
+            return redirect()->back()->with([
                 'error' => [
                     'id' => uniqid(),
                     'mensaje' => "Error al eliminar la compañía",
