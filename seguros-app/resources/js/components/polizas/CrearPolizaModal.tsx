@@ -65,7 +65,7 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
     }, []);
 
     // Establece la fecha máxima para el campo de fecha de efecto como la fecha actual.
-    const maxFecha = new Date().toISOString().split("T")[0];
+    // const maxFecha = new Date().toISOString().split("T")[0];
 
     // Estado para manejar el formateo de la cuenta bancaria cuando se escribe en el campo de entrada.
     const [cuentaFormateada, setCuentaFormateada] = useState('');
@@ -199,7 +199,7 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
                                 // si es dark mode, establece el colorScheme a 'dark' y si no, a 'light'
                                 style={{ colorScheme: isDark ? 'dark' : 'light' }}
                                 disabled={processing}
-                                max={maxFecha} // Establece la fecha máxima como la fecha actual
+                                // max={maxFecha} // Establece la fecha máxima como la fecha actual
                                 required
                             />
                             <InputError message={errors.fecha_efecto} className="mt-2" />
