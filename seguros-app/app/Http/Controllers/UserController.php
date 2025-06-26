@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use App\Http\Middleware\CheckPermiso;
 use App\Models\Subusuario;
-use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -17,7 +16,7 @@ use Throwable;
 /**
  * Controlador para gestionar usuarios y empleados.
  */
-class UserController extends BaseController
+class UserController extends Controller
 {
     public function __construct()
     {

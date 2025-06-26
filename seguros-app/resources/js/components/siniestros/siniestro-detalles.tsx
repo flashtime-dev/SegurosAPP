@@ -46,10 +46,6 @@ export function SiniestroDetalles({ siniestro }: { siniestro: Siniestro }) {
                     value={safeFormatDate(siniestro.fecha_ocurrencia)}
                 />
                 <DetailItem
-                    label="Tramitador"
-                    value={siniestro.tramitador}
-                />
-                <DetailItem
                     label="Expediente CIA"
                     value={siniestro.exp_cia}
                 />

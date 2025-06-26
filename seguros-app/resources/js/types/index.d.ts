@@ -139,7 +139,6 @@ export interface ChatSiniestro {
 export interface Siniestro {
     id: number;
     declaracion: string;
-    tramitador: string;
     expediente: string;
     exp_cia: string;
     exp_asist: string;

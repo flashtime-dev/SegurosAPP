@@ -29,7 +29,6 @@ type FormData = {
     _method: "PUT",
     id_poliza: string;
     declaracion: string;
-    tramitador: string;
     expediente: string;
     exp_cia: string;
     exp_asist: string;
@@ -44,7 +43,6 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
         _method: "PUT", // Importante: agregar este campo para simular PUT
         id_poliza: "",
         declaracion: "",
-        tramitador: "",
         expediente: "",
         exp_cia: "",
         exp_asist: "",
@@ -69,7 +67,6 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                 _method: "PUT", // Mantener el método
                 id_poliza: String(siniestro.id_poliza),
                 declaracion: siniestro.declaracion || "",
-                tramitador: siniestro.tramitador || "",
                 expediente: siniestro.expediente || "",
                 exp_cia: siniestro.exp_cia || "",
                 exp_asist: siniestro.exp_asist || "",
@@ -184,24 +181,6 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                     placeholder="Daños por agua en baño principal"
                                 />
                                 <InputError message={errors.declaracion} />
-                            </div>
-
-                            {/* Tramitador */}
-                            <div>
-                                <Label htmlFor="tramitador">Tramitador</Label>
-                                <Input
-                                    id="tramitador"
-                                    value={data.tramitador}
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        setData(
-                                            "tramitador",
-                                            value.charAt(0).toUpperCase() + value.slice(1)
-                                        );
-                                    }}
-                                    placeholder="Nombre del tramitador"
-                                />
-                                <InputError message={errors.tramitador} />
                             </div>
 
                             {/* Expediente / Exp_CIA */}

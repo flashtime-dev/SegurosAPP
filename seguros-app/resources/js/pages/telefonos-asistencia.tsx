@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { Compania } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -79,7 +79,9 @@ export default function TelefonosAsistencia() {
                             <ul className="space-y-2">
                                 {selectedCompania.telefonos.map((telefono) => (
                                     <li key={telefono.id} className="flex justify-between">
-                                        <span className="font-medium">{telefono.telefono}</span>
+                                        <a href={`tel:${telefono.telefono}`}>
+                                            <span className="font-medium">{telefono.telefono}</span>
+                                        </a>
                                         <span className="text-sm text-gray-500">{telefono.descripcion}</span>
                                     </li>
                                 ))}

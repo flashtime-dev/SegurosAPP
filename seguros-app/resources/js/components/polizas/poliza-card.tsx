@@ -6,7 +6,7 @@ import { router } from "@inertiajs/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Link } from "@inertiajs/react";
 import { Edit, Trash2 } from "lucide-react";
- 
+
 /**
  * Componente que muestra la información de una póliza de seguro en formato de tarjeta
  */

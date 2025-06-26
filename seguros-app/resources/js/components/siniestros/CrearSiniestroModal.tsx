@@ -30,7 +30,6 @@ type Props = {
 type FormData = {
     id_poliza: string;
     declaracion: string;
-    tramitador: string;
     expediente: string;
     exp_cia: string;
     exp_asist: string;
@@ -44,7 +43,6 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
         id_poliza: polizaSeleccionada || '',
         declaracion: '',
-        tramitador: '',
         expediente: '',
         exp_cia: '',
         exp_asist: '',
@@ -137,20 +135,6 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                     placeholder="Daños por aguan en baño principal"
                                 />
                                 <InputError message={errors.declaracion} />
-                            </div>
-
-                            <div>
-                                <Label htmlFor="tramitador">Tramitador</Label>
-                                <Input
-                                    id="tramitador"
-                                    value={data.tramitador}
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        setData('tramitador', value.charAt(0).toUpperCase() + value.slice(1));
-                                    }}
-                                    placeholder="Nombre del tramitador"
-                                />
-                                <InputError message={errors.tramitador} />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">

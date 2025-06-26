@@ -16,7 +16,6 @@ class SiniestrosSeeder_Prueba extends Seeder
             [
                 'id_poliza' => 1,
                 'declaracion' => 'Accidente leve en carretera',
-                'tramitador' => 'Juan Pérez',
                 'expediente' => 'EXP-2025-001',
                 'exp_cia' => 'CIA-1001',
                 'exp_asist' => 'ASIST-5001',
@@ -27,7 +26,6 @@ class SiniestrosSeeder_Prueba extends Seeder
             [
                 'id_poliza' => 2,
                 'declaracion' => 'Daños por incendio en vivienda',
-                'tramitador' => 'María López',
                 'expediente' => 'EXP-2025-002',
                 'exp_cia' => 'CIA-1002',
                 'exp_asist' => 'ASIST-5002',
@@ -38,7 +36,6 @@ class SiniestrosSeeder_Prueba extends Seeder
             [
                 'id_poliza' => 1,
                 'declaracion' => 'Robo con violencia',
-                'tramitador' => 'Carlos Ruiz',
                 'expediente' => 'EXP-2025-003',
                 'exp_cia' => 'CIA-1001',
                 'exp_asist' => 'ASIST-5003',
@@ -49,7 +46,6 @@ class SiniestrosSeeder_Prueba extends Seeder
             [
                 'id_poliza' => 3,
                 'declaracion' => 'Accidente de tráfico con heridos',
-                'tramitador' => 'Laura Gómez',
                 'expediente' => 'EXP-2025-004',
                 'exp_cia' => 'CIA-1003',
                 'exp_asist' => 'ASIST-5004',

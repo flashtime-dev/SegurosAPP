@@ -85,14 +85,12 @@ class SiniestroController extends Controller
         // Capitalizar solo la primera palabra de los campos declaracion y tramitador
         $request->merge([
             'declaracion' => ucfirst($request->declaracion),
-            'tramitador' => ucfirst($request->tramitador),
         ]);
 
         // Validación de los datos del siniestro
         $request->validate([
             'id_poliza' => 'required|exists:polizas,id',
             'declaracion' => 'required|string|min:10|max:1000',
-            'tramitador' => 'nullable|string|min:2|max:255',
             'expediente' => 'required|string|min:2|max:50',
             'exp_cia' => 'nullable|string|min:2|max:50',
             'exp_asist' => 'nullable|string|min:2|max:50',
@@ -111,8 +109,6 @@ class SiniestroController extends Controller
             'declaracion.required' => 'La declaración es obligatoria.',
             'declaracion.min' => 'La declaración debe tener al menos 10 caracteres.',
             'declaracion.max' => 'La declaración no puede exceder los 1000 caracteres.',
-            'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
-            'tramitador.max' => 'El tramitador no puede exceder los 255 caracteres.',
             'expediente.required' => 'El tramitador es obligatorio.',
             'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
             'expediente.max' => 'El expediente no puede exceder los 50 caracteres.',
@@ -243,14 +239,12 @@ class SiniestroController extends Controller
         // Normalizar mayúsculas en ciertos campos
         $request->merge([
             'declaracion' => ucfirst($request->declaracion),
-            'tramitador'  => ucfirst($request->tramitador),
         ]);
 
         // Validación
         $request->validate([
             'id_poliza'        => 'required|exists:polizas,id',
             'declaracion'      => 'required|string|min:10|max:1000',
-            'tramitador'       => 'nullable|string|min:2|max:255',
             'expediente'       => 'required|string|min:2|max:50',
             'exp_cia'          => 'nullable|string|min:2|max:50',
             'exp_asist'        => 'nullable|string|min:2|max:50',
@@ -269,8 +263,6 @@ class SiniestroController extends Controller
             'declaracion.required' => 'La declaración es obligatoria.',
             'declaracion.min' => 'La declaración debe tener al menos 10 caracteres.',
             'declaracion.max' => 'La declaración no puede exceder los 1000 caracteres.',
-            'tramitador.min' => 'El tramitador debe tener al menos 2 caracteres.',
-            'tramitador.max' => 'El tramitador no puede exceder los 255 caracteres.',
             'expediente.required' => 'El tramitador es obligatorio.',
             'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
             'expediente.max' => 'El expediente no puede exceder los 50 caracteres.',

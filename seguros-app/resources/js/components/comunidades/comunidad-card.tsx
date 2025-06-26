@@ -4,6 +4,7 @@ import { Comunidad } from "@/types";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
 import { router } from "@inertiajs/react";
+import ImageZoom from "../ImageZoom";
 
 export function ComunidadCard({ comunidad, onEdit }: { comunidad: Comunidad; onEdit?: () => void }) {
     // Ref para el botón del menú
@@ -59,12 +60,11 @@ export function ComunidadCard({ comunidad, onEdit }: { comunidad: Comunidad; onE
             {/* Contenido de la tarjeta */}
             <div className="p-4">
                 <CardHeader className="flex-row items-center justify-between p-0 mb-4">
-                    <div>
                         <CardTitle>{comunidad.nombre}</CardTitle>
                         <CardDescription>{comunidad.cif}</CardDescription>
-                    </div>
                 </CardHeader>
                 <CardContent className="p-0">
+                    <ImageZoom src={'https://ovc.catastro.meh.es/OVCServWeb/OVCWcfLibres/OVCFotoFachada.svc/RecuperarFotoFachadaGet?ReferenciaCatastral=' + comunidad.ref_catastral} />
                     <p className="text-sm text-gray-500 dark:text-gray-300">{comunidad.direccion}</p>
                     <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">{comunidad.telefono}</p>
                 </CardContent>

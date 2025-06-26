@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { Rol, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Building, FileText, LayoutGrid, Phone, ShieldUser , User, Zap } from 'lucide-react';
+import { Building, FileText, LayoutGrid, Phone, ShieldUser , User, Zap, Store } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -37,6 +37,7 @@ const mainNavItems: NavItem[] = [
         icon: ShieldUser,
         role: [1],
     },
+    
     {
         title: 'Polizas',
         href: '/polizas',
@@ -46,6 +47,11 @@ const mainNavItems: NavItem[] = [
         title: 'Siniestros',
         href: '/siniestros',
         icon: Zap,
+    },{
+        title: 'Compañias',
+        href: '/companias',
+        icon: Store,
+        role: [1],
     },
     {
         title: 'Telefonos de Asistencia',

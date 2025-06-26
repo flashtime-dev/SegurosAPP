@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/siniestros/{id}/cerrar', [SiniestroController::class, 'cerrar'])->name('siniestros.cerrar');
 
     // Rutas para consultar los teléfonos de asistencia de las compañías
+    Route::resource('companias', CompaniaController::class)->except(['create', 'edit']);
     Route::get('telefonos-asistencia', [CompaniaController::class, 'telefonosAsistencia'])->name('telefonos-asistencia');
 });
 

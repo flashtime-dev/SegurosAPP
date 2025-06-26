@@ -14,7 +14,6 @@ class Siniestro extends Model
     protected $fillable = [ // Atributos que se pueden asignar masivamente
         'id_poliza',
         'declaracion',
-        'tramitador',
         'expediente',
         'exp_cia',
         'exp_asist',

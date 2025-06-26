@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comunidad;
 use App\Models\Poliza;
 use App\Models\Siniestro;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,10 @@ class DashboardController extends Controller
         // Segun el rol del usuario, se obtienen diferentes datos para el dashboard
         try{
             $user = Auth::user(); // Obtener el usuario autenticado
+            
+            $userLogued = User::with('rol.permisos')->findOrFail($user->id);
 
+            //dd($userLogued->rol);
             // Verificar si el usuario tiene el rol de superadministrador
             if ($user->rol->nombre == 'Superadministrador') {
                 $comunidades = Comunidad::all()->count();
@@ -54,6 +58,7 @@ class DashboardController extends Controller
                 'comunidades' => $comunidades,
                 'polizas' => $polizas,
                 'siniestros' => $siniestros,
+                'rol' => $userLogued->rol,
             ]);
         } catch (Throwable $e) {
             Log::error('❌ Error al cargar el dashboard', [
