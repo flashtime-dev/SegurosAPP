@@ -38,10 +38,10 @@ class PolizaController extends Controller
      * Si es un superadministrador, muestra todas las pólizas.
      * Si es un usuario normal, muestra solo las pólizas de las comunidades donde es propietario o está asignado.
      */
-    
+
     public function index()
     {
-        try{
+        try {
             $user = Auth::user(); // Obtener el usuario autenticado
 
             // Verificar si el usuario tiene el rol de administrador
@@ -95,6 +95,7 @@ class PolizaController extends Controller
         $request->merge([
             'alias' => ucfirst(($request->alias)),
             'id_agente' => $request->id_agente === 'null' ? null : $request->id_agente,
+            'cuenta' => strtoupper(str_replace(' ', '', $request->cuenta)),
         ]);
 
         // Validar los campos del formulario
@@ -105,7 +106,7 @@ class PolizaController extends Controller
             'alias' => 'nullable|string|min:2|max:255',
             'numero' => 'required|string|max:20',
             'fecha_efecto' => 'required|date|before_or_equal:today',
-            'cuenta' => 'nullable|string|min:20|max:24',
+            'cuenta' => 'nullable|string|size:24|regex:/^[A-Z]{2}[0-9]{22}$/i',
             'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
             'prima_neta' => 'required|numeric|min:0',
             'prima_total' => 'required|numeric|min:0',
@@ -124,8 +125,8 @@ class PolizaController extends Controller
             'numero.max' => 'El número de póliza no debe exceder los 20 carácteres.',
             'fecha_efecto.required' => 'La fecha de efecto es obligatoria.',
             'fecha_efecto.before_or_equal' => 'La fecha de efecto no puede ser mayor a hoy.',
-            'cuenta.min' => 'La cuenta debe tener al menos 20 caracteres.',
-            'cuenta.max' => 'La cuenta no debe execeder los 24 carácteres.',
+            'cuenta.size' => 'La cuenta debe tener exactamente 24 caracteres.',
+            'cuenta.regex' => 'La cuenta debe empezar por dos letras y contener 22 números.',
             'forma_pago.required' => 'La forma de pago es obligatoria.',
             'prima_neta.required' => 'La prima neta es obligatoria.',
             'prima_neta.min' => 'La prima neta debe ser un número positivo.',
@@ -188,7 +189,7 @@ class PolizaController extends Controller
         try {
             // Cargar la póliza con sus relaciones necesarias
             $poliza = Poliza::with(['compania', 'comunidad', 'siniestros', 'agente', 'chats.usuario'])->findOrFail($id);
-            
+
             // Aplicar politica de autorización
             $this->authorize('view', $poliza);
 
@@ -238,6 +239,7 @@ class PolizaController extends Controller
         $request->merge([
             'alias' => ucfirst(($request->alias)),
             'id_agente' => $request->id_agente === 'null' ? null : $request->id_agente,
+            'cuenta' => strtoupper(str_replace(' ', '', $request->cuenta)),
         ]);
 
         $request->validate([
@@ -247,7 +249,7 @@ class PolizaController extends Controller
             'alias' => 'nullable|string|min:2|max:255',
             'numero' => 'required|string|max:20',
             'fecha_efecto' => 'required|date|before_or_equal:today',
-            'cuenta' => 'nullable|string|min:20|max:24',
+            'cuenta' => 'nullable|string|size:24|regex:/^[A-Z]{2}[0-9]{22}$/i',
             'forma_pago' => 'required|in:Bianual,Anual,Semestral,Trimestral,Mensual',
             'prima_neta' => 'required|numeric|min:0',
             'prima_total' => 'required|numeric|min:0',
@@ -266,8 +268,8 @@ class PolizaController extends Controller
             'numero.max' => 'El número de póliza no debe exceder los 20 carácteres.',
             'fecha_efecto.required' => 'La fecha de efecto es obligatoria.',
             'fecha_efecto.before_or_equal' => 'La fecha de efecto no puede ser mayor a hoy.',
-            'cuenta.min' => 'La cuenta debe tener al menos 20 caracteres.',
-            'cuenta.max' => 'La cuenta no debe execeder los 24 carácteres.',
+            'cuenta.size' => 'La cuenta debe tener exactamente 24 caracteres.',
+            'cuenta.regex' => 'La cuenta debe empezar por dos letras y contener 22 números.',
             'forma_pago.required' => 'La forma de pago es obligatoria.',
             'prima_neta.required' => 'La prima neta es obligatoria.',
             'prima_neta.min' => 'La prima neta debe ser un número positivo.',

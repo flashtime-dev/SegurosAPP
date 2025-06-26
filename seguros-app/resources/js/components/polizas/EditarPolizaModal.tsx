@@ -23,7 +23,7 @@ type Props = {
     companias: Compania[];
     comunidades: Comunidad[];
     agentes: Agente[];
-    poliza?: any; 
+    poliza?: any;
 };
 
 export default function EditarPolizaModal({ isOpen, onClose, companias, comunidades, agentes, poliza }: Props & { poliza?: any }) {
@@ -51,6 +51,18 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                 const date = new Date(fecha);
                 return date.toISOString().split('T')[0]; // Convierte a "yyyy-MM-dd"
             };
+
+            const formatCuenta = (cuenta: string) => {
+                if (!cuenta) return '';
+                // Limpiar espacios y poner mayúsculas
+                const clean = cuenta.toUpperCase().replace(/\s+/g, '');
+                // Formatear con espacios cada 4 caracteres
+                return clean.replace(/(.{4})/g, '$1 ').trim();
+            };
+
+            // Actualizar data con el valor limpio (sin espacios) y cuentaFormateada con espacios
+            const cuentaLimpia = poliza.cuenta ? poliza.cuenta.toUpperCase().replace(/\s+/g, '') : '';
+
             // Actualizar el estado del formulario con los datos de la póliza
             setData({
                 _method: 'PUT', // Mantener el método
@@ -60,7 +72,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                 alias: poliza.alias || '',
                 numero: poliza.numero || '',
                 fecha_efecto: formatFecha(poliza.fecha_efecto) || '',
-                cuenta: poliza.cuenta || '',
+                cuenta: cuentaLimpia, // Guardar la cuenta sin espacios
                 forma_pago: poliza.forma_pago || '',
                 prima_neta: poliza.prima_neta || '',
                 prima_total: poliza.prima_total || '',
@@ -68,6 +80,7 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                 observaciones: poliza.observaciones || '',
                 estado: poliza.estado || '',
             });
+            setCuentaFormateada(formatCuenta(poliza.cuenta || ''));
         }
     }, [poliza, companias, comunidades, agentes]); // Dependencias: cuando cambian estos datos, actualizamos el estado
     // Función que maneja el envío del formulario
@@ -86,18 +99,43 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
     };
 
     // Detecta si el tema es oscuro
-        const [isDark, setIsDark] = useState(false);
-        useEffect(() => {
-            const checkDark = () => setIsDark(document.documentElement.classList.contains("dark"));
-            checkDark();
-            // Si tu app cambia el tema dinámicamente, puedes escuchar eventos personalizados aquí
-            // Por ejemplo, si usas localStorage para el tema:
-            window.addEventListener("storage", checkDark);
-            return () => window.removeEventListener("storage", checkDark);
-        }, []);
-    
-        // Establece la fecha máxima para el campo de fecha de efecto como la fecha actual.
-        const maxFecha = new Date().toISOString().split("T")[0];
+    const [isDark, setIsDark] = useState(false);
+    useEffect(() => {
+        const checkDark = () => setIsDark(document.documentElement.classList.contains("dark"));
+        checkDark();
+        // Si tu app cambia el tema dinámicamente, puedes escuchar eventos personalizados aquí
+        // Por ejemplo, si usas localStorage para el tema:
+        window.addEventListener("storage", checkDark);
+        return () => window.removeEventListener("storage", checkDark);
+    }, []);
+
+    // Establece la fecha máxima para el campo de fecha de efecto como la fecha actual.
+    const maxFecha = new Date().toISOString().split("T")[0];
+
+    // Estado para manejar el formateo de la cuenta bancaria cuando se escribe en el campo de entrada.
+    const [cuentaFormateada, setCuentaFormateada] = useState('');
+    const handleCuentaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let inputValue = e.target.value.toUpperCase().replace(/\s+/g, '');
+
+        // Forzar que empiece por dos letras (máx. 2 letras al inicio)
+        let letras = inputValue.slice(0, 2).replace(/[^A-Z]/g, '');
+
+        // Si las primeras posiciones no son letras, no permitir avanzar
+        if (inputValue.length < 3 && letras.length < inputValue.length) {
+            return; // Evita escribir si empieza por número o carácter inválido
+        }
+        // Extraer solo números después de las letras
+        let numeros = inputValue.slice(letras.length).replace(/\D/g, ''); // solo números después
+
+        // Limitar el total a 24 caracteres IBAN (2 letras + 22 números)
+        let cuentaLimpia = (letras + numeros).slice(0, 24);
+
+        // Formatear con espacios cada 4 caracteres
+        let formateada = cuentaLimpia.replace(/(.{4})/g, '$1 ').trim();
+
+        setCuentaFormateada(formateada);
+        setData('cuenta', cuentaLimpia);
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -217,10 +255,11 @@ export default function EditarPolizaModal({ isOpen, onClose, companias, comunida
                             <Label htmlFor="cuenta">Cuenta</Label>
                             <Input
                                 id="cuenta"
-                                value={data.cuenta}
-                                onChange={(e) => setData('cuenta', e.target.value)}
+                                value={cuentaFormateada}
+                                onChange={handleCuentaChange}
                                 disabled={processing}
-                                placeholder="1234 5678 90 1234567890"
+                                placeholder="ES91 2100 0418 4502 0005 1332"
+                                maxLength={29}
                             />
                             <InputError message={errors.cuenta} className="mt-2" />
                         </div>

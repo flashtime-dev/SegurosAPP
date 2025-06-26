@@ -67,6 +67,31 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
     // Establece la fecha máxima para el campo de fecha de efecto como la fecha actual.
     const maxFecha = new Date().toISOString().split("T")[0];
 
+    // Estado para manejar el formateo de la cuenta bancaria cuando se escribe en el campo de entrada.
+    const [cuentaFormateada, setCuentaFormateada] = useState('');
+    const handleCuentaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let inputValue = e.target.value.toUpperCase().replace(/\s+/g, '');
+
+        // Forzar que empiece por dos letras (máx. 2 letras al inicio)
+        let letras = inputValue.slice(0, 2).replace(/[^A-Z]/g, '');
+
+        // Si las primeras posiciones no son letras, no permitir avanzar
+        if (inputValue.length < 3 && letras.length < inputValue.length) {
+            return; // Evita escribir si empieza por número o carácter inválido
+        }
+        // Extraer solo números después de las letras
+        let numeros = inputValue.slice(letras.length).replace(/\D/g, ''); // solo números después
+
+        // Limitar el total a 24 caracteres IBAN (2 letras + 22 números)
+        let cuentaLimpia = (letras + numeros).slice(0, 24);
+
+        // Formatear con espacios cada 4 caracteres
+        let formateada = cuentaLimpia.replace(/(.{4})/g, '$1 ').trim();
+
+        setCuentaFormateada(formateada);
+        setData('cuenta', cuentaLimpia);
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-lg">
@@ -185,10 +210,11 @@ export default function CrearPolizaModal({ isOpen, onClose, companias, comunidad
                             <Label htmlFor="cuenta">Cuenta</Label>
                             <Input
                                 id="cuenta"
-                                value={data.cuenta}
-                                onChange={(e) => setData('cuenta', e.target.value)}
+                                value={cuentaFormateada}
+                                onChange={handleCuentaChange}
                                 disabled={processing}
-                                placeholder="1234 5678 90 1234567890"
+                                placeholder="ES91 2100 0418 4502 0005 1332"
+                                maxLength={29}
                             />
                             <InputError message={errors.cuenta} className="mt-2" />
                         </div>

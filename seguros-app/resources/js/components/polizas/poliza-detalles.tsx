@@ -5,6 +5,16 @@ interface Props {
     label: string;
     value?: string | React.ReactNode;
 }
+
+// Función para formatear la cuenta bancaria (IBAN)
+const formatearCuenta = (cuenta?: string): string => {
+    if (!cuenta) return '-';
+    // Limpiar espacios y poner mayúsculas
+    const clean = cuenta.toUpperCase().replace(/\s+/g, '');
+    // Formatear con espacios cada 4 caracteres
+    return clean.replace(/(.{4})/g, '$1 ').trim();
+}
+
 // Componente para mostrar un ítem de detalle con su etiqueta y valor.
 const DetailItem = ({ label, value }: Props) => (
     <div className="space-y-1">
@@ -21,7 +31,7 @@ export function PolizaDetalles({ poliza }: { poliza: Poliza }) {
             <DetailItem label="Forma de pago" value={poliza.forma_pago} />
             <DetailItem label="Cliente" value={poliza.comunidad.nombre} />
             <DetailItem label="Alias del Cliente" value={poliza.alias || '-'} />
-            <DetailItem label="Domiciliación" value={poliza.cuenta} />
+            <DetailItem label="Domiciliación" value={formatearCuenta(poliza.cuenta)} />
             <DetailItem label="Dirección del riesgo" value={poliza.comunidad.direccion || '-'} />
             <DetailItem label="Efecto" value={new Date(poliza.fecha_efecto).toLocaleDateString()} />
             {/* Calcula la fecha de vencimiento, que es un año después de la fecha de efecto */}
