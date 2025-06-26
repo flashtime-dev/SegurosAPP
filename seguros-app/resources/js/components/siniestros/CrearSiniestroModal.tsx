@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import {
     Dialog,
@@ -85,6 +85,20 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
             },
         });
     };
+
+    // Detecta si el tema es oscuro
+    const [isDark, setIsDark] = useState(false);
+    useEffect(() => {
+        const checkDark = () => setIsDark(document.documentElement.classList.contains("dark"));
+        checkDark();
+        // Si tu app cambia el tema dinámicamente, puedes escuchar eventos personalizados aquí
+        // Por ejemplo, si usas localStorage para el tema:
+        window.addEventListener("storage", checkDark);
+        return () => window.removeEventListener("storage", checkDark);
+    }, []);
+
+    // Establece la fecha máxima para el campo de fecha de efecto como la fecha actual.
+    const maxFecha = new Date().toISOString().split("T")[0];
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -181,7 +195,9 @@ export default function CrearSiniestroModal({ isOpen, onClose, polizas, polizaSe
                                     className="cursor-pointer"
                                     value={data.fecha_ocurrencia}
                                     onChange={e => setData('fecha_ocurrencia', e.target.value)}
-                                    style={{ colorScheme: 'dark' }}
+                                    // si es dark mode, establece el colorScheme a 'dark' y si no, a 'light'
+                                    style={{ colorScheme: isDark ? 'dark' : 'light' }}
+                                    max={maxFecha} // Establece la fecha máxima como la fecha actual
                                 />
                                 <InputError message={errors.fecha_ocurrencia} />
                             </div>
