@@ -152,6 +152,8 @@ export default function EditarComunidadModal({ isOpen, onClose, usuarios, comuni
                                     onChange={(e) => setData('ref_catastral', e.target.value.toUpperCase())}
                                     disabled={processing}
                                     placeholder="1234ABCD5678EFGH9012"
+                                    minLength={14}
+                                    maxLength={20}
                                 />
                                 <InputError message={errors.ref_catastral} className="mt-2" />
                             </div>

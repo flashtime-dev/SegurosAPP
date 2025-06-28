@@ -113,7 +113,7 @@ class ComunidadController extends Controller
             'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif',
             'direccion' => 'nullable|string|min:3|max:255',
             'ubi_catastral' => 'nullable|string|min:3|max:255',
-            'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
+            'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{14,20}$/',
             'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
@@ -128,7 +128,7 @@ class ComunidadController extends Controller
             'direccion.max' => 'La dirección no puede exceder de 255 caracteres.',
             'ubi_catastral.min' => 'La ubicación catastral debe tener al menos 3 caracteres.',
             'ubi_catastral.max' => 'La ubicación catastral no puede exceder de 255 caracteres.',
-            'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
+            'ref_catastral.regex' => 'La referencia catastral debe tener entre 14 y 20 caracteres alfanuméricos.',
             'telefono' => 'Formato de teléfono incorrecto',
             'usuarios.exists' => 'Alguno de los usuarios seleccionados no existe.',
         ]);
@@ -206,7 +206,7 @@ class ComunidadController extends Controller
             'cif' => 'required|string|regex:/^[ABCDEFGHJKLMNPQRSUVW]\d{8}$/|unique:comunidades,cif,' . $comunidad->id,
             'direccion' => 'nullable|string|min:3|max:255',
             'ubi_catastral' => 'nullable|string|min:3|max:255',
-            'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{20}$/',
+            'ref_catastral' => 'nullable|string|regex:/^[0-9A-Z]{14,20}$/',
             'telefono' => ['nullable', 'phone:ES,US,FR,GB,DE,IT,PT,MX,AR,BR,INTL'],
             'usuarios' => 'array', // Validar que usuarios sea un array
             'usuarios.*' => 'exists:users,id', // Validar que cada usuario exista
@@ -221,7 +221,7 @@ class ComunidadController extends Controller
             'direccion.max' => 'La dirección no puede exceder de 255 caracteres.',
             'ubi_catastral.min' => 'La ubicación catastral debe tener al menos 3 caracteres.',
             'ubi_catastral.max' => 'La ubicación catastral no puede exceder de 255 caracteres.',
-            'ref_catastral.regex' => 'La referencia catastral debe tener 20 caracteres alfanuméricos.',
+            'ref_catastral.regex' => 'La referencia catastral debe tener entre 14 y 20 caracteres alfanuméricos.',
             'telefono' => 'Formato de teléfono incorrecto',
             'usuarios.exists' => 'Alguno de los usuarios seleccionados no existe.',
         ]);
