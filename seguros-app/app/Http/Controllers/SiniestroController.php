@@ -488,15 +488,15 @@ class SiniestroController extends Controller
             // Verificar si el usuario tiene permiso para actualizar el siniestro
             $this->authorize('update', $siniestro);
 
-            // Verificar si el siniestro ya está cerrado
-            if ($siniestro->estado === 'Cerrado') {
-                return back()->with([
-                    'info' => [
-                        'id' => uniqid(),
-                        'mensaje' => 'El siniestro ya está cerrado'
-                    ],
-                ]);
-            }
+            // Verificar si el siniestro ya está cerrado (Esto no se utiliza)
+            // if ($siniestro->estado === 'Cerrado') {
+            //     return back()->with([
+            //         'info' => [
+            //             'id' => uniqid(),
+            //             'mensaje' => 'El siniestro ya está cerrado'
+            //         ],
+            //     ]);
+            // }
 
             // Cambiar el estado a cerrado
             $siniestro->estado = 'Cerrado';
@@ -515,6 +515,50 @@ class SiniestroController extends Controller
                 'error' => [
                     'id' => uniqid(),
                     'mensaje' => "Error al cerrar el siniestro",
+                ],
+            ]);
+        }
+    }
+
+    /**
+     * Reabre un siniestro cambiando su estado a "Abierto".
+     */
+    public function reabrir($id)
+    {
+        try {
+            // Buscar el siniestro por ID
+            $siniestro = Siniestro::findOrFail($id);
+
+            // Verificar si el usuario tiene permiso para actualizar el siniestro
+            $this->authorize('update', $siniestro);
+
+            // Verificar si el siniestro ya está abierto (No se utiliza))
+            // if ($siniestro->estado === 'Abierto') {
+            //     return back()->with([
+            //         'info' => [
+            //             'id' => uniqid(),
+            //             'mensaje' => 'El siniestro ya está abierto',
+            //         ],
+            //     ]);
+            // }
+
+            // Cambiar el estado a abierto
+            $siniestro->estado = 'Abierto';
+            $siniestro->save();
+
+            Log::info("SiniestroController@reabrir - Siniestro reabierto correctamente", ['id' => $id]);
+            return redirect()->route('siniestros.index')->with([
+                'success' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Siniestro reabierto correctamente",
+                ],
+            ]);
+        } catch (Throwable $e) {
+            Log::error("Error al reabrir siniestro: {$e->getMessage()}", ['id' => $id]);
+            return redirect()->route('siniestros.index')->with([
+                'error' => [
+                    'id' => uniqid(),
+                    'mensaje' => "Error al reabrir el siniestro",
                 ],
             ]);
         }

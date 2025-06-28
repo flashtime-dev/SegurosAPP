@@ -49,6 +49,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/chat-siniestro/{siniestro}', [ChatSiniestroController::class, 'store'])->name('chat-siniestro.store');
     Route::get('/siniestros/{id}/archivo/{filename}', [SiniestroController::class, 'servePdf'])->name('siniestro.pdf');
     Route::post('/siniestros/{id}/cerrar', [SiniestroController::class, 'cerrar'])->name('siniestros.cerrar');
+    Route::post('/siniestros/{id}/reabrir', [SiniestroController::class, 'reabrir'])->name('siniestros.reabrir');
+
 
     // Rutas para consultar los teléfonos de asistencia de las compañías
     Route::resource('companias', CompaniaController::class)->except(['create', 'edit']);

@@ -12,11 +12,17 @@ export function SiniestroLogoAcciones({ id, logoUrl, telefono, estadoSiniestro }
     const [loading, setLoading] = useState(false);
     const estaCerrado = estadoSiniestro?.toLowerCase() === "cerrado";
 
-    //Funcion para enviar a la ruta de cerrar siniestro en caso de confirmacion
-    function handleCerrar() {
+    // Función para cerrar o reabrir el siniestro según estado actual
+    function handleAccion() {
+        const accion = estaCerrado ? "reabrir" : "cerrar";
+        const mensaje = estaCerrado
+            ? "¿Estás seguro de que deseas reabrir este siniestro?"
+            : "¿Estás seguro de que deseas cerrar este siniestro?";
+        const ruta = `/siniestros/${id}/${accion}`;
+
         setLoading(true);
-        if (confirm('¿Estás seguro de que deseas cerrar este siniestro?')) {
-            router.post(`/siniestros/${id}/cerrar`, {}, {
+        if (confirm(mensaje)) {
+            router.post(ruta, {}, {
                 onFinish: () => setLoading(false),
             });
         } else {
@@ -32,14 +38,16 @@ export function SiniestroLogoAcciones({ id, logoUrl, telefono, estadoSiniestro }
             <div className="w-full space-y-2">
                 <Button
                     variant="outline"
-                    className={`w-full dark:border-gray-500 ${loading || estaCerrado
+                    className={`w-full dark:border-gray-500 ${loading
                             ? "cursor-not-allowed bg-gray-300 hover:bg-gray-300 opacity-50 dark:hover:bg-gray-600"
                             : "cursor-pointer hover:dark:bg-gray-700"
                         }`}
-                    onClick={handleCerrar}
-                    disabled={loading || estaCerrado}
+                    onClick={handleAccion}
+                    disabled={loading}
                 >
-                    {loading ? "Cerrando..." : "Cerrar siniestro"}
+                    {loading
+                        ? (estaCerrado ? "Reabriendo..." : "Cerrando...")
+                        : (estaCerrado ? "Reabrir siniestro" : "Cerrar siniestro")}
                 </Button>
             </div>
         </div>
