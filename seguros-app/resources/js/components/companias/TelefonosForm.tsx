@@ -39,7 +39,7 @@ export default function TelefonosForm({ telefonos, setTelefonos, errors }: Telef
         <div className="space-y-2">
             <div className="flex gap-2">
                 <div className="flex-1">
-                    <Label htmlFor="telefono">Teléfono</Label>
+                    <Label htmlFor="telefono">Teléfono*</Label>
                     <PhoneInputField
                         value={nuevoTelefono.telefono}
                         onChange={value => {
@@ -50,7 +50,7 @@ export default function TelefonosForm({ telefonos, setTelefonos, errors }: Telef
                     />
                 </div>
                 <div className="flex-1">
-                    <Label htmlFor="descripcion">Descripción</Label>
+                    <Label htmlFor="descripcion">Descripción*</Label>
                     <Input id="descripcion" value={nuevoTelefono.descripcion} onChange={e => setNuevoTelefono({ ...nuevoTelefono, descripcion: e.target.value })} placeholder='Descripción'/>
                 </div>
                 <Button type="button" onClick={handleAdd} className="self-end">Añadir</Button>

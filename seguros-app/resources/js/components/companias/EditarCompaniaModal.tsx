@@ -43,12 +43,12 @@ export default function EditarCompaniaModal({ isOpen, onClose, compania }: Edita
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <Label htmlFor="nombre">Nombre</Label>
-                        <Input id="nombre" value={data.nombre} onChange={e => setData('nombre', e.target.value)} required />
+                        <Input id="nombre" value={data.nombre} onChange={e => setData('nombre', e.target.value)} required placeholder='Nombre' />
                         {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre}</p>}
                     </div>
                     <div>
-                        <Label htmlFor="url_logo">Logo (URL)</Label>
-                        <Input id="url_logo" value={data.url_logo} onChange={e => setData('url_logo', e.target.value)} />
+                        <Label htmlFor="url_logo">Logo* (URL)</Label>
+                        <Input id="url_logo" value={data.url_logo} onChange={e => setData('url_logo', e.target.value)} required placeholder='URL' />
                         {errors.url_logo && <p className="text-red-500 text-xs mt-1">{errors.url_logo}</p>}
                     </div>
                     <div>
