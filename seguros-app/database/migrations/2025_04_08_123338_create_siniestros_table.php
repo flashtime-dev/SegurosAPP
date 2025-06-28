@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_poliza'); // Relación con pólizas
             $table->text('declaracion'); // Declaración obligatoria
             $table->string('tramitador', 255)->nullable(); // Tramitador opcional
-            $table->string('expediente', 50); // Expediente obligatorio
+            $table->string('expediente', 50)->nullable(); // Expediente obligatorio pero se pone opcional ya que luego en el controlador se genera automaticamente
             $table->string('exp_cia', 50)->nullable(); // Expediente de la compañía opcional
             $table->string('exp_asist', 50)->nullable(); // Expediente de asistencia opcional
             $table->date('fecha_ocurrencia')->nullable(); // Fecha de ocurrencia opcional

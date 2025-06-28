@@ -200,7 +200,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
 
                             {/* Expediente / Exp_CIA */}
                             <div className="grid grid-cols-2 gap-4">
-                                <div>
+                                {/* <div>
                                     <Label htmlFor="expediente">Expediente *</Label>
                                     <Input
                                         id="expediente"
@@ -210,7 +210,7 @@ export default function EditarSiniestroModal({ isOpen, onClose, polizas, siniest
                                         placeholder="SIN-2025-001"
                                     />
                                     <InputError message={errors.expediente} />
-                                </div>
+                                </div> */}
 
                                 <div>
                                     <Label htmlFor="exp_cia">Expediente CIA</Label>

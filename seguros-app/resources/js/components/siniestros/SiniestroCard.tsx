@@ -78,7 +78,7 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
             <Link href={`/siniestros/${siniestro.id}`} className="p-4">
                 <div >
                     <div className="flex justify-between items-center mb-2">
-                        <h2 className="text-lg font-semibold dark:text-gray-100">{siniestro.expediente}</h2>
+                        <h2 className="text-lg font-semibold dark:text-gray-100">{siniestro.poliza?.comunidad?.nombre ?? "Comunidad no disponible"}</h2>
                         <span
                             className={cn(
                                 "text-white text-xs font-medium px-3 py-1 rounded-full",
@@ -89,13 +89,14 @@ export function SiniestroCard({ siniestro, onEdit }: { siniestro: Siniestro; onE
                         </span>
                     </div>
                     {/* <p className="text-gray-600">Estado: {siniestro.estado}</p> */} {/*HACE FALTA AÑADIR A BD*/}
+                    <p className="text-gray-600 dark:text-gray-300">Expediente: {siniestro.expediente}</p>
+                    <p className="text-gray-600 dark:text-gray-300">Poliza: {siniestro.poliza.numero}</p>
                     <p className="text-gray-600 dark:text-gray-300">
                         Fecha:{" "}
                         {siniestro.fecha_ocurrencia
                             ? format(parseISO(siniestro.fecha_ocurrencia), "dd/MM/yyyy")
                             : "Fecha no disponible"}
                     </p>
-                    <p className="text-gray-600 dark:text-gray-300">Poliza: {siniestro.poliza.numero}</p>
                     <p className="text-gray-600 dark:text-gray-300">Descripcion: {siniestro.declaracion}</p>
                 </div>
             </Link>

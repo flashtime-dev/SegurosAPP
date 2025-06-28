@@ -40,7 +40,7 @@ class SiniestroController extends Controller
 
             // Verificar si el usuario tiene el rol de administrador
             if ($user->rol->nombre == 'Superadministrador') {
-                $siniestros = Siniestro::with('poliza', 'contactos')->get(); // Obtener todos los siniestros con sus relaciones
+                $siniestros = Siniestro::with('poliza.comunidad', 'contactos')->get(); // Obtener todos los siniestros con sus relaciones
                 $polizas = Poliza::all(); // Obtener todas las pólizas
             } else {
                 // Obtener comunidades donde el usuario es propietario o está asignado como usuario
@@ -53,7 +53,7 @@ class SiniestroController extends Controller
 
                 //obtener siniestros de las pólizas de las comunidades del usuario
                 $siniestros = Siniestro::whereIn('id_poliza', Poliza::whereIn('id_comunidad', $comunidades->pluck('id'))->pluck('id'))
-                    ->with(['poliza', 'contactos'])
+                    ->with(['poliza.comunidad', 'contactos'])
                     ->get();
 
                 // Obtener pólizas de las comunidades del usuario
@@ -65,6 +65,7 @@ class SiniestroController extends Controller
             return Inertia::render('siniestros/index', [
                 'siniestros' => $siniestros,
                 'polizas' => $polizas,
+                
             ]); // Retornar la vista con la lista de siniestros
         } catch (Throwable $e) {
             Log::error('Error en SiniestroController@index: ' . $e->getMessage(), ['exception' => $e]);
@@ -91,7 +92,7 @@ class SiniestroController extends Controller
         $request->validate([
             'id_poliza' => 'required|exists:polizas,id',
             'declaracion' => 'required|string|min:10|max:1000',
-            'expediente' => 'required|string|min:2|max:50',
+            // 'expediente' => 'required|string|min:2|max:50',
             'exp_cia' => 'nullable|string|min:2|max:50',
             'exp_asist' => 'nullable|string|min:2|max:50',
             'fecha_ocurrencia' => 'nullable|date|before_or_equal:today',
@@ -109,9 +110,9 @@ class SiniestroController extends Controller
             'declaracion.required' => 'La declaración es obligatoria.',
             'declaracion.min' => 'La declaración debe tener al menos 10 caracteres.',
             'declaracion.max' => 'La declaración no puede exceder los 1000 caracteres.',
-            'expediente.required' => 'El tramitador es obligatorio.',
-            'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
-            'expediente.max' => 'El expediente no puede exceder los 50 caracteres.',
+            // 'expediente.required' => 'El tramitador es obligatorio.',
+            // 'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
+            // 'expediente.max' => 'El expediente no puede exceder los 50 caracteres.',
             'exp_cia.min' => 'El expediente CIA debe tener al menos 2 caracteres.',
             'exp_cia.max' => 'El expediente CIA no puede exceder los 50 caracteres.',
             'exp_asist.min' => 'El expediente asistencia debe tener al menos 2 caracteres.',
@@ -133,13 +134,20 @@ class SiniestroController extends Controller
         ]);
         try {
             // Preparar datos excepto contactos y archivos
-            $data = $request->except(['contactos', 'files']);
+            $data = $request->except(['contactos', 'files', 'expediente']);
 
             // Determinar si hay archivos adjuntos
             $data['adjunto'] = $request->hasFile('files') && count($request->file('files')) > 0;
 
             // Crear el siniestro primero
             $siniestro = Siniestro::create($data);
+
+            // Genera el valor del campo "expediente" con el siguiente formato:
+            // - date('Y-m'): obtiene el año y mes actual, por ejemplo "2025-06"
+            // - str_pad($siniestro->id, 4, '0', STR_PAD_LEFT): convierte el ID del siniestro en una cadena de 4 dígitos, agregando ceros a la izquierda si es necesario (por ejemplo, 7 → "0007")
+            // - Se concatena con un guion "-" entre ambos para formar un string como: "2025-06-0007"
+            $expediente = now()->format('Y-m') . '-' . str_pad($siniestro->id, 4, '0', STR_PAD_LEFT);
+            $siniestro->update(['expediente' => $expediente]);
 
             // Guardar archivos y crear registros en adjuntos_siniestros
             if ($request->hasFile('files')) {
@@ -196,7 +204,7 @@ class SiniestroController extends Controller
     public function show($id)
     {
         try {
-            $siniestro = Siniestro::with('poliza.compania', 'contactos', 'chats.usuario', 'adjuntos')->findOrFail($id); // Buscar el siniestro por ID
+            $siniestro = Siniestro::with('poliza.compania','poliza.comunidad', 'contactos', 'chats.usuario', 'adjuntos')->findOrFail($id); // Buscar el siniestro por ID
             //dd($siniestro); // Debugging: Verificar el siniestro cargado
 
             // Verificar si el usuario tiene permiso para ver el siniestro
@@ -246,7 +254,7 @@ class SiniestroController extends Controller
         $request->validate([
             'id_poliza'        => 'required|exists:polizas,id',
             'declaracion'      => 'required|string|min:10|max:1000',
-            'expediente'       => 'required|string|min:2|max:50',
+            // 'expediente'       => 'required|string|min:2|max:50',
             'exp_cia'          => 'nullable|string|min:2|max:50',
             'exp_asist'        => 'nullable|string|min:2|max:50',
             'fecha_ocurrencia' => 'nullable|date|before_or_equal:today',
@@ -264,9 +272,9 @@ class SiniestroController extends Controller
             'declaracion.required' => 'La declaración es obligatoria.',
             'declaracion.min' => 'La declaración debe tener al menos 10 caracteres.',
             'declaracion.max' => 'La declaración no puede exceder los 1000 caracteres.',
-            'expediente.required' => 'El tramitador es obligatorio.',
-            'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
-            'expediente.max' => 'El expediente no puede exceder los 50 caracteres.',
+            // 'expediente.required' => 'El tramitador es obligatorio.',
+            // 'expediente.min' => 'El expediente debe tener al menos 2 caracteres.',
+            // 'expediente.max' => 'El expediente no puede exceder los 50 caracteres.',
             'exp_cia.min' => 'El expediente CIA debe tener al menos 2 caracteres.',
             'exp_cia.max' => 'El expediente CIA no puede exceder los 50 caracteres.',
             'exp_asist.min' => 'El expediente asistencia debe tener al menos 2 caracteres.',
@@ -289,13 +297,20 @@ class SiniestroController extends Controller
 
         try {
             // Preparar datos excepto contactos y archivos
-            $data = $request->except(['contactos', 'files']);
+            $data = $request->except(['contactos', 'files', 'expediente']);
 
             // Determinar si hay archivos adjuntos
             $data['adjunto'] = $request->hasFile('files') && count($request->file('files')) > 0;
 
             // Actualizar el siniestro en la BD
             $siniestro->update($data);
+
+            // Genera el valor del campo "expediente" con el siguiente formato:
+            // - date('Y-m'): obtiene el año y mes actual, por ejemplo "2025-06"
+            // - str_pad($siniestro->id, 4, '0', STR_PAD_LEFT): convierte el ID del siniestro en una cadena de 4 dígitos, agregando ceros a la izquierda si es necesario (por ejemplo, 7 → "0007")
+            // - Se concatena con un guion "-" entre ambos para formar un string como: "2025-06-0007"
+            $expediente = now()->format('Y-m') . '-' . str_pad($siniestro->id, 4, '0', STR_PAD_LEFT);
+            $siniestro->update(['expediente' => $expediente]);
 
             // Si vienen archivos nuevos, borrar primero los anteriores (físicos y registros)
             if ($request->hasFile('files')) {

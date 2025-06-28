@@ -9,13 +9,12 @@ import { SiniestroChat } from "./siniestro-chat";
 import TablaContactos from "./TablaContactos";
 
 export function SiniestroMenu({ poliza, siniestro, contactos, chats, authUser }: { poliza: Poliza, siniestro: Siniestro, contactos: Contacto[],chats: ChatSiniestro[], authUser: number }) {
-    //console.log("SiniestroMenu", { poliza, siniestro, contactos, chats, authUser });
     const isClosed = siniestro.estado.toLowerCase() === 'cerrado';
     return (
         <div>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                 <div>
-                    <h4 className="text-lg font-semibold dark:text-gray-100">{siniestro.expediente}</h4>
+                    <h4 className="text-lg font-semibold dark:text-gray-100">{siniestro.poliza?.comunidad?.nombre || "Comunidad no disponible"}</h4>
                 </div>
                 <Badge variant={siniestro.estado as "Abierto"| "Cerrado" }>{siniestro.estado}</Badge>
             </div>
