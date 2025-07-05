@@ -20,6 +20,8 @@ class Siniestro extends Model
         'fecha_ocurrencia',
         'adjunto',
         'estado',
+        'tipologia',
+        'urgencia'
     ];
 
     protected $casts = [ // Casts para los atributos
@@ -33,10 +35,15 @@ class Siniestro extends Model
         return $this->belongsTo(Poliza::class, 'id_poliza', 'id');
     }
 
-    // Relación muchos a muchos: Un Siniestro puede tener muchos Contactos
+    // Relacion N:M: un siniestro puede tener muchos contactos
     public function contactos()
     {
-        return $this->hasMany(Contacto::class, 'id_siniestro', 'id');
+        return $this->belongsToMany(
+            Contacto::class,           // Modelo relacionado
+            'contacto_siniestro',      // Tabla pivot
+            'id_siniestro',            // Clave foránea de Siniestro en la pivot
+            'id_contacto'              // Clave foránea de Contacto en la pivot
+        )->withTimestamps();           // Si la tabla pivot tiene created_at y updated_at
     }
 
     // Relación uno a muchos: Un Siniestro tiene muchos AdjuntoSiniestro
@@ -49,5 +56,16 @@ class Siniestro extends Model
     public function chats()
     {
         return $this->hasMany(ChatSiniestro::class, 'id_siniestro', 'id');
+    }
+
+    // Relación uno a muchos: Una Comunidad tiene muchos Usuarios
+    public function usuarios()
+    {
+        return $this->belongsToMany(
+            User::class,       // Modelo relacionado
+            'usuarios_siniestros', // Nombre de la tabla intermedia
+            'id_siniestro',    // Clave foránea del modelo actual (Comunidad) en la tabla intermedia
+            'id_usuario'       // Clave foránea del modelo relacionado (User) en la tabla intermedia
+        )->withTimestamps(); // Incluye created_at y updated_at en la tabla intermedia
     }
 }

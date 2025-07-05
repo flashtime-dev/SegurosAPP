@@ -81,6 +81,28 @@ class User extends Authenticatable
         )->withTimestamps(); // Incluye created_at y updated_at en la tabla intermedia
     }
 
+    // Relación N:N: Un Usuario pertenece a muchas Polizas
+    public function polizas()
+    {
+        return $this->belongsToMany(
+            Poliza::class,  // Modelo relacionado
+            'usuarios_polizas', // Nombre de la tabla intermedia
+            'id_usuario',      // Clave foránea del modelo actual (User) en la tabla intermedia
+            'id_poliza'     // Clave foránea del modelo relacionado (Comunidad) en la tabla intermedia
+        )->withTimestamps(); // Incluye created_at y updated_at en la tabla intermedia
+    }
+
+    // Relación N:N: Un Usuario pertenece a muchos siniestros
+    public function siniestros()
+    {
+        return $this->belongsToMany(
+            Siniestro::class,  // Modelo relacionado
+            'usuarios_siniestros', // Nombre de la tabla intermedia
+            'id_usuario',      // Clave foránea del modelo actual (User) en la tabla intermedia
+            'id_siniestro'     // Clave foránea del modelo relacionado (Comunidad) en la tabla intermedia
+        )->withTimestamps(); // Incluye created_at y updated_at en la tabla intermedia
+    }
+
     // Relación 1:N: Un Usuario escribe muchos ChatsPoliza
     public function chatsPoliza()
     {

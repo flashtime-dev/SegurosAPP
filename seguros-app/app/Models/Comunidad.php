@@ -55,5 +55,10 @@ class Comunidad extends Model
     {
         return $this->hasMany(Poliza::class, 'id_comunidad', 'id');
     }
-    
+
+    // Relación uno a muchos: Una Comunidad tiene muchas solicitudes
+    public function solicitudes()
+    {
+        return $this->hasMany(Solicitud::class, 'id_comunidad', 'id');
+    }
 }

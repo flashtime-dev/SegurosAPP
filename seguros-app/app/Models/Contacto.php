@@ -12,7 +12,7 @@ class Contacto extends Model
     protected $table = 'contactos'; // Nombre de la tabla en la base de datos
 
     protected $fillable = [
-        'id_siniestro',
+        'id_comunidad',
         'nombre',
         'cargo',
         'piso',
@@ -20,8 +20,19 @@ class Contacto extends Model
     ];
 
     // Relación uno a muchos: Un Contacto pertenecen a una Comunidad
-    public function siniestro()
+    public function comunidad()
     {
-        return $this->belongsTo(Siniestro::class, 'id_siniestro', 'id');
+        return $this->belongsTo(Comunidad::class, 'id_comunidad', 'id');
+    }
+
+    // Relacion N:M: Un contacto puede formar parte de muchos siniestros
+    public function siniestros()
+    {
+        return $this->belongsToMany(
+            Siniestro::class,         // Modelo relacionado
+            'contacto_siniestro',     // Tabla pivot
+            'id_contacto',            // Clave foránea de Contacto en la pivot
+            'id_siniestro'            // Clave foránea de Siniestro en la pivot
+        )->withTimestamps();          // Si la tabla pivot tiene created_at y updated_at
     }
 }

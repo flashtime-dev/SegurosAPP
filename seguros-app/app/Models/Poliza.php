@@ -68,5 +68,16 @@ class Poliza extends Model
     {
         return $this->hasMany(ChatPoliza::class, 'id_poliza', 'id');
     }
+
+    // Relación muchos a muchos: Una Poliza tiene muchos Usuarios
+    public function usuarios()
+    {
+        return $this->belongsToMany(
+            User::class,       // Modelo relacionado
+            'usuarios_polizas', // Nombre de la tabla intermedia
+            'id_poliza',    // Clave foránea del modelo actual (Comunidad) en la tabla intermedia
+            'id_usuario'       // Clave foránea del modelo relacionado (User) en la tabla intermedia
+        )->withTimestamps(); // Incluye created_at y updated_at en la tabla intermedia
+    }
     
 }
