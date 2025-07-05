@@ -20,7 +20,7 @@ return new class extends Migration
                 'Vencida',
                 'Anulada a Vto.',
                 'No Renueva'
-            ])->default('En Vigor');
+            ])->default('En Vigor')->change();
         });
     }
 
@@ -30,13 +30,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('polizas', function (Blueprint $table) {
-            $table->string('estado', [
+            $table->enum('estado', [
                 'En Vigor',
                 'Anulada',
                 'Solicitada',
                 'Externa',
                 'Vencida',
-            ])->default('En Vigor');
+            ])->default('En Vigor')->change();
         });
     }
 };

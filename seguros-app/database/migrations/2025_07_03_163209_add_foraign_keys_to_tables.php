@@ -30,7 +30,7 @@ return new class extends Migration
 
         // Tabla Reparadores
         Schema::table('reparadores', function (Blueprint $table) {
-            $table->foreign('id_tipo_reparador')->references('id')->on('tipos_reparador')->onDelete('cascade');
+            $table->foreign('id_tipo_reparador')->references('id')->on('tipos_reparadores')->onDelete('cascade');
         });
 
         // Tabla Solicitudes_Reparadores
